@@ -1,0 +1,105 @@
+<!-- <div>
+    <h3>Marksheet</h3>
+    <hr>
+</div> -->
+
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h4><b>View Marksheet</b></h4>
+    </c-card-header>
+
+    <c-card-body>
+      <c-row class="align-items-start">
+        <form cForm [formGroup]="MarksheetViewForm" (keydown.enter)="$event.preventDefault()">
+          <c-row>
+
+            <c-col [md]="2">
+              <label for="edit_batchtype" class="required">Batch Type</label>
+              <select
+                      #batch_type
+                      id="edit_batchtype"
+                      formControlName="edit_batchtype"
+                      class="form-control"
+                      [(ngModel)]=edit_batchtype_outside
+                      (change)="onChangeBatchtypeEdit_Select($event.target.selectedIndex)"
+              >
+                <option *ngFor="let typebatch of batchtype_edit_outside_detail"
+                        [ngValue]="typebatch.id">{{typebatch.name}}</option>
+
+              </select>
+            </c-col>
+            <c-col [md]="4">
+              <label for="aadhaar">Aadhaar Number:</label>
+              <input type="number" id="aadhaar" formControlName="aadhaar"
+                     placeholder="Enter your Aadhaar Number" class="form-control">
+              <span
+                *ngIf="MarksheetViewForm.get('aadhaar')?.invalid && MarksheetViewForm.get('aadhaar')?.touched"
+                class="text-danger">Aadhaar no is required</span>
+            </c-col>
+
+            <c-col [md]="2" style="padding-top: 23px;">
+              <button cButton type="button" class="btn btn-info" style="width: 100%;" (click)="ShowMarksheet()">
+                Show
+                <c-spinner *ngIf="showloader" aria-hidden="false" size="sm"></c-spinner>
+              </button>
+            </c-col>
+          </c-row>
+        </form>
+        <br>
+      </c-row>
+      <br>
+      <c-row>
+        <ag-grid-angular *ngIf="showGridbox"
+                         style="width: 100%; height: 300px"
+                         class="ag-theme-alpine"
+                         [rowData]="rowData"
+                         [gridOptions]="gridOptions"
+                         [columnDefs]="columnData"
+                         [rowSelection]="rowSelection"
+                         (gridReady)="onGridReady($event)"
+                         (selectionChanged)="onSelectionChanged($event)"
+        >
+        </ag-grid-angular>
+      </c-row>
+      <br>
+      <c-row>
+        <c-col [md]="2">
+          <button cButton type="submit" style="width:100%;"
+                  class="btn btn-info" (click)="ShowPDF()">
+            <!--                          <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+            <!--                                                        *ngIf="Downloadloader"></i>&nbsp;&nbsp;-->
+            <c-spinner *ngIf="viewloader" aria-hidden="false" size="sm"></c-spinner>
+            View Marksheet
+          </button>
+        </c-col>
+      </c-row>
+
+      <c-row>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end" *ngIf="showpdfbox">
+          <button cButton color="primary" class="me-md-2 btn btn-success"
+                  (click)="incrementZoom(0.1)"><b>Zoom-In</b></button>
+          <button cButton class="btn btn-warning" (click)="incrementZoom(-0.1)"><b>Zoom-Out</b></button>
+          <button cButton class="btn btn-danger" (click)="ClosePdf()"><b>Close PDF</b></button>
+        </div>
+      </c-row>
+      <c-row>
+
+
+        <div class="pdf-container" *ngIf="showpdfbox">
+          <pdf-viewer
+            [src]="pdfSrc"
+            [render-text]="true"
+            [original-size]="false"
+            [fit-to-page]="true"
+            [zoom]="zoom"
+            [autoresize]="true"
+            [show-borders]="true"
+            style="display: block"
+          ></pdf-viewer>
+        </div>
+      </c-row>
+    </c-card-body>
+  </c-card>
+</div>

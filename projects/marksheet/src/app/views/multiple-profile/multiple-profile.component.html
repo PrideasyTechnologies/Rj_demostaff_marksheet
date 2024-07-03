@@ -1,0 +1,122 @@
+<!-- <div>
+    <h3>Multiple Edit</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h4><b>Multiple Edit</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-row>
+        <c-col [md]="6">
+          <label for="Batch_Name">Batch:</label>
+          <div id="Batch_Name" class="ng-autocomplete" style="width: 100%;">
+            <ng-autocomplete
+              [data]="Batchs"
+              [searchKeyword]="Batchkeyword"
+              (selected)='selectBatch($event)'
+              
+              [itemTemplate]="batTemplate"
+              [notFoundTemplate]="notFoundTemplate"
+              placeholder="Select Batch">
+            </ng-autocomplete>
+
+            <ng-template #batTemplate let-bat>
+              <a [innerHTML]="bat.Batch_Name"></a>
+            </ng-template>
+
+            <ng-template #notFoundTemplate let-notFound>
+              <div [innerHTML]="notFound"></div>
+            </ng-template>
+          </div>
+        </c-col>
+        <c-col [md]="2" style="padding-top: 25px;">
+          <button cButton type="submit" [disabled]="downloadclicked" (click)="OnDownloadFile(); downloadclicked=true"
+                  class="btn btn-info">
+            <!--                      <i style="border-color: white;" class="spinner-border text-primary"-->
+            <!--                            role="status" *ngIf="downloadloader"></i>&nbsp;-->
+            <c-spinner *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+            Download
+          </button>
+        </c-col>
+      </c-row>
+
+      <form cForm [formGroup]="DownloadUploadForm" (keydown.enter)="$event.preventDefault()">
+        <c-row>
+          <c-col [md]="3">
+            <h6>Upload Excel</h6>
+            <input aria-label="file example"
+                   cFormControl
+                   id="validationText1"
+                   type="file"
+                   (change)="xlsxUpload($event)"
+                   (selectionchange)="xlsxUpload($event)"
+            />
+            <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+          </c-col>
+
+          <c-col [md]="2" style="padding-top: 27px;">
+            <button cButton type="button" class="btn btn-success"
+                    (click)="uploadfile()">
+              <!--                            <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+              <!--                               *ngIf="loader"></i>&nbsp;&nbsp;-->
+              <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+
+              Upload
+            </button>
+          </c-col>
+          <c-col [md]="2" style="padding-top: 30px;">
+            <button cButton type="submit" class="btn btn-danger" (click)="resetAll()">Reset</button>
+          </c-col>
+        </c-row>
+      </form>
+    </c-card-body>
+    <c-card-body>
+      <c-row>
+        <c-col [md]="12" style="padding-top: 20px;">
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Search</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="Username"
+                   cFormControl
+                   placeholder="Search here"
+                   [(ngModel)]="searchValue"
+                   (keyup)="quickSearch()"
+            />
+          </c-input-group>
+          <!--                    </form>-->
+        </c-col>
+      </c-row>
+      <br/>
+      <div>
+        <div class="example-header">
+          Page Size:
+          <select
+            style="background-color: rgba(255, 255, 255, 0.1) !important;color: #495057; box-shadow: none; border-radius: 0.25rem; border: 1px solid #dde6e9;"
+            (change)="onPageSizeChanged()" id="page-size">
+            <option value="10" selected="">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+          </select>
+        </div>
+        <br/>
+        <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                         [rowData]="rowss"
+                         [gridOptions]="gridOptions"
+                         [columnDefs]="columnDefs"
+                         (gridReady)="onGridReady($event)"
+                         (rowSelected)="onRowSelectedEvent($event)"
+                         [pagination]="true"
+                         [paginationPageSize]="paginationPageSize"
+                         (selectionChanged)="onSelectionChanged($event)">
+        </ag-grid-angular>
+      </div>
+    </c-card-body>
+  </c-card>
+</div>

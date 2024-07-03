@@ -1,0 +1,137 @@
+<c-row *ngIf="ShowMain">
+  <div class="col-lg-12">
+    <c-card>
+      <c-card-header style="background-color:#f0f3f5">
+        <c-row>
+          <c-col [md]="8">
+            <h4><b>Employee</b></h4>
+          </c-col>
+          <c-col [md]="2">
+          </c-col>
+          <c-col [md]="2">
+            <button cButton class="btn btn-success" (click)="OnAdd()" ><b>&#43;</b> &nbsp;Add
+            </button>
+          </c-col>
+        </c-row>
+      </c-card-header>
+      <c-card-body>
+        <c-row>
+
+          <br>
+          <br>
+          <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                           [rowData]="employee_Ajson"
+                           [gridOptions]="gridOptionsemployee"
+                           [columnDefs]="columnDefsemployee"
+                           [pagination]="true"
+                           [paginationPageSize]="10"
+                           (gridReady)="onGridReadyemployee($event)"
+                           [rowSelection]='rowSelectionfeedback'
+                           (rowSelected)="onRowSelectedEventemployee($event)"
+                           (selectionChanged)="onSelectionChangedemployee($event)">
+          </ag-grid-angular>
+        </c-row>
+      </c-card-body>
+    </c-card>
+  </div>
+</c-row>
+
+<div class="fade-in" *ngIf="ShowAdd">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h3><b>Add Employee</b></h3>
+    </c-card-header>
+    <c-card-body>
+      <form cForm [formGroup]="AddForm" (keydown.enter)="$event.preventDefault()">
+        <c-row>
+          <c-col [md]="4">
+            <label for="fullname">Full name:</label>
+            <input id="fullname" type="text" formControlName="fullname" class="form-control">
+                        <span *ngIf="AddForm.get('fullname')?.invalid && AddForm.get('fullname')?.touched"
+                              class="text-danger"> Full name is required</span>
+          </c-col>
+          <c-col [md]="4">
+            <label for="department">Department</label>
+            <input id="department" type="text" formControlName="department" class="form-control">
+            <span *ngIf="AddForm.get('department')?.invalid && AddForm.get('department')?.touched"
+                  class="text-danger">Department is required</span>
+          </c-col>
+
+          <c-col [md]="4">
+            <label for="designation">Designation</label>
+            <input id="designation" type="text" formControlName="designation" class="form-control">
+            <span *ngIf="AddForm.get('designation')?.invalid && AddForm.get('designation')?.touched"
+                  class="text-danger">Designation is required</span>
+          </c-col>
+        </c-row>
+        <c-row>
+          <c-col [md]="4">
+            <label for="address">Address</label>
+            <input id="address" type="text" formControlName="address" class="form-control">
+            <span *ngIf="AddForm.get('address')?.invalid && AddForm.get('address')?.touched"
+                  class="text-danger">Address is required</span>
+          </c-col>
+          <c-col [md]="4">
+            <label for="email">Email</label>
+            <input id="email" type="email" formControlName="email" class="form-control">
+            <span *ngIf="AddForm.get('email')?.invalid && AddForm.get('email')?.touched"
+                  class="text-danger">Email is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label>DOB</label>
+            <input type="date" formControlName="Birth_date" class="form-control">
+            <span *ngIf="AddForm.get('Birth_date')?.invalid && AddForm.get('Birth_date')?.touched"
+                  class="text-danger">DOB is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="doj">DOJ</label>
+            <input id="doj" type="date" formControlName="doj" class="form-control">
+            <span *ngIf="AddForm.get('doj')?.invalid && AddForm.get('doj')?.touched"
+                  class="text-danger">DOJ is required</span>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [md]="2">
+            <label for="mobile">Mobile No.</label>
+            <input id="mobile" type="text" formControlName="mobile" class="form-control">
+            <span *ngIf="AddForm.get('mobile')?.invalid && AddForm.get('mobile')?.touched"
+                  class="text-danger">Mobile is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="alternatemobile">Alternate Mobile No.</label>
+            <input id="alternatemobile" type="text" formControlName="alternatemobile" class="form-control">
+            <span *ngIf="AddForm.get('alternatemobile')?.invalid && AddForm.get('alternatemobile')?.touched"
+                  class="text-danger">Alternate Mobile is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="bloodgroup">Blood Group.</label>
+            <input id="bloodgroup" type="text" formControlName="bloodgroup" class="form-control">
+            <span *ngIf="AddForm.get('bloodgroup')?.invalid && AddForm.get('bloodgroup')?.touched"
+                  class="text-danger">Blood Group is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="createddate">Created Date</label>
+            <input id="createddate" type="date" formControlName="createddate" class="form-control">
+            <span *ngIf="AddForm.get('createddate')?.invalid && AddForm.get('createddate')?.touched"
+                  class="text-danger">Created date is required</span>
+          </c-col>
+        </c-row>
+        <br>
+        <c-row>
+          <c-col [md]="2">
+            <button cButton type="submit" (click)="Addemployee()" class="btn btn-success">
+              <c-spinner *ngIf="Addloader" aria-hidden="false" size="lg"></c-spinner>
+              Add
+            </button>
+          </c-col>
+          <c-col [md]="2">
+            <button cButton type="reset" (click)="resetAll()" class="btn btn-danger">
+              Cancel</button>
+          </c-col>
+        </c-row>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>
+

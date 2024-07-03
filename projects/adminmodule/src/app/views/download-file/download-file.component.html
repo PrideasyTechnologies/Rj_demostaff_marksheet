@@ -1,0 +1,175 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Reports</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a [active]="true" [cTabContent]="tabContent"  [tabPaneIdx]="0" cNavLink>
+            Merit List/ General register
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent"  [tabPaneIdx]="1" cNavLink>
+            Student Profile Print
+          </a>
+        </c-nav-item>
+
+      </c-nav>
+      <c-tab-content #tabContent="cTabContent">
+
+        <c-tab-pane class="p-3">
+
+          <br/>
+          <form cForm [formGroup]="MeritListForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="5">
+                <label for="batchcode">Select Batch:</label>
+                <div id="batchcode" class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" id="Batch_Name"
+                                   (selected)='selectBatch($event)' (inputChanged)='onChangeSearch($event)'
+                                   (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                   [notFoundTemplate]="notFoundTemplate" placeholder="Select Batch">
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="DocType">Select Document Type:</label>
+                <select id="DocType" [(ngModel)]="SelectedDocType" formControlName="DocType"
+                        class="form-control"
+                        (change)="onChangeDocType()">
+                  <option selected>--Select Document--</option>
+                  <option *ngFor="let doc of docType" [ngValue]="doc.Education_details">
+                    {{doc.Education_details}}</option>
+                </select>
+                <span
+                  *ngIf="MeritListForm.get('DocType')?.invalid && MeritListForm.get('DocType')?.touched"
+                  class="text-danger">Document is required</span>
+              </c-col>
+
+
+              <c-col [md]="2" style="padding-top: 20px">
+                <c-dropdown variant="btn-group">
+                  <button cButton cDropdownToggle size="md">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Merit List
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <c-spinner *ngIf="meritlistloader" aria-hidden="false" size="sm"></c-spinner>
+                  </button>
+                  <ul cDropdownMenu>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                      (click)="SingleMeritListDownload()"
+                              >
+                             Single Education Merit list
+                      </button>
+
+                    </li>
+                    <hr>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem (click)="AllEducationMerit()"
+                              >
+                              All Education Merit list
+                      </button>
+
+                    </li>
+                   
+                  </ul>
+                </c-dropdown>
+            </c-col>
+
+              <!-- <c-col [md]="2" style="padding-top: 24px;">
+                <button type="submit" (click)="MeritListDownload()" size="lg" class="btn btn-info">
+
+                  <c-spinner  *ngIf="meritlistloader" aria-hidden="false" size="sm"></c-spinner>
+                Merit List
+                </button>
+              </c-col> -->
+
+              <c-col [md]="2" style="padding-top: 20px;">
+                <button type="submit" (click)="GeneralRegisterDownload()" size="md"
+                        class="btn btn-info ">
+<!--                  <i style="border-color:white"-->
+<!--                                                class="spinner-border text-primary" role="status"-->
+<!--                                                *ngIf="generalregisterloader"></i>&nbsp;&nbsp;-->
+                  <c-spinner  *ngIf="generalregisterloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  General Register
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+
+        <!-- //megha -->
+        <!--                <tab heading="Student Profile Print">-->
+        <c-tab-pane class="p-3">
+
+          <br/>
+          <form cForm [formGroup]="ProfileListForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="5">
+                <label for="Batch_Code">Select Batch:</label>
+                <div id="Batch_Code" class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword"
+                                   (selected)='selectBatch($event)' (inputChanged)='onChangeSearch($event)'
+                                   (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                   [notFoundTemplate]="notFoundTemplate" placeholder="Select Batch">
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+              <c-col [md]="3">
+                <label for="fromdate">From Date:</label>
+                <input id="fromdate" type="date" class="form-control" formControlName="fromdate">
+
+                <span *ngIf="PaymentForm.get('fromdate')?.invalid && PaymentForm.get('fromdate')?.touched"
+                      class="text-danger">from date is required</span>
+              </c-col>
+
+              <c-col [md]="3" style="padding-top: 24px;">
+                <button type="button" class="btn btn-info" (click)="StudentProfileDownload()">
+<!--                  <i style="border-color:white" class="spinner-border text-primary" role="status"-->
+<!--                     *ngIf="StudentProfileloader"></i>&nbsp;&nbsp;-->
+                  <c-spinner  *ngIf="StudentProfileloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Student Profile With Rollno
+                </button>
+              </c-col>
+
+              <c-col [md]="3" style="padding-top: 30px;">
+                <button type="button" class="btn btn-info" (click)="Printprofile_withoutrollno()">
+<!--                  <i style="border-color:white" class="spinner-border text-primary" role="status"-->
+<!--                     *ngIf="StudentProfileloader"></i>&nbsp;-->
+                  <c-spinner  *ngIf="StudentProfileclicked" aria-hidden="false" size="sm"></c-spinner>
+
+                  Student Profile without rollno
+                </button>
+              </c-col>
+
+            </c-row>
+          </form>
+        </c-tab-pane>
+
+      </c-tab-content>
+      <!-- //end 2022 -->
+    </c-card-body>
+  </c-card>
+</div>

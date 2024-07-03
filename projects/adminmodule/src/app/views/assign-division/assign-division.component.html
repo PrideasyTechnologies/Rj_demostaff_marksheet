@@ -1,0 +1,453 @@
+<!-- <div>
+    <h3>Assign Division and Roll No.</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <c-row>
+        <h4><b>Roll Call</b></h4>
+      </c-row>
+    </c-card-header>
+    <c-card-body >
+      <c-nav variant="tabs" >
+        <c-nav-item>
+          <a
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="0"
+            cNavLink
+          >
+            View And Assign RollCall
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            Create RollCall
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+            RollCall Configuration
+          </a>
+        </c-nav-item>
+      </c-nav>
+
+      <c-tab-content #tabContent="cTabContent" (activeTabPaneIdxChange)="handleChange($event)">
+        <!-- Tab 1 -->
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="AssignDivisionForm"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="4">
+                <label for="Batch_Code">Select Batch:</label>
+                <div
+                  id="Batch_Code"
+                  class="ng-autocomplete"
+                  style="width: 100%"
+                >
+                  <ng-autocomplete
+                    [data]="Batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="4">
+                <label for="SubCode">Select Subject Group Code:</label>
+                <select
+                  id="SubCode"
+                  [(ngModel)]="SelectedSubject"
+                  name="SelectedSubject"
+                  formControlName="SubCode"
+                  class="form-control"
+                  (change)="onChangeSubjectSelect()"
+                >
+                  <option selected disabled>
+                    --Select Subject Group Code--
+                  </option>
+                  <option
+                    *ngFor="let sub of Subject_group_code"
+                    [ngValue]="sub"
+                  >
+                    {{ sub.Subject_group_code }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    AssignDivisionForm.get('SubCode')?.invalid &&
+                    AssignDivisionForm.get('SubCode')?.touched
+                  "
+                  class="text-danger"
+                  >Subject Code is required</span
+                >
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  type="submit"
+                  [disabled]="AssignDivisionForm.invalid"
+                  size="md"
+                  class="btn btn-info"
+                  (click)="onSubmit()"
+                >
+                  <c-spinner
+                    *ngIf="showloader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+
+          <div style="text-align: center" *ngIf="loader">
+            <div class="text-muted">
+              <b style="color: blue">Uploading...Please wait.</b>
+            </div>
+          </div>
+          <br />
+          <form
+            cForm
+            [formGroup]="UploadFileForm"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="2" style="padding-top: 27px">
+                <button
+                  cButton
+                  type="submit"
+                  size="md"
+                  class="btn btn-info"
+                  (click)="DownloadFile()"
+                >
+                  <!--              <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                  <!--                 *ngIf="loader"></i>&nbsp;-->
+                  <c-spinner
+                    *ngIf="loader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+
+                  Download File
+                </button>
+              </c-col>
+              <!--          <c-col [md]="3">-->
+              <!--            <label for="upload">Upload File:&nbsp;&nbsp;</label>-->
+              <!--            <input id="upload" type="file" (change)="csvUpload($event)" formControlName="upload"-->
+              <!--                   class="fileInputProfile" accept=".xlsx">-->
+              <!--            <span *ngIf="UploadFileForm.get('upload')?.invalid && UploadFileForm.get('upload')?.touched"-->
+              <!--                  class="text-danger">Only .xlsx file is required</span>-->
+              <!--          </div>-->
+
+              <!--          <c-col [md]="2" style="padding-top: 30px;">-->
+              <!--            <button cButton type="submit" size="lg" class="btn btn-success" (click)="uploadfile()"> Upload File</button>-->
+              <!--          </div>-->
+              <c-col [md]="3">
+                <h6>Upload Image</h6>
+                <input
+                  aria-label="file example"
+                  cFormControl
+                  id="validationText1"
+                  type="file"
+                  (change)="csvUpload($event)"
+                  (selectionchange)="csvUpload($event)"
+                />
+                <c-form-feedback [valid]="false"
+                  >Example invalid form file feedback</c-form-feedback
+                >
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px">
+                <button
+                  cButton
+                  type="submit"
+                  size="md"
+                  class="btn btn-success"
+                  (click)="uploadfile()"
+                  (change)="csvUpload($event)"
+                  (selectionchange)="csvUpload($event)"
+                >
+                  <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                  <!--                     *ngIf="loader"></i>-->
+                  <c-spinner
+                    *ngIf="Uploadloader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+                  Upload
+                </button>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px">
+                <button
+                  cButton
+                  type="reset"
+                  size="md"
+                  class="btn btn-danger"
+                  (click)="reset()"
+                >
+                  Reset
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br />
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px">
+              <form cForm class="d-flex" role="search">
+                <!--          <div class="input-group">-->
+                <!--            <div class="input-group-prepend">-->
+                <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+                <!--            </div>-->
+                <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+                <!--          </div>-->
+                <c-input-group class="mb-3">
+                  <span cInputGroupText id="basic-addon1">Search</span>
+                  <input
+                    aria-describedby="basic-addon1"
+                    aria-label="Username"
+                    cFormControl
+                    placeholder="Search here"
+                    [(ngModel)]="searchValue"
+                    name="Value"
+                    (keyup)="quickSearch()"
+                  />
+                </c-input-group>
+              </form>
+            </c-col>
+          </c-row>
+          <br />
+          <ag-grid-angular
+            style="width: 100%; height: 300px"
+            class="ag-theme-alpine"
+            [rowData]="rowss"
+            [gridOptions]="gridOptions"
+            [columnDefs]="columnDefs"
+            (gridReady)="onGridReady($event)"
+            (selectionChanged)="onSelectionChanged($event)"
+          >
+          </ag-grid-angular>
+        </c-tab-pane>
+
+        <!-- Tab 2 -->
+        <c-tab-pane>
+          <c-row class="mt-3">
+            <c-col [md]="2">
+              <button
+                cButton
+                type="submit"
+                class="btn btn-warning"
+                (click)="showPopup()"
+                [cModalToggle]="primaryModal.id"
+              >
+                Create
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-pane>
+
+        <!-- Tab 3 -->
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="Rollcall_configurationForm"
+            (keydown.enter)="$event.preventDefault()"
+            class="p-3"
+          >
+            <c-row>
+              <c-col [md]="4">
+                <label for="Batch_Code">Select Batch:</label>
+                <div
+                  id="Batch_Code"
+                  class="ng-autocomplete"
+                  style="width: 100%"
+                >
+                  <ng-autocomplete
+                    [data]="Batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    formControlName="batch"
+                    [notFoundTemplate]="notFoundTemplate"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  size="md"
+                  class="btn btn-info"
+                  (click)="showPopup_Rollcall_config()"
+                >
+                  <c-spinner
+                    *ngIf="showloader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+
+          <br />
+          <c-row>
+            <c-col [md]="12">
+              <form cForm class="d-flex" role="search">
+                <c-input-group class="mb-3">
+                  <span cInputGroupText id="basic-addon1">Search</span>
+                  <input
+                    aria-describedby="basic-addon1"
+                    aria-label="Username"
+                    cFormControl
+                    placeholder="Search here"
+                    [(ngModel)]="searchValue"
+                    name="Value"
+                    (keyup)="quickSearch()"
+                  />
+                </c-input-group>
+              </form>
+            </c-col>
+          </c-row>
+          <br />
+
+          <ag-grid-angular
+            style="width: 100%; height: 300px"
+            class="ag-theme-alpine"
+            [rowData]="Res_subject_group_rollno"
+            [gridOptions]="gridOptions_subjectgroup"
+            [columnDefs]="columnDefs_subjectgroup"
+            (gridReady)="onGridReady_subjectgroup($event)"
+            [pagination]="true"
+            (selectionChanged)="onSeletionChange_subjectgroup($event)"
+          >
+          </ag-grid-angular>
+
+          <c-row style="padding-top: 24px; justify-content: center">
+            <c-col [md]="2" class="text-center">
+              <button
+                cButton
+                class="btn btn-success text-white"
+                (click)="Edit_rollcall()"
+              >
+                Update
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>
+
+<c-modal #primaryModal id="primaryModal" color="primary" size="sm" [visible]="primaryvisible">
+  <c-modal-header>
+    <h4 class="c-modal-title">Create Rollno</h4>
+  </c-modal-header>
+  <c-modal-body>
+    <form cForm [formGroup]="PopUpForm">
+      <div class="modal-body">
+        <label>
+          Password:
+          <input
+            class="form-control"
+            type="password"
+            formControlName="Rollno_pwd"
+            required
+            pattern=".{4,}"
+            title="Please enter 4 characters or more."
+          />
+        </label>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <c-col [md]="5">
+      <button cButton class="btn btn-success" (click)="Close()">Back</button>
+    </c-col>
+    <c-col [md]="5">
+      <button cButton class="btn btn-info" (click)="OnValidateCreateRollno()">
+        <c-spinner
+          *ngIf="validateloader"
+          aria-hidden="false"
+          size="sm"
+        ></c-spinner>
+        Validate
+      </button>
+    </c-col>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal #secondaryModal id="secondaryModal" color="primary" size="sm" [visible]="secondaryvisible">
+  <c-modal-header>
+    <h4 class="c-modal-title">Validate</h4>
+  </c-modal-header>
+  <c-modal-body>
+    <form cForm [formGroup]="PopUpForm_Rollcall">
+      <div class="modal-body">
+        <label>
+          Password:
+          <input
+            class="form-control"
+            type="password"
+            formControlName="Rollno_pwd_rollcall"
+            required
+            pattern=".{4,}"
+            title="Please enter 4 characters or more."
+          />
+        </label>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <c-col [md]="5">
+      <button cButton class="btn btn-success" (click)="Close_secondary()">Back</button>
+    </c-col>
+    <c-col [md]="5">
+      <button
+        cButton
+        class="btn btn-info"
+        (click)="OnValidate_RollCallConfiguration()"
+      >
+        <c-spinner
+          *ngIf="validateloader"
+          aria-hidden="false"
+          size="sm"
+        ></c-spinner>
+        Validate
+      </button>
+    </c-col>
+  </c-modal-footer>
+</c-modal>

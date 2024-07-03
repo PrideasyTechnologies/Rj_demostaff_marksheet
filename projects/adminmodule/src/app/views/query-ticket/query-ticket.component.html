@@ -1,0 +1,141 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Query Ticket</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <form cForm [formGroup]="QueryForm">
+        <c-row>
+          <c-col [md]="2">
+            <label>Status</label>
+            <select formControlName="status" class="form-control" (change)="onChangeStatusSelect()">
+              <option disabled>Select Status</option>
+              <option value="open"> Open</option>
+              <option value="close"> Close</option>
+            </select>
+            <span *ngIf="QueryForm.get('status')?.invalid && QueryForm.get('status')?.touched"
+                  class="text-danger">status is required</span>
+          </c-col>
+          <c-col [md]="10" style="padding-top: 30px;">
+            <button cButton class="btn btn-secondary" (click)="QueryData()"><i class='fas fa-sync-alt'></i></button> &nbsp;
+            <button cButton class="btn btn-warning"><i class='fas fa-plus'></i></button> &nbsp;
+            <button cButton class="btn btn-info" (click)="OnActionClick()"><i class='fas fa-pen'></i></button> &nbsp;
+            <button cButton class="btn btn-danger"><i class='fas fa-trash-alt'></i></button>
+          </c-col>
+        </c-row>
+      <br/>
+      <c-row>
+        <c-col [md]="12" style="padding-top: 20px;">
+          <form cForm class="d-flex" role="search">
+            <!--          <div class="input-group">-->
+            <!--            <div class="input-group-prepend">-->
+            <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+            <!--            </div>-->
+            <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+            <!--          </div>-->
+            <c-input-group class="mb-3">
+              <span cInputGroupText id="basic-addon1">Search</span>
+              <input aria-describedby="basic-addon1"
+                     aria-label="Username"
+                     cFormControl
+                     placeholder="Search here"
+                     [(ngModel)]="searchValue"
+                     (keyup)="quickSearch()"
+                     name="Value"
+              />
+            </c-input-group>
+          </form>
+        </c-col>
+      </c-row>
+      <br/>
+      <br>
+      <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                       [rowData]="rowss"
+                       [gridOptions]="gridOptions"
+                       [columnDefs]="columnDefs"
+                       [pagination]="true"
+                       [paginationPageSize]="10"
+                       (gridReady)="onGridReady($event)"
+                       [rowSelection]='rowSelection'
+                       (rowSelected)="onRowSelectedEvent($event)"
+                       (selectionChanged)="onSelectionChanged($event)">
+      </ag-grid-angular>
+      <br>
+            <c-row>
+              <c-col [md]="6">
+                <button cButton style="margin-left: 450px;justify-content: right;"
+                        (click)="ShowTicket()"
+
+                        color="success">
+                  Show ticket details
+                </button>
+              </c-col>
+              <c-col [md]="6">
+                <button cButton style="margin-left: 15px;"
+                        align="center"
+                        (click)="Closeticket()"
+                         color="danger">Close ticket
+                </button>
+              </c-col>
+            </c-row>
+            <div [visible]="visible" cCollapse>
+
+              <div *ngFor="let data of detailticket; let i = index">
+
+                <c-card>
+                  <c-card-body>
+                    <c-card class>
+                      <c-row>
+                        <strong>
+                          {{data.Ticketdate}}
+                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{data.Replayuser}}
+                        </strong>
+                      </c-row>
+                      <br>
+                      <br>
+                      <c-row>
+                        &nbsp;&nbsp;&nbsp; {{data.Ticketdescription}}
+                      </c-row>
+                    </c-card>
+                  </c-card-body>
+                </c-card>
+                <br>
+              </div>
+            </div>
+      <c-row>
+        <c-col [md]="12" id="descriptionone">
+          <label for="descriptionone"><b>Reply to {{this.Ticketid}}</b></label>
+        </c-col>
+        <c-col [md]="12">
+          <angular-editor id="texteditorone" formControlName="texteditorone"
+                          [config]="editorConfig">
+          </angular-editor>
+        </c-col>
+        <c-col [md]="12">
+                              <span *ngIf="QueryForm.get('texteditorone')?.invalid && QueryForm.get('texteditorone')?.touched"
+                                    class="text-danger">Text is required</span>
+        </c-col>
+      </c-row>
+      <br>
+      <c-row>
+        <c-col [md]="2">
+          <button cButton style="margin-left: 15px;"
+                  (click)="ReplyQuery()"
+                   color="success">
+            Submit
+          </button>
+        </c-col>
+      </c-row>
+      </form>
+    </c-card-body>
+
+  </c-card>
+
+</div>
+
+
+
+<!--</c-card-body>-->
+
+<!--</c-card>-->
+<!--</div>-->

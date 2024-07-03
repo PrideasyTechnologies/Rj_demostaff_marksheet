@@ -1,0 +1,47 @@
+<div class="bg-light dark:bg-transparent min-vh-100 d-flex flex-row align-items-center">
+  <c-container breakpoint="md">
+    <c-row class="justify-content-center">
+      <c-col lg="10" xl="5">
+        <c-card-group>
+          <c-card class="p-6">
+            <c-card-body style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+              <form cForm [formGroup]="Finfrom" class="justify-content-center" (ngSubmit)="OnsubmitButton()">
+                <h1>Financial Year</h1>
+                <br>
+                <!--                               ?\ <p class="text-medium-emphasis">Sign In to your account</p>-->
+                <label>Financial Year</label>
+                <select aria-label="Finyear"
+                        cSelect
+                        class="mb-4"
+                        formControlName="Finyear"
+                        [(ngModel)]="SelectedFinyear_json">
+                  <option disabled selected>--Select year--</option>
+                  <option *ngFor="let fin of Finyear_json"
+                          [ngValue]="fin">{{fin.FinyearName}}</option>
+                </select>
+                <label>College Name</label><br>
+                <select aria-label="CollegeCode"
+                        formControlName="CollegeCode"
+                        cSelect
+                        class="mb-4"
+                        [(ngModel)]="SelectedCollege_json">
+                  <!--                                      (change)="onChangeCollegeCodeSelect($event)">-->
+                  <option disabled selected>--Select Name--</option>
+                  <option *ngFor="let col of CollegeCode_json"
+                          [ngValue]="col">{{col.Name}}</option>
+
+
+                </select>
+                <div style="text-align: center;">
+                  <button type="submit" class="btn btn-rounded btn-info"  color="secondary" (click)="OnsubmitButton()">
+                    <b>SUBMIT</b>
+                  </button>
+                </div>
+              </form>
+            </c-card-body>
+          </c-card>
+        </c-card-group>
+      </c-col>
+    </c-row>
+  </c-container>
+</div>

@@ -1,0 +1,152 @@
+<c-card>
+  <c-card-header>
+    <h4><b>ABCD Approval</b></h4>
+  </c-card-header>
+  <c-card-body>
+    <c-row>
+      <c-col [md]="6">
+        <label for="Batch_Code">Select Batch:</label>
+        <div id="Batch_Code" class="ng-autocomplete" style="width: 100%;">
+          <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword"
+                           (selected)='selectBatch($event)'
+                           [itemTemplate]="batTemplate"
+                           [notFoundTemplate]="notFoundTemplate" placeholder="Select Batch">
+          </ng-autocomplete>
+
+          <ng-template #batTemplate let-bat>
+            <a [innerHTML]="bat.Batch_Name"></a>
+          </ng-template>
+
+          <ng-template #notFoundTemplate let-notFound>
+            <div [innerHTML]="notFound"></div>
+          </ng-template>
+        </div>
+      </c-col>
+      <br>
+      <c-col [md]="2">
+        <button cButton type="button" class="btn btn-info" style="margin-top: 22px;" (click)="ShowList()">
+          <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+          <!--                     *ngIf="Freeshiploader"></i>-->
+          <c-spinner *ngIf="Freeshiploader" aria-hidden="false" size="sm"></c-spinner>
+          &nbsp; Show
+        </button>
+      </c-col>
+      <c-col [md]="2" style="padding-top: 23px;">
+        <button cButton type="submit" class="btn btn-success"
+                [cModalToggle]="scrollableLongContentModal.id">
+          View details
+        </button>
+      </c-col>
+      <c-col [md]="2" style="padding-top: 23px;">
+        <button cButton type="submit" class="btn btn-info" (click)="Downloadreports()">
+          <c-spinner *ngIf="viewloader" aria-hidden="false" size="sm"></c-spinner>
+          Download
+        </button>
+      </c-col>
+    </c-row>
+    <br>
+    <h5 style="color: red">Note: To View details select row.</h5>
+    <br>
+    <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                     [rowData]="rowss"
+                     [gridOptions]="gridOptions"
+                     [columnDefs]="columnDefs"
+                     [pagination]="true"
+                     [paginationPageSize]="10"
+                     (gridReady)="onGridReady($event)"
+                     [rowSelection]='rowSelection'
+                     (filterChanged)="onFilterchange($event)"
+                     (selectionChanged)="onSelectionChanged($event)">
+    </ag-grid-angular>
+    <br>
+  </c-card-body>
+</c-card>
+
+<c-modal #scrollableLongContentModal size="xl" id="scrollableLongContentModal" scrollable>
+  <c-modal-header>
+    <c-row>
+      <c-row>
+        <c-col [md]="7">
+          <p>Name - {{ Myname }}</p>
+        </c-col>
+        <c-col [md]="5">
+          <p> Dob - {{ MyDob  }}</p>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col [md]="7">
+          <p> Aadhaar - {{ MyAadhaar }}</p>
+        </c-col>
+        <c-col [md]="5">
+          <p> Gender - {{ MyGender  }}</p>
+        </c-col>
+      </c-row>
+      <c-row>
+        <c-col [md]="7">
+          <p>Mobile - {{ MyMobile }}</p>
+        </c-col>
+        <c-col [md]="5">
+          <p>Abcid - {{ MyAbcId }}</p>
+        </c-col>
+      </c-row>
+    </c-row>
+  </c-modal-header>
+  <c-modal-body>
+    <div style="height: 200px;">
+      <ng-container *ngTemplateOutlet="longContent"></ng-container>
+    </div>
+  </c-modal-body>
+  <c-modal-footer>
+    <form cForm [formGroup]="AbcdAadhaarModalForm" (keydown.enter)="$event.preventDefault()"
+          style="width: 100%; height: 100%">
+      <h5>Student ABCD Details</h5>
+      <c-row>
+        <c-col [md]="4">
+          <label>Status</label>
+          <select formControlName="abcdstatus" class="form-control">
+            <option disabled>Select Status</option>
+            <option> APPROVED</option>
+            <option> REJECTED</option>
+          </select>
+        </c-col>
+        <c-col [md]="4">
+          <label>Reason for Rejection</label>
+          <c-multi-select formControlName="rejecttext" multiple type="text">
+            <c-multi-select-option *ngFor="let docs of typeReason"
+                                   [value]="docs">{{docs}}</c-multi-select-option>
+          </c-multi-select>
+        </c-col>
+        <!--        <c-col [md]="4">-->
+        <!--          <label>Reason for Rejection</label>-->
+        <!--          <select [(ngModel)]="Selectreason" formControlName="rejecttext"-->
+        <!--                  class="form-control">-->
+        <!--            <option disabled selected>Select Reason Type</option>-->
+        <!--            <option></option>-->
+        <!--          </select>-->
+        <!--        </div>-->
+      </c-row>
+      <br>
+      <c-row>
+        <c-col [md]="3" style="padding-top: 23px;">
+          <button cButton type="submit" class="btn btn-success"
+                  (click)="UpdateAbcd();Showclicked=true">
+            <c-spinner *ngIf="showloader" aria-hidden="false" size="sm"></c-spinner>
+            Submit
+          </button>
+        </c-col>
+        <c-col [md]="3" style="margin-top: 23px">
+          <button cButton [cModalToggle]="scrollableLongContentModal.id"  color="secondary">
+            Close
+          </button>
+        </c-col>
+      </c-row>
+    </form>
+  </c-modal-footer>
+</c-modal>
+
+<ng-template #longContent>
+  <div>
+    <img [src]="MyImage">
+  </div>
+</ng-template>
+

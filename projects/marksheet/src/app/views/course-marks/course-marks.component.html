@@ -1,0 +1,161 @@
+<!-- <div>
+    <h3>Marksheet</h3>
+    <hr>
+</div> -->
+
+
+<div class="fade-in">
+    <c-card>
+        <c-card-header style="background-color:#f0f3f5">
+            <h4><b>Course Marks</b></h4>
+        </c-card-header>
+        <c-card-body>
+
+            <form cForm [formGroup]="CourseMarksForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="OnDownloadFile()">
+                <c-row>
+                    <c-col [md]="4">
+                        <label for="Batch_Name">Batch:</label>
+                        <div id="Batch_Name" class="ng-autocomplete" style="width: 100%;">
+                            <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword"
+                                (selected)='selectBatch($event)' (inputChanged)='onChangeSearch($event)'
+                                (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                [notFoundTemplate]="notFoundTemplate" placeholder="Select Batch">
+                            </ng-autocomplete>
+                            <ng-template #batTemplate let-bat>
+                                <a [innerHTML]="bat.Batch_Name"></a>
+                            </ng-template>
+                            <ng-template #notFoundTemplate let-notFound>
+                                <div [innerHTML]="notFound"></div>
+                            </ng-template>
+                        </div>
+                    </c-col>
+
+                    <c-col [md]="2">
+                        <label for="Semester_Name">User Exam:</label>
+                        <select id="Semester_Name" [(ngModel)]="SelectedSemester" formControlName="Semester_Name" class="form-control"
+                            (change)="onChangeSemesterSelect()">
+                            <option selected>Select Semester</option>
+                            <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                                {{sem.Userexamname}}</option>
+                        </select>
+                        <span
+                            *ngIf="CourseMarksForm.get('Semester_Name')?.invalid && CourseMarksForm.get('Semester_Name')?.touched"
+                            class="text-danger">Semester is required</span>
+                    </c-col>
+
+
+                    <c-col [md]="2" style="padding-top: 23px;">
+                        <button cButton type="submit" [disabled]="CourseMarksForm.invalid" class="btn btn-info">
+<!--                          <i style="border-color: white;" class="spinner-border text-success" role="status"-->
+<!--                                *ngIf="downloadloader"></i>&nbsp;-->
+                          <c-spinner  *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                          Download</button>
+                    </c-col>
+                    <c-col [md]="1" style="padding-top: 23px;">
+                        <button cButton type="button" class="btn btn-info" (click)="GridData()">
+                          <c-spinner  *ngIf="viewloader" aria-hidden="false" size="sm"></c-spinner>
+                          View</button>
+                    </c-col>
+                </c-row>
+            </form>
+
+            <form cForm [formGroup]="DownloadUploadForm" (keydown.enter)="$event.preventDefault()">
+
+                <c-row>
+<!--                    <c-col [md]="2">-->
+<!--                        <label for="upload">Upload File:</label>-->
+<!--                        <input id="upload" type="file" (change)="xlsxUpload($event)" formControlName="upload"-->
+<!--                            class="fileInputProfile" accept=".xlsx">-->
+<!--                        <span-->
+<!--                            *ngIf="DownloadUploadForm.get('upload')?.invalid && DownloadUploadForm.get('upload')?.touched"-->
+<!--                            class="text-danger">Only .xlsx file is required</span>-->
+<!--                    </div>-->
+                  <c-col [md]="5">
+                    <h6>Upload Image</h6>
+                    <input aria-label="file example"
+                           cFormControl
+                           id="validationText1"
+                           type="file"
+                           (change)="xlsxUpload($event)"
+                    />
+                    <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+                  </c-col>
+                    <c-col [md]="2" style="padding-top: 27px;">
+                        <button cButton type="submit"  class="btn btn-success"
+                            (click)="uploadfile()">
+<!--                          [disabled]="CourseMarksForm.invalid"-->
+<!--                          <i style="border-color: white;" class="spinner-border text-success"-->
+<!--                                role="status" *ngIf="uploadloader"></i>&nbsp;&nbsp;-->
+                          <c-spinner  *ngIf="uploadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                          Upload</button>
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 27px;">
+                        <button cButton type="reset" class="btn btn-danger" (click)="resetAll()">Reset</button>
+                    </c-col>
+                </c-row>
+            </form>
+            <br>
+
+
+<!--            <c-col [md]="12" style="padding-left: 5px;">-->
+<!--                <div class="input-group">-->
+<!--                    <div class="input-group-prepend">-->
+<!--                        <span class="input-group-text"><i class="cil-search"></i></span>-->
+<!--                    </div>-->
+<!--                    <input cInput placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+<!--                </div>-->
+<!--            </div>-->
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px;">
+              <!--                    <form cForm class="d-flex" role="search">-->
+              <!--          <div class="input-group">-->
+              <!--            <div class="input-group-prepend">-->
+              <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+              <!--            </div>-->
+              <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+              <!--          </div>-->
+              <c-input-group class="mb-3">
+                <span cInputGroupText id="basic-addon1">Search</span>
+                <input aria-describedby="basic-addon1"
+                       aria-label="Username"
+                       cFormControl
+                       placeholder="Search here"
+                       [(ngModel)]="searchValue"
+                       (keyup)="quickSearch()"
+                />
+              </c-input-group>
+              <!--                    </form>-->
+            </c-col>
+          </c-row>
+            <br />
+
+            <div>
+                <div class="example-header">
+                    Page Size:
+                    <select
+                        style="background-color: rgba(255, 255, 255, 0.1) !important;color: #495057; box-shadow: none; border-radius: 0.25rem; border: 1px solid #dde6e9;"
+                        (change)="onPageSizeChanged()" id="page-size">
+                        <option value="10" selected="">10</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                        <option value="1000">1000</option>
+                    </select>
+                </div>
+                <br />
+                <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                                 [rowData]="rowss"
+                                 [gridOptions]="gridOptions"
+                                 [columnDefs]="columnDefs"
+                                 (gridReady)="onGridReady($event)"
+                                 [pagination]="true"
+                                 [paginationPageSize]="paginationPageSize"
+                                 (selectionChanged)="onSelectionChanged($event)">
+                </ag-grid-angular>
+            </div>
+
+        </c-card-body>
+    </c-card>
+</div>

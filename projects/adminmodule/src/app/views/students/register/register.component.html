@@ -1,0 +1,377 @@
+<!-- <div class="animated fadeIn">
+    <c-row>
+        <div class="col">
+            <c-card>
+                <nav class="navbar navbar-expand-lg" style="margin-top: 10px">
+                    <ul>
+                    </ul>
+                    <ul>
+                        <h4 style="color: rgba(51, 153, 255, 100)">
+                            RAMNIRANJAN JHUNJHUNWALA COLLEGE OF ARTS , COMMERCE AND SCIENCE
+                            (AUTONOMOUS)<br/>
+                            <h6 style="color: black">
+                                Opposite Ghatkopar Railway Station West Mumbai-400086,
+                                Maharashtra, India
+                            </h6>
+                        </h4>
+                    </ul>
+                </nav>
+            </c-card>
+        </div>
+    </c-row>
+</div> -->
+
+<div class="app-body bg-light min-vh-100">
+    <main class="main d-flex align-items-center ">
+        <c-container>
+            <c-row>
+                <c-col [md]="6" class="mx-auto mb-3">
+                    <br>
+                    <br>
+                    <c-card class="mx-4">
+                        <c-card-body class="p-4">
+                            <form cForm [formGroup]="registerForm" (ngSubmit)="onRegister()" autocomplete="off">
+                                <h2 style="padding-left: 15px">Registration for {{Registrationlabel}} students</h2>
+                                <p style="padding-left: 15px" class="text-muted">
+                                    Create your account
+                                </p>
+
+                                <c-col [sm]="12">
+                                    <label cLabel class="required"
+                                    >Junior / Graduation/ Post Graduation</label
+                                    >
+
+                                    <select cSelect
+                                            #teams
+                                            class="form-control modal-validation"
+                                            formControlName="ugpg"
+                                            (change)="onUgPg_Selected(teams.value)"
+                                            [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['ugpg'].touched) && f['ugpg'].errors,
+                      'is-valid': f['ugpg'].touched && !f['ugpg'].errors
+                    }"
+                                    >
+                                        <option disabled>Select Type</option>
+                                        <option value="JR">Junior College</option>
+                                        <option value="UG">Under Graduation</option>
+                                        <option value="PG">Post Graduation</option>
+                                        <option value="PHD">PHD</option>
+                                    </select>
+                                </c-col>
+
+                                <c-col [sm]="12">
+                                    <label cLabel class="required">Batch</label>
+                                    <select cSelect
+                                            [(ngModel)]="Selected_batchname"
+                                            class="form-control modal-validation"
+                                            formControlName="userbatch"
+                                            (change)="on_Selectbtch()"
+                                            [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['userbatch'].touched) &&
+                        f['userbatch'].errors,
+                      'is-valid': f['userbatch'].touched && !f['userbatch'].errors
+                    }"
+                                    >
+                                        <option value="" disabled selected>
+                                            --- Please Select ---
+                                        </option>
+                                        <option *ngFor="let data of BatchNames" [ngValue]="data">
+                                            {{ data.Batch_name }}
+                                        </option>
+                                    </select>
+                                </c-col>
+
+                                <c-col [sm]="12">
+
+                                    <label cLabel for="aadharNo" class="required">Aadhar Number</label>
+                                    <input cFormControl
+                                           id="aadharNo"
+                                           type="text"
+                                           formControlName="aadharNo"
+                                           autocomplete="off"
+                                           [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['aadharNo'].touched) && f['aadharNo'].errors,
+                      'is-valid': f['aadharNo'].touched && !f['aadharNo'].errors
+                    }"
+                                           class="form-control"
+                                           placeholder="Enter your Aadhar Number"
+                                    />
+                                    <div
+                                            *ngIf="submitted && f['aadharNo'].errors"
+                                            class="invalid-feedback"
+                                    >
+                                        <div *ngIf="f['aadharNo'].errors['required']">
+                                            Aadhar Number is required
+                                        </div>
+                                        <div *ngIf="f['aadharNo'].errors['minlength']">
+                                            Aadhar Number must be of 12 characters
+                                        </div>
+                                    </div>
+                                </c-col>
+
+                                <c-col [md]="12">
+                                    <h6>Please upload clear picture of Aadhaar.</h6>
+                                    <input aria-label="file example"
+                                           cFormControl
+                                           id="validationText1"
+                                           type="file"
+                                           accept="image/*"
+                                           formControlName="uploadaadhaar"
+                                           required
+                                           (change)="Uploadfiles($event)"
+                                           (selectionchange)="Uploadfiles($event)"
+                                    />
+                                    <!-- <c-form-feedback [valid]="false">Example invalid form file feedback
+                                    </c-form-feedback> -->
+                                </c-col>
+
+
+                                <c-col [sm]="12">
+                                    <label cLabel for="email" class="required">Email Id</label>
+                                    <input cFormControl
+                                           autocomplete="off"
+                                           type="text"
+                                           formControlName="email"
+                                           [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['email'].touched) && f['email'].errors,
+                      'is-valid': f['email'].touched && !f['email'].errors
+                    }"
+                                           class="form-control"
+                                           id="email"
+                                           placeholder="Enter your Email ID"
+
+                                    />
+                                    <div
+                                            *ngIf="submitted && f['email'].errors"
+                                            class="invalid-feedback"
+                                    >
+                                        <div *ngIf="f['email'].errors['required']">
+                                            Email ID is required
+                                        </div>
+                                        <div *ngIf="f['email'].errors['email']">
+                                            Email must be a valid email address
+                                        </div>
+                                    </div>
+                                </c-col>
+                                <c-col [sm]="12">
+                                    <label cLabel for="mobileNo" class="required">Mobile Number</label>
+                                    <input cFormControl
+                                           type="number"
+                                           formControlName="mobileNo"
+                                           [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['mobileNo'].touched) && f['mobileNo'].errors,
+                      'is-valid': f['mobileNo'].touched && !f['mobileNo'].errors
+                    }"
+                                           class="form-control"
+                                           id="mobileNo"
+                                           placeholder="Enter your Mobile Number"
+                                           autocomplete="off"
+                                    />
+                                    <div
+                                            *ngIf="submitted && f['mobileNo'].errors"
+                                            class="invalid-feedback"
+                                    >
+                                        <div *ngIf="f['mobileNo'].errors['required']">
+                                            Mobile Number is required
+                                        </div>
+                                        <div *ngIf="f['mobileNo'].errors['minlength']">
+                                            Mobile Number must be of 10 characters
+                                        </div>
+                                    </div>
+                                </c-col>
+
+                                <c-col [sm]="12">
+                                    <label cLabel for="inhouse" class="required"
+                                    >In-House Student?</label
+                                    >
+                                    <select cSelect id="inhouse"
+                                            formControlName="inhouse"
+                                            [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['inhouse'].touched) && f['inhouse'].errors,
+                      'is-valid': f['inhouse'].touched && !f['inhouse'].errors
+                    }"
+                                            class="form-control"
+                                    >
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                    <div
+                                            *ngIf="submitted && f['inhouse'].errors"
+                                            class="invalid-feedback"
+                                    >
+                                        <div *ngIf="f['inhouse'].errors['required']">
+                                            Inhouse Value is required
+                                        </div>
+                                    </div>
+                                </c-col>
+
+                                <c-col [sm]="12">
+                                    <label cLabel for="linguistic" class="required"
+                                    >Hindi Linguistic Minority?</label
+                                    >
+                                    <select cSelect
+                                            id="linguistic"
+                                            formControlName="linguistic"
+                                            [ngClass]="{
+                      'is-invalid':
+                        (submitted || f['linguistic'].touched) &&
+                        f['linguistic'].errors,
+                      'is-valid': f['linguistic'].touched && !f['linguistic'].errors
+                    }"
+                                            class="form-control"
+                                    >
+                                        <option value="Yes">Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                    <div
+                                            *ngIf="submitted && f['linguistic'].errors"
+                                            class="invalid-feedback"
+                                    >
+                                        <div *ngIf="f['linguistic'].errors['required']">
+                                            Linguistic Value is required
+                                        </div>
+                                    </div>
+                                </c-col>
+
+                                <!--                <c-col [sm]="12">-->
+                                <!--                  <label cLabel for="password" class="required">Password</label>-->
+                                <!--                  <input cFormControl-->
+                                <!--                         id="password"-->
+                                <!--                         type="password"-->
+                                <!--                         formControlName="password"-->
+                                <!--                         [ngClass]="{-->
+                                <!--                      'is-invalid':-->
+                                <!--                        (submitted || f['password'].touched) && f['password'].errors,-->
+                                <!--                      'is-valid': f['password'].touched && !f['password'].errors-->
+                                <!--                    }"-->
+                                <!--                         class="form-control"-->
+                                <!--                         placeholder="Enter your Password"-->
+                                <!--                  />-->
+                                <!--                  <div-->
+                                <!--                    *ngIf="submitted && f['password'].errors"-->
+                                <!--                    class="invalid-feedback"-->
+                                <!--                  >-->
+                                <!--                    <div *ngIf="f['password'].errors['required']">-->
+                                <!--                      Password is required-->
+                                <!--                    </div>-->
+                                <!--                    <div *ngIf="f['password'].errors['pattern']">-->
+                                <!--                      Must contain Uppercase , Lowercase and digit with 6 min-->
+                                <!--                      characters-->
+                                <!--                    </div>-->
+                                <!--                  </div>-->
+                                <!--                </c-col>-->
+
+                                <c-row class="mb-1">
+                                    <label [sm]="4" cCol cLabel="col" for="password">Password</label>
+                                </c-row>
+                                <c-row>
+                                    <c-col *ngIf="registerForm.controls['password'] as ctrl" [sm]="12">
+                                        <input
+                                                cFormControl
+                                                autocomplete="off"
+                                               (keydown.space)="$event.preventDefault()"
+                                               [valid]="
+              ctrl.touched && ctrl.valid
+                ? true
+                : (submitted || ctrl.touched) && ctrl.invalid
+                ? false
+                : undefined
+            "
+
+                                               formControlName="password"
+                                               id="password"
+
+                                               placeholder="Password"
+                                               required
+                                               type="password"
+                                        />
+                                        <c-form-feedback *ngIf="submitted || ctrl.invalid"
+                                                         [valid]="!(submitted || ctrl.invalid)">
+                                            <ng-container *ngIf="ctrl.errors as errors">
+                                                <div *ngIf="errors?.required">Password is required</div>
+                                                <div *ngIf="errors?.minlength">
+                                                    {{ formErrors['password'].minLength }}
+                                                </div>
+                                                <div *ngIf="errors.pattern">
+                                                    {{ formErrors['password'].pattern }}
+                                                </div>
+                                            </ng-container>
+                                        </c-form-feedback>
+                                    </c-col>
+                                </c-row>
+
+                                <c-row class="mb-1">
+                                    <label [sm]="4" cCol cLabel="col" for="confirmPassword">Confirm password</label>
+                                </c-row>
+                                <c-row>
+                                    <c-col *ngIf="registerForm.controls['confirmPassword'] as ctrl" [sm]="12">
+                                        <input
+                                                cFormControl
+                                                autocomplete="off"
+                                               aria-autocomplete="none"
+                                               (keydown.space)="$event.preventDefault()"
+                                               [valid]="
+                                                  ctrl.touched && ctrl.valid
+                                                    ? true
+                                                    : (submitted || ctrl.touched) && ctrl.invalid
+                                                    ? false
+                                                    : undefined
+                                                "
+
+
+                                               formControlName="confirmPassword"
+                                               id="confirmPassword"
+                                               placeholder="Confirm password"
+                                               required
+                                               type="password"
+                                        />
+                                        <c-form-feedback *ngIf="submitted || ctrl.invalid"
+                                                         [valid]="!(submitted || ctrl.invalid)">
+                                            <ng-container *ngIf="ctrl.errors as errors">
+                                                <div *ngIf="errors?.passwordMismatch">
+                                                    {{ formErrors['confirmPassword'].passwordMismatch }}
+                                                </div>
+                                                <div *ngIf="errors?.required">Confirmation is required</div>
+                                            </ng-container>
+                                        </c-form-feedback>
+                                    </c-col>
+                                </c-row>
+
+                                <br/>
+
+
+                                <c-row class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <c-col [sm]="4">
+                                        <button cButton [disabled]="registerForm.invalid"
+                                                type="submit" class="btn btn-block btn-success">
+                                            Create Account
+                                        </button>
+
+                                    </c-col>
+                                    <c-col [sm]="4">
+                                        <button cButton
+                                                type="reset"
+                                                class="btn btn-block btn-danger"
+                                                (click)="onReset()"
+                                        >
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                            Reset
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                        </button>
+                                    </c-col>
+                                </c-row>
+                            </form>
+                        </c-card-body>
+                    </c-card>
+                </c-col>
+            </c-row>
+        </c-container>
+    </main>
+</div>
+<!-- <app-otp hidden [OTPGetValue]="OTPSendValue"></app-otp> -->

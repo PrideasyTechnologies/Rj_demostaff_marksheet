@@ -1,0 +1,609 @@
+<!-- <div>
+    <h3>Upload Template</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in" *ngIf="ShowMain">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <c-row>
+        <c-col [md]="10">
+          <h3><b>Batch Exams</b></h3>
+        </c-col>
+        <c-col [md]="2">
+          <button cButton class="btn btn-success" (click)="OnAdd()"><b>&#43;</b> &nbsp;Add</button>
+        </c-col>
+      </c-row>
+    </c-card-header>
+    <c-card-body>
+
+      <c-row>
+        <c-col [md]="6">
+          <label for="Batch_Name">Batch:</label>
+          <div id="Batch_Name"
+               class="ng-autocomplete" style="width: 100%;">
+            <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" (selected)='selectBatch($event)'
+                             (inputChanged)='onChangeSearch($event)' (inputFocused)='onFocused($event)'
+                             [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate"
+                             placeholder="Select Batch">
+            </ng-autocomplete>
+
+            <ng-template #batTemplate let-bat>
+              <a [innerHTML]="bat.Batch_Name"></a>
+            </ng-template>
+
+            <ng-template #notFoundTemplate let-notFound>
+              <div [innerHTML]="notFound"></div>
+            </ng-template>
+          </div>
+        </c-col>
+
+        <c-col [md]="2">
+          <div style="padding-top: 23px;">
+            <button cButton type="submit" [disabled]="downloadclicked"
+                    (click)="OnDownloadFile();downloadclicked=true" class="btn btn-info">
+              <!--              <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+              <!--              *ngIf="Downloadloader"></i>-->
+              <c-spinner *ngIf="Downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+              Show
+            </button>
+          </div>
+        </c-col>
+        <c-col [md]="2">
+          <div style="padding-top: 23px;">
+            <button cButton type="reset" class="btn btn-danger" (click)="resetAll()">Reset</button>
+          </div>
+        </c-col>
+      </c-row>
+
+      <br/>
+      <c-row>
+        <c-col [md]="12" style="padding-top: 20px;">
+
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Search</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="Username"
+                   cFormControl
+                   placeholder="Search here"
+                   [(ngModel)]="searchValue"
+                   (keyup)="quickSearch()"
+            />
+          </c-input-group>
+          <!--                    </form>-->
+        </c-col>
+      </c-row>
+      <br/>
+
+      <div>
+        <div class="example-header">
+          Page Size:
+          <select
+            style="background-color: rgba(255, 255, 255, 0.1) !important;color: #495057; box-shadow: none; border-radius: 0.25rem; border: 1px solid #dde6e9;"
+            (change)="onPageSizeChanged()" id="page-size">
+            <option value="10" selected="">10</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="500">500</option>
+            <option value="1000">1000</option>
+          </select>
+        </div>
+        <br/>
+        <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine" [rowData]="rowss"
+                         [gridOptions]="gridOptions"
+                         [columnDefs]="columnDefs"
+                         (gridReady)="onGridReady($event)"
+                         (rowSelected)="onRowSelectedEvent($event)"
+                         [pagination]="true"
+                         [paginationPageSize]="paginationPageSize"
+                         (selectionChanged)="onSelectionChanged($event)">
+        </ag-grid-angular>
+      </div>
+    </c-card-body>
+  </c-card>
+</div>
+
+<div class="fade-in" *ngIf="ShowAdd">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h3><b>Add Batch Exams</b></h3>
+    </c-card-header>
+    <c-card-body>
+      <form cForm cRow [formGroup]="AddForm" (keydown.enter)="$event.preventDefault()">
+
+        <c-row>
+          <c-col [md]="2">
+            <label for="userexam">Semester:</label>
+            <select id="userexam" [(ngModel)]="SelectedUserExam" formControlName="userexam" class="form-control"
+                    (ngModelChange)="onChangeUserExamSelect()">
+              <option disabled>--Select User Exam--</option>
+              <option *ngFor="let user of UserExam" [ngValue]="user">
+                {{user.Userexamname}}</option>
+            </select>
+            <span *ngIf="AddForm.get('userexam')?.invalid && AddForm.get('userexam')?.touched"
+                  class="text-danger">semester is required</span>
+          </c-col>
+          <!-- </div>
+      <c-row> -->
+          <c-col [md]="2">
+            <label for="examdate">Exam Date:</label>
+            <input id="examdate" type="date" formControlName="examdate" class="form-control">
+            <span *ngIf="AddForm.get('examdate')?.invalid && AddForm.get('examdate')?.touched"
+                  class="text-danger">exam date is required</span>
+          </c-col>
+          <!-- </div>
+      <br />
+
+      <c-row> -->
+          <!-- <c-col [md]="4">
+              <label for="batchname">Specialization:</label>
+              <input type="text" formControlName="batchname" [(ngModel)]="BatchName"
+                  placeholder="Enter Batch Name" class="form-control">
+              <span *ngIf="AddForm.get('batchname').invalid && AddForm.get('batchname').touched"
+                  class="text-danger">specialization is required</span>
+          </div> -->
+          <c-col [md]="4">
+            <label for="slab">Slab:</label>
+            <select id="slab" [(ngModel)]="SelectedSlab" formControlName="slab" class="form-control"
+                    (ngModelChange)="onChangeSlabSelect()">
+              <option disabled>--Select Slab--</option>
+              <option *ngFor="let sla of SlabName" [ngValue]="sla.Slabid">
+                {{sla.Slabname}}</option>
+            </select>
+            <span *ngIf="AddForm.get('slab')?.invalid && AddForm.get('slab')?.touched"
+                  class="text-danger">slab is required</span>
+          </c-col>
+
+          <c-col [md]="2" style="margin-top: 20px">
+
+            <c-form-check>
+              <input cFormCheckInput formControlName="checkoutstanding"
+                     id="checkoutstanding" type="checkbox" (change)="changeCheckboxoutstanding($event.target.checked)"/>
+              <label cFormCheckLabel for="checkoutstanding">Validate Outstanding</label>
+            </c-form-check>
+
+          </c-col>
+          <c-col [md]="2" style="margin-top: 20px">
+
+<!--            <c-form-check>-->
+<!--              <input cFormCheckInput formControlName="checkeligibility" id="checkeligibility" type="checkbox"/>-->
+<!--              <label cFormCheckLabel for="checkeligibility">Next year eligibility</label>-->
+<!--            </c-form-check>-->
+          </c-col>
+
+        </c-row>
+        <br/>
+
+        <c-row>
+          <c-col [md]="4">
+            <label for="template">Template:</label>
+            <select id="template" [(ngModel)]="SelectedTemplate" formControlName="template" class="form-control"
+                    (ngModelChange)="onChangeTemplateSelect($event)">
+              <option disabled>--Select Template--</option>
+              <option *ngFor="let tem of TemplateName" [ngValue]="tem.templatename">
+                {{tem.templatename}}</option>
+            </select>
+            <span *ngIf="AddForm.get('template')?.invalid && AddForm.get('template')?.touched"
+                  class="text-danger">template is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="printdate">Print Date:</label>
+            <input id="printdate" type="date" formControlName="printdate" class="form-control">
+            <span *ngIf="AddForm.get('printdate')?.invalid && AddForm.get('printdate')?.touched"
+                  class="text-danger">print date is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="eventdateadd">Event Date:</label>
+            <input id="eventdateadd" type="date" formControlName="eventdateadd" class="form-control">
+
+            <span *ngIf="AddForm.get('eventdateadd')?.invalid && AddForm.get('eventdateadd')?.touched"
+                  class="text-danger">print date is required</span>
+          </c-col>
+
+          <c-col [md]="4">
+            <label for="certificatename">Certificate Name:</label>
+            <input id="certificatename" type="text" formControlName="certificatename" class="form-control">
+            <span *ngIf="AddForm.get('certificatename')?.invalid && AddForm.get('certificatename')?.touched"
+                  class="text-danger">certificate name is required</span>
+          </c-col>
+
+        </c-row>
+
+        <c-row>
+          <c-col [md]="4">
+            <label for="releasedate">Release Date:</label>
+            <input id="releasedate" type="date" formControlName="releasedate" class="form-control">
+            <span *ngIf="AddForm.get('releasedate')?.invalid && AddForm.get('releasedate')?.touched"
+                  class="text-danger">Release date is required</span>
+          </c-col>
+          <c-col [md]="4">
+            <label for="noofsemesters">No. of Semesters:</label>
+            <input id="noofsemesters" type="text" formControlName="noofsemesters" class="form-control">
+            <span *ngIf="AddForm.get('noofsemesters')?.invalid && AddForm.get('noofsemesters')?.touched"
+                  class="text-danger">no of semesters is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="overallcreditpoints">Total Credit Points:</label>
+            <input id="overallcreditpoints" type="text" formControlName="overallcreditpoints"
+                   class="form-control">
+            <span *ngIf="AddForm.get('overallcreditpoints')?.invalid && AddForm.get('overallcreditpoints')?.touched"
+                  class="text-danger">Over All Credit Points is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="examType">Exam Type:</label>
+            <select id="examType" [(ngModel)]="SelectedExamType" formControlName="examType" class="form-control"
+                    (ngModelChange)="onChangeExamTypeSelect($event)">
+              <option selected disabled>--Select Exam Type--</option>
+              <option *ngFor="let examType of ExamTypeList"
+                      [ngValue]="examType.name">{{examType.name}}</option>
+            </select>
+            <span
+              *ngIf="AddForm.get('examType')?.invalid && AddForm.get('examType')?.touched"
+              class="text-danger">Exam Type is required</span>
+          </c-col>
+
+        </c-row>
+
+        <c-row>
+
+        </c-row>
+        <br/>
+        <h3>Subject Gracing </h3>
+
+        <c-row>
+          <c-col [md]="2">
+            <label for="subjectgracing">Subject Gracing :</label>
+            <input id="subjectgracing" type="text" formControlName="subjectgracing" class="form-control">
+            <span *ngIf="AddForm.get('subjectgracing')?.invalid && AddForm.get('subjectgracing')?.touched"
+                  class="text-danger">subject gracing is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="subjectsymbol">Symbol:</label>
+            <input id="subjectsymbol" type="text" formControlName="subjectsymbol" class="form-control">
+            <span *ngIf="AddForm.get('subjectsymbol')?.invalid && AddForm.get('subjectsymbol')?.touched"
+                  class="text-danger">subject symbol is required</span>
+          </c-col>
+        </c-row>
+
+        <br/>
+        <h3>NSS/ Sports Gracing</h3>
+
+        <c-row>
+          <c-col [md]="2">
+            <label for="nssmarks">NSS Gracing:</label>
+            <input id="nssmarks" type="text" formControlName="nssmarks" class="form-control">
+            <span *ngIf="AddForm.get('nssmarks')?.invalid && AddForm.get('nssmarks')?.touched"
+                  class="text-danger">nss marks is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="nssmarkssymbol">Symbol:</label>
+            <input id="nssmarkssymbol" type="text" formControlName="nssmarkssymbol" class="form-control">
+            <span *ngIf="AddForm.get('nssmarkssymbol')?.invalid && AddForm.get('nssmarkssymbol')?.touched"
+                  class="text-danger">nss symbol is required</span>
+          </c-col>
+        </c-row>
+
+        <!-- <hr/> -->
+        <br/>
+        <h3>Condonation Gracing</h3>
+
+        <c-row>
+          <c-col [md]="2">
+            <label for="condonation">Total Condonation:</label>
+            <input id="condonation" type="text" formControlName="condonation" class="form-control">
+            <span *ngIf="AddForm.get('condonation')?.invalid && AddForm.get('condonation')?.touched"
+                  class="text-danger">total condonation is required</span>
+          </c-col>
+          <!-- <c-col [md]="3">
+              <label for="maxmarks">Maximum Marks For Each Subject:</label>
+              <input type="number" formControlName="maxmarks" class="form-control">
+              <span *ngIf="AddForm.get('maxmarks').invalid && AddForm.get('maxmarks').touched"
+                  class="text-danger">maximum marks is required</span>
+          </div> -->
+
+          <c-col [md]="2">
+            <label for="condonationsymbol">Symbol:</label>
+            <input id="condonationsymbol" type="text" formControlName="condonationsymbol"
+                   class="form-control">
+            <span
+              *ngIf="AddForm.get('condonationsymbol')?.invalid && AddForm.get('condonationsymbol')?.touched"
+              class="text-danger">symbol is required</span>
+          </c-col>
+        </c-row>
+
+        <!-- <hr/> -->
+        <br/>
+        <h3>Grade Jump Rule</h3>
+
+        <c-row>
+          <c-col [md]="2">
+            <label for="gradejumpmarks">Grade Jump Max Marks:</label>
+            <input id="gradejumpmarks" type="number" formControlName="gradejumpmarks" class="form-control">
+            <span *ngIf="AddForm.get('gradejumpmarks')?.invalid && AddForm.get('gradejumpmarks')?.touched"
+                  class="text-danger">grade jump marks is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="gradesymbol">Symbol:</label>
+            <input id="gradesymbol" type="text" formControlName="gradesymbol" class="form-control">
+            <span *ngIf="AddForm.get('gradesymbol')?.invalid && AddForm.get('gradesymbol')?.touched"
+                  class="text-danger">symbol is required</span>
+          </c-col>
+        </c-row>
+
+        <br/><br/>
+
+        <c-row>
+          <c-col [md]="8"></c-col>
+          <c-col [md]="2">
+            <button cButton type="submit" (click)="Addbutton()" class="btn btn-success">
+              <c-spinner *ngIf="Addloader" aria-hidden="false" size="sm"></c-spinner>
+              Add
+            </button>
+          </c-col>
+
+          <c-col [md]="2">
+            <button cButton type="reset" (click)="resetAll()" class="btn btn-danger">
+              Cancel
+            </button>
+          </c-col>
+        </c-row>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>
+
+<div class="fade-in" *ngIf="ShowEdit">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h3><b>Edit Batch Exams</b></h3>
+    </c-card-header>
+    <c-card-body>
+      <form cForm [formGroup]="EditForm" (keydown.enter)="$event.preventDefault()">
+        <c-row>
+          <c-col [md]="2">
+            <label for="userexamedit">Semester:</label>
+            <input id="userexamedit" [(ngModel)]="Userexamname" disabled formControlName="userexamedit"
+                   class="form-control">
+            <span *ngIf="AddForm.get('userexamedit')?.invalid && AddForm.get('userexamedit')?.touched"
+                  class="text-danger">semester is required</span>
+          </c-col>
+          <!-- </div>
+      <br />
+
+      <c-row> -->
+          <c-col [md]="2">
+            <label for="examdate">Exam Date:</label>
+            <input type="date" formControlName="examdate" [(ngModel)]="Examdate" class="form-control">
+
+            <span *ngIf="EditForm.get('examdate')?.invalid && EditForm.get('examdate')?.touched"
+                  class="text-danger">exam date is required</span>
+
+          </c-col>
+          <!-- </div>
+      <br />
+
+
+      <c-row> -->
+          <!-- <c-col [md]="4">
+              <label for="batchname">Specialization:</label>
+              <input [(ngModel)]="Examdate" type="text" formControlName="batchname" [(ngModel)]="BatchName"
+                  placeholder="Enter Batch Name" class="form-control">
+              <span *ngIf="EditForm.get('batchname').invalid && EditForm.get('batchname').touched"
+                  class="text-danger">specialization is required</span>
+          </div> -->
+
+          <c-col [md]="4">
+            <label for="slab">Slab:</label>
+            <select [(ngModel)]="SelectedSlab" formControlName="slab" class="form-control"
+            >
+              <option disabled>--Select Template--</option>
+              <option *ngFor="let sla of SlabName" [ngValue]="sla.Slabid">
+                {{sla.Slabname}}</option>
+            </select>
+            <span *ngIf="EditForm.get('slab')?.invalid && EditForm.get('slab')?.touched"
+                  class="text-danger">slab is required</span>
+          </c-col>
+
+          <c-col [md]="2" style="margin-top: 20px">
+
+            <c-form-check>
+              <input cFormCheckInput formControlName="checkoutstanding_edit" [(ngModel)]="Outcheck"
+                     (change)="changeCheckboxoutstanding_edit($event.target.checked)"
+                     id="checkoutstanding_edit" type="checkbox"/>
+              <label cFormCheckLabel for="checkoutstanding_edit">Validate Outstanding</label>
+            </c-form-check>
+          </c-col>
+          <c-col [md]="2" style="margin-top: 20px">
+
+<!--            <c-form-check>-->
+<!--              <input cFormCheckInput formControlName="checkeligibility_edit" id="checkeligibility_edit" type="checkbox"/>-->
+<!--              <label cFormCheckLabel for="checkeligibility_edit">Next year eligibility</label>-->
+<!--            </c-form-check>-->
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [md]="4">
+            <label for="template">Template:</label>
+            <select [(ngModel)]="SelectedTemplate" formControlName="template" class="form-control"
+                    (ngModelChange)="onChangeTemplateSelect($event)">
+              <option disabled>--Select Template--</option>
+              <option *ngFor="let tem of TemplateName" [ngValue]="tem.templatename">
+                {{tem.templatename}}</option>
+            </select>
+            <span *ngIf="EditForm.get('template')?.invalid && EditForm.get('template')?.touched"
+                  class="text-danger">template is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="printdate">Print Date:</label>
+            <input type="date" formControlName="printdate" [(ngModel)]="Printdate" class="form-control">
+
+            <span *ngIf="EditForm.get('printdate')?.invalid && EditForm.get('printdate')?.touched"
+                  class="text-danger">print date is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="eventdate">Event Date:</label>
+            <input id="eventdate" type="date" [(ngModel)]="Eventdate"
+                   formControlName="eventdate" class="form-control">
+
+            <span *ngIf="EditForm.get('eventdate')?.invalid && EditForm.get('eventdate')?.touched"
+                  class="text-danger">Event date is required</span>
+          </c-col>
+
+          <c-col [md]="4">
+            <label for="releasedate">Release Date:</label>
+            <input type="date" [(ngModel)]="Releaseddate" formControlName="releasedate"
+                   class="form-control">
+
+            <span *ngIf="EditForm.get('releasedate')?.invalid && EditForm.get('releasedate')?.touched"
+                  class="text-danger">Release date is required</span>
+          </c-col>
+
+        </c-row>
+
+        <c-row>
+
+          <c-col [md]="4">
+            <label for="certificatename">Certificate Name:</label>
+            <input type="text" [(ngModel)]="Certificatename" formControlName="certificatename"
+                   class="form-control">
+            <span *ngIf="EditForm.get('certificatename')?.invalid && EditForm.get('certificatename')?.touched"
+                  class="text-danger">certificate name is required</span>
+          </c-col>
+
+          <c-col [md]="4">
+            <!--                        <label for="noofsemesters">No. of Semesters:</label>-->
+            <!--                        <input type="text" formControlName="noofsemesters" class="form-control">-->
+            <!--                        <span *ngIf="EditForm.get('noofsemesters')?.invalid && EditForm.get('noofsemesters')?.touched"-->
+            <!--                              class="text-danger">no of semesters is required</span>-->
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="overallcreditpoints">Total Credit Points:</label>
+            <input type="text" [(ngModel)]="Overallcreditpoints" formControlName="overallcreditpoints"
+                   class="form-control">
+            <span *ngIf="EditForm.get('overallcreditpoints')?.invalid && EditForm.get('overallcreditpoints')?.touched"
+                  class="text-danger">Over All Credit Points is required</span>
+          </c-col>
+          <c-col [md]="2">
+            <label for="examType">Exam Type:</label>
+            <select [(ngModel)]="SelectedExamType" formControlName="examType" class="form-control"
+                    (ngModelChange)="onChangeExamTypeSelect($event)">
+              <option selected disabled>--Select Exam Type--</option>
+              <option *ngFor="let examType of ExamTypeList"
+                      [ngValue]="examType.name">{{examType.name}}</option>
+            </select>
+            <span
+              *ngIf="EditForm.get('examType')?.invalid && EditForm.get('examType')?.touched"
+              class="text-danger">Exam Type is required</span>
+          </c-col>
+        </c-row>
+        <hr/>
+        <h3>Subject Gracing </h3>
+        <c-row>
+          <c-col [md]="2">
+            <label for="subjectgracing">Subject Gracing :</label>
+            <input [(ngModel)]="SubjectGrace" type="text" formControlName="subjectgracing"
+                   class="form-control">
+            <span *ngIf="EditForm.get('subjectgracing')?.invalid && EditForm.get('subjectgracing')?.touched"
+                  class="text-danger">subject gracing is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="subjectsymbol">Symbol:</label>
+            <input [(ngModel)]="Subjectsymbol" type="text" formControlName="subjectsymbol"
+                   class="form-control">
+            <span *ngIf="EditForm.get('subjectsymbol')?.invalid && EditForm.get('subjectsymbol')?.touched"
+                  class="text-danger">subject symbol is required</span>
+          </c-col>
+        </c-row>
+        <br/>
+        <h3>NSS/ Sports Gracing</h3>
+        <c-row>
+          <c-col [md]="2">
+            <label for="nssmarks">NSS Gracing:</label>
+            <input [(ngModel)]="Nssgrace" type="text" formControlName="nssmarks" class="form-control">
+            <span *ngIf="EditForm.get('nssmarks')?.invalid && EditForm.get('nssmarks')?.touched"
+                  class="text-danger">nss marks is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="nssmarkssymbol">Symbol:</label>
+            <input [(ngModel)]="Nsssymbol" type="text" formControlName="nssmarkssymbol"
+                   class="form-control">
+            <span *ngIf="EditForm.get('nssmarkssymbol')?.invalid && EditForm.get('nssmarkssymbol')?.touched"
+                  class="text-danger">nss symbol is required</span>
+          </c-col>
+        </c-row>
+        <!-- <hr/> -->
+        <br/>
+        <h3>Condonation Gracing</h3>
+        <c-row>
+          <c-col [md]="2">
+            <label for="condonation">Total Condonation:</label>
+            <input [(ngModel)]="Condonation" type="text" formControlName="condonation" class="form-control">
+            <span *ngIf="EditForm.get('condonation')?.invalid && EditForm.get('condonation')?.touched"
+                  class="text-danger">total condonation is required</span>
+          </c-col>
+          <!-- <c-col [md]="3">
+              <label for="maxmarks">Maximum Marks For Each Subject:</label>
+              <input type="number" formControlName="maxmarks" class="form-control">
+              <span *ngIf="AddForm.get('maxmarks').invalid && AddForm.get('maxmarks').touched"
+                  class="text-danger">maximum marks is required</span>
+          </div> -->
+
+          <c-col [md]="2">
+            <label for="condonationsymbol">Symbol:</label>
+            <input [(ngModel)]="Condonationsymbol" type="text" formControlName="condonationsymbol"
+                   class="form-control">
+            <span
+              *ngIf="EditForm.get('condonationsymbol')?.invalid && EditForm.get('condonationsymbol')?.touched"
+              class="text-danger">symbol is required</span>
+          </c-col>
+        </c-row>
+        <!-- <hr/> -->
+        <br/>
+        <h3>Grade Jump Rule</h3>
+        <c-row>
+          <c-col [md]="2">
+            <label for="gradejumpmarks">Grade Jump Max Marks:</label>
+            <input [(ngModel)]="Gradejump" type="number" formControlName="gradejumpmarks"
+                   class="form-control">
+            <span *ngIf="EditForm.get('gradejumpmarks')?.invalid && EditForm.get('gradejumpmarks')?.touched"
+                  class="text-danger">grade jump marks is required</span>
+          </c-col>
+
+          <c-col [md]="2">
+            <label for="gradesymbol">Symbol:</label>
+            <input [(ngModel)]="Gradejumpsymbol" type="text" formControlName="gradesymbol"
+                   class="form-control">
+            <span *ngIf="EditForm.get('gradesymbol')?.invalid && EditForm.get('gradesymbol')?.touched"
+                  class="text-danger">symbol is required</span>
+          </c-col>
+        </c-row>
+        <br/><br/>
+        <c-row>
+          <c-col [md]="8"></c-col>
+          <c-col [md]="2">
+            <button cButton type="submit" (click)="Editbutton()" class="btn btn-success">
+              <c-spinner *ngIf="Editloader" aria-hidden="false" size="sm"></c-spinner>
+
+              Edit
+            </button>
+          </c-col>
+          <c-col [md]="2">
+            <button cButton type="reset" (click)="resetAll()" class="btn btn-danger">Cancel</button>
+          </c-col>
+        </c-row>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

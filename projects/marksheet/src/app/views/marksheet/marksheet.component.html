@@ -1,0 +1,912 @@
+<div class="fade-in">
+    <c-card>
+        <c-card-header style="background-color: #f0f3f5">
+            <h4><b>Marks Entry</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <c-nav variant="tabs">
+                <c-nav-item>
+                    <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+                       Marks Entry
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+                        Delete Marks
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+                        20 Marks Exam
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>
+                        Delete Cancel Students
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="4" cNavLink>
+                        Merge Internal Marks
+                    </a>
+                </c-nav-item>
+            </c-nav>
+            <c-tab-content #tabContent="cTabContent">
+                <c-tab-pane class="p-3">
+                    <form cForm
+                            [formGroup]="marksheetForm"
+                            (keydown.enter)="$event.preventDefault()"
+                            (ngSubmit)="OnDownloadFile()"
+                    >
+                        <c-row>
+                            <c-col [md]="6">
+                                <label>Batch:</label>
+                                <div class="ng-autocomplete" style="width: 100%">
+                                    <ng-autocomplete
+                                            [data]="Batchs"
+                                            [searchKeyword]="Batchkeyword"
+                                            (selected)="selectBatch($event)"
+                                            (inputChanged)="onChangeSearch($event)"
+                                            (inputFocused)="onFocused($event)"
+                                            [itemTemplate]="batTemplate"
+                                            [notFoundTemplate]="notFoundTemplate"
+                                            placeholder="Select Batch"
+                                    >
+                                    </ng-autocomplete>
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>User Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemester"
+                                        formControlName="Semester_Name"
+                                        class="form-control"
+                                        (change)="onChangeSemesterSelect()"
+                                >
+                                    <option disabled>Select Semester</option>
+                                    <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                                        {{ sem.Userexamname }}
+                                    </option>
+                                </select>
+                                <span *ngIf="marksheetForm.get('Semester_Name')?.invalid && marksheetForm.get('Semester_Name')?.touched  "
+                                      class="text-danger"
+                                >Semester is required</span
+                                >
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label>Semester Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemExam"
+                                        formControlName="Exam_Name"
+                                        class="form-control"
+                                        (change)="onChangeSemExamSelect()"
+                                >
+                                    <option disabled>Select Semester Exam</option>
+                                    <option *ngFor="let exam of Exam" [ngValue]="exam">
+                                        {{ exam.Examname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      marksheetForm.get('Exam_Name')?.invalid &&
+                      marksheetForm.get('Exam_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >field is required</span
+                                >
+                            </c-col>
+                        </c-row>
+                        <c-row>
+                            <c-col [md]="4">
+                                <label>Subject Name:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemSubjects"
+                                        formControlName="SubjectName"
+                                        class="form-control"
+                                        (change)="onChangeSemSubjectsSelect()"
+                                >
+                                    <option disabled>Select Subject Name</option>
+                                    <option
+                                            *ngFor="let subject of SubjectName"
+                                            [ngValue]="subject"
+                                    >
+                                        {{ subject.Subject_name }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      marksheetForm.get('SubjectName')?.invalid &&
+                      marksheetForm.get('SubjectName')?.touched
+                    "
+                                        class="text-danger"
+                                >field is required</span
+                                >
+                            </c-col>
+
+                            <c-col [md]="2" style="padding-top: 22px">
+                                <button cButton
+                                        type="submit"
+                                        [disabled]="marksheetForm.invalid"
+                                        class="btn btn-info"
+                                >
+<!--                                    <i-->
+<!--                                            style="border-color: white"-->
+<!--                                            class="spinner-border text-success"-->
+<!--                                            role="status"-->
+<!--                                            *ngIf="downloadloader"-->
+<!--                                    ></i-->
+<!--                                    >&nbsp;&nbsp;-->
+                                  <c-spinner  *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                                  Download marks
+                                </button>
+                            </c-col>
+
+                            <c-col [md]="2" style="padding-top: 22px">
+                                <button cButton
+                                        type="button"
+                                        (click)="FailedStudentDownload()"
+                                        [disabled]="marksheetForm.invalid"
+                                        class="btn btn-primary"
+                                >
+<!--                                    <i-->
+<!--                                            style="border-color: white"-->
+<!--                                            class="spinner-border text-success"-->
+<!--                                            role="status"-->
+<!--                                            *ngIf="studentdownloadloader"-->
+<!--                                    ></i-->
+<!--                                    >&nbsp;&nbsp;-->
+                                  <c-spinner  *ngIf="studentdownloadloader"
+                                              aria-hidden="false" size="sm"></c-spinner>
+
+                                  Download Students
+                                </button>
+                            </c-col>
+                            <!-- <c-col [md]="1" style="padding-top: 30px;">
+                                                <button cButton type="reset" class="btn btn-success" (click)="resetAll()">Clear</button>
+                                            </div> -->
+                        </c-row>
+                    </form>
+                    <form cForm [formGroup]="DownloadUploadForm" (keydown.enter)="$event.preventDefault()">
+
+                        <c-row>
+                            <!--                    <c-col [md]="2">-->
+                            <!--                        <label for="upload">Upload File:</label>-->
+                            <!--                        <input id="upload" type="file" (change)="xlsxUpload($event)" formControlName="upload"-->
+                            <!--                            class="fileInputProfile" accept=".xlsx">-->
+                            <!--                        <span-->
+                            <!--                            *ngIf="DownloadUploadForm.get('upload')?.invalid && DownloadUploadForm.get('upload')?.touched"-->
+                            <!--                            class="text-danger">Only .xlsx file is required</span>-->
+                            <!--                    </div>-->
+                            <c-col [md]="4">
+                                <h6>Upload File</h6>
+                                <input aria-label="file example"
+                                       cFormControl
+                                       id="validationText1"
+                                       type="file"
+                                       (change)="xlsxUpload($event)"
+                                       (selectionchange)="xlsxUpload($event)"
+                                       formControlName="upload"
+                                />
+                                <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 27px;">
+                                <button cButton type="submit" class="btn btn-success"
+                                        (click)="uploadfile()">
+<!--                                  <i style="border-color: white;" class="spinner-border text-success"-->
+<!--                                                                  role="status" *ngIf="uploadloader"></i>&nbsp;&nbsp;-->
+                                  <c-spinner  *ngIf="uploadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                                  Upload</button>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 27px;">
+                                <button cButton type="reset" class="btn btn-danger" (click)="resetAll()">
+                                  Reset</button>
+                            </c-col>
+                        </c-row>
+                    </form>
+                    <br/>
+                    <hr/>
+                    <div>
+                        <h6 style="color: red">
+                            <b>Note:</b>&nbsp;&nbsp;Please Don't change Sheet name It should
+                            be <b>MARKSENTRY</b> only.
+                        </h6>
+                        <hr/>
+                    </div>
+
+                    <c-row>
+                        <c-col [md]="12" style="padding-top: 20px;">
+                            <!--                    <form cForm class="d-flex" role="search">-->
+                            <!--          <div class="input-group">-->
+                            <!--            <div class="input-group-prepend">-->
+                            <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+                            <!--            </div>-->
+                            <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+                            <!--          </div>-->
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText id="basic-addon1">Search</span>
+                                <input aria-describedby="basic-addon1"
+                                       aria-label="Username"
+                                       cFormControl
+                                       placeholder="Search here"
+                                       [(ngModel)]="searchValue"
+                                       (keyup)="quickSearch()"
+                                />
+                            </c-input-group>
+                            <!--                    </form>-->
+                        </c-col>
+                    </c-row>
+                    <br/>
+
+                    <div>
+                        <div class="example-header">
+                            Page Size:
+                            <select
+                                    style="
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    color: #495057;
+                    box-shadow: none;
+                    border-radius: 0.25rem;
+                    border: 1px solid #dde6e9;
+                  "
+                                    (change)="onPageSizeChanged()"
+                                    id="page-size1"
+                            >
+                                <option value="10" selected="">10</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                                <option value="1000">1000</option>
+                            </select>
+                        </div>
+                        <br/>
+                        <ag-grid-angular
+                                style="width: 100%; height: 300px"
+                                class="ag-theme-alpine"
+                                [rowData]="rowss"
+                                [gridOptions]="marks_gridOptions"
+                                [columnDefs]="columnDefs_marks"
+                                (gridReady)="onGridReady_marks($event)"
+                                (rowSelected)="onRowSelectedEvent_marks($event)"
+                                [pagination]="true"
+                                rowSelection="single"
+                                [paginationPageSize]="paginationPageSize"
+                                (selectionChanged)="onSelectionChanged_marks($event)"
+                        >
+                        </ag-grid-angular>
+                    </div>
+                </c-tab-pane>
+                <c-tab-pane class="p-3">
+                    <form cForm
+                            [formGroup]="DeletemarksheetForm"
+                            (keydown.enter)="$event.preventDefault()"
+                            (ngSubmit)="OnDelete()">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label>Batch:</label>
+                                <div class="ng-autocomplete" style="width: 100%">
+                                    <ng-autocomplete
+                                            [data]="Batchs"
+                                            [searchKeyword]="Batchkeyword"
+                                            formControlName="batchname"
+                                            (selected)="selectBatch($event)"
+                                            (inputChanged)="onChangeSearch($event)"
+                                            (inputFocused)="onFocused($event)"
+                                            [itemTemplate]="batTemplate"
+                                            [notFoundTemplate]="notFoundTemplate"
+                                            placeholder="Select Batch"
+                                    >
+                                    </ng-autocomplete>
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                    <span
+                                            *ngIf="
+                        DeletemarksheetForm.get('batchname')?.invalid &&
+                        DeletemarksheetForm.get('batchname')?.touched
+                      "
+                                            class="text-danger"
+                                    >batch name is required</span
+                                    >
+                                </div>
+                            </c-col>
+                            <c-col [md]="4">
+                                <label>User Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemester"
+                                        formControlName="Semester_Name"
+                                        class="form-control"
+                                        (change)="onChangeSemesterSelect()"
+                                >
+                                    <option disabled>Select Semester</option>
+                                    <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                                        {{ sem.Userexamname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      DeletemarksheetForm.get('Semester_Name')?.invalid &&
+                      DeletemarksheetForm.get('Semester_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >Semester is required</span
+                                >
+                            </c-col>
+                            <c-col [md]="4">
+                                <label>Semester Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemExam"
+                                        formControlName="Exam_Name"
+                                        class="form-control"
+                                        (change)="onChangeSemExamSelect()"
+                                >
+                                    <option disabled>Select Semester Exam</option>
+                                    <option *ngFor="let exam of Exam" [ngValue]="exam">
+                                        {{ exam.Examname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      DeletemarksheetForm.get('Exam_Name')?.invalid &&
+                      DeletemarksheetForm.get('Exam_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >field is required</span
+                                >
+                            </c-col>
+                        </c-row>
+                        <br/>
+                        <c-row>
+                            <c-col [md]="4">
+                                <label>Subject Name:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemSubjects"
+                                        formControlName="SubjectName"
+                                        class="form-control"
+                                        (change)="onChangeSemSubjectsSelect()"
+                                >
+                                    <option disabled>Select Subject Name</option>
+                                    <option
+                                            *ngFor="let subject of SubjectName"
+                                            [ngValue]="subject"
+                                    >
+                                        {{ subject.Subject_name }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      DeletemarksheetForm.get('SubjectName')?.invalid &&
+                      DeletemarksheetForm.get('SubjectName')?.touched
+                    "
+                                        class="text-danger"
+                                >
+                    field is required</span
+                                >
+                            </c-col>
+                            <c-col [md]="4">
+                                <label>Aadhaar No.:</label>
+                                <input
+                                        type="number"
+                                        class="form-control"
+                                        formControlName="markdelete_aadhaar"
+                                        minlength="12"
+                                        maxlength="12"
+                                        placeholder="Aadhaar No."
+                                />
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 23px">
+                                <button cButton
+                                        type="submit"
+                                        [disabled]="DeletemarksheetForm.invalid"
+                                        class="btn btn-success"
+                                >
+                                    Delete
+                                </button>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 23px">
+                                <button cButton
+                                        type="reset"
+                                        (click)="resetAll()"
+                                        class="btn btn-danger"
+                                >
+                                    Reset
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </form>
+                </c-tab-pane>
+                <c-tab-pane class="p-3">
+                    <form cForm
+                            [formGroup]="marksForm"
+                            (keydown.enter)="$event.preventDefault()"
+                    >
+                        <c-row>
+                            <c-col [md]="4">
+                                <label>Batch:</label>
+                                <div class="ng-autocomplete" style="width: 100%">
+                                    <ng-autocomplete
+                                            [data]="Batchs"
+                                            [searchKeyword]="Batchkeyword"
+                                            (selected)="selectInternalBatch($event)"
+                                            (inputChanged)="onChangeSearch($event)"
+                                            (inputFocused)="onFocused($event)"
+                                            [itemTemplate]="batTemplate"
+                                            [notFoundTemplate]="notFoundTemplate"
+                                            placeholder="Select Batch"
+                                    >
+                                    </ng-autocomplete>
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>User Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemester"
+                                        formControlName="Semester_Name"
+                                        class="form-control"
+                                        (change)="onChangeInternalSemesterSelect()"
+                                >
+                                    <option disabled>Select Semester</option>
+                                    <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                                        {{ sem.Userexamname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      marksForm.get('Semester_Name')?.invalid &&
+                      marksForm.get('Semester_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >Semester is required</span
+                                >
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label>Subject Name:</label>
+                                <select
+                                        [(ngModel)]="SelectedBatSubjects"
+                                        formControlName="SubjectName"
+                                        class="form-control"
+                                        (change)="onChangeBatSubjectsSelect()"
+                                >
+                                    <option disabled>Select Subject Name</option>
+                                    <option
+                                            *ngFor="let subject of SubjectName"
+                                            [ngValue]="subject"
+                                    >
+                                        {{ subject.Subject_name }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      marksForm.get('SubjectName')?.invalid &&
+                      marksForm.get('SubjectName')?.touched
+                    "
+                                        class="text-danger"
+                                >field is required</span
+                                >
+                            </c-col>
+                            <c-col [md]="2">
+                                <label>Internal Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedInternalExam"
+                                        formControlName="Internal_Name"
+                                        class="form-control"
+                                        (change)="onChangeInternalExamSelect()"
+                                >
+                                    <option disabled>Select Exam</option>
+                                    <option *ngFor="let exam of InternalExam" [ngValue]="exam">
+                                        {{ exam.Userexamname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      marksForm.get('Internal_Name')?.invalid &&
+                      marksForm.get('Internal_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >exam is required</span
+                                >
+                            </c-col>
+                        </c-row>
+                        <br/>
+                        <c-row>
+                            <c-col [md]="2">
+                                <button cButton
+                                        (click)="Donwload_internalmarks()"
+                                        type="submit"
+                                        [disabled]="marksForm.invalid"
+                                        class="btn btn-info"
+                                >
+<!--                                    <i-->
+<!--                                            style="border-color: white"-->
+<!--                                            class="spinner-border text-success"-->
+<!--                                            role="status"-->
+<!--                                            *ngIf="marksdownloadloader"-->
+<!--                                    ></i-->
+<!--                                    >-->
+                                  <c-spinner  *ngIf="marksdownloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                                  Download
+                                </button>
+                            </c-col>
+                            <c-col [md]="2">
+                                <button cButton
+                                        (click)="OnRelease(true)"
+                                        type="submit"
+                                        [disabled]="marksForm.invalid"
+                                        class="btn btn-primary"
+                                >
+                                    Release
+                                </button>
+                            </c-col>
+                            <c-col [md]="2">
+                                <button cButton
+                                        (click)="OnRelease(false)"
+                                        type="submit"
+                                        [disabled]="marksForm.invalid"
+                                        class="btn btn-warning"
+                                >
+                                    UnRelease
+                                </button>
+                            </c-col>
+                            <!-- <c-col [md]="1" style="padding-top: 30px;">
+                                    <button cButton type="reset" class="btn btn-success" (click)="resetAll()">Clear</button>
+                                </div> -->
+                        </c-row>
+                    </form>
+                    <br/><br/>
+                    <form cForm
+                            [formGroup]="marksDownloadUploadForm"
+                            (keydown.enter)="$event.preventDefault()"
+                    >
+                        <c-row>
+                            <!--                                <c-col [md]="2">-->
+                            <!--                                    <label>Upload File:</label>-->
+                            <!--                                    <input-->
+                            <!--                                            type="file"-->
+                            <!--                                            (change)="marksxlsxUpload($event)"-->
+                            <!--                                            formControlName="upload"-->
+                            <!--                                            class="fileInputProfile"-->
+                            <!--                                            accept=".xlsx"-->
+                            <!--                                    />-->
+                            <!--                                    <span-->
+                            <!--                                            *ngIf="-->
+                            <!--                      marksDownloadUploadForm.get('upload')?.invalid &&-->
+                            <!--                      marksDownloadUploadForm.get('upload')?.touched-->
+                            <!--                    "-->
+                            <!--                                            class="text-danger"-->
+                            <!--                                    >Only .xlsx file is required</span-->
+                            <!--                                    >-->
+                            <!--                                </div>-->
+                            <c-col [md]="4">
+                                <h6>Upload Image</h6>
+                                <input aria-label="file example"
+                                       cFormControl
+                                       id="validationTexttwentymarks"
+                                       type="file"
+                                       (change)="marksxlsxUpload($event)"
+                                       (selectionchange)="marksxlsxUpload($event)"
+                                />
+                                <c-form-feedback [valid]="false">
+                                    Example invalid form file feedback
+                                </c-form-feedback>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 25px">
+                                <button cButton
+                                        type="submit"
+                                        [disabled]="marksForm.invalid"
+                                        class="btn btn-success"
+                                        (click)="marksuploadfile()"
+                                >
+<!--                                    <i-->
+<!--                                            style="border-color: white"-->
+<!--                                            class="spinner-border text-success"-->
+<!--                                            role="status"-->
+<!--                                            *ngIf="marksuploadloader"-->
+<!--                                    ></i-->
+<!--                                    >&nbsp;&nbsp;-->
+                                  <c-spinner  *ngIf="marksuploadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                                  Upload
+                                </button>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 25px">
+                                <button cButton
+                                        type="reset"
+                                        class="btn btn-danger"
+                                        (click)="resetAll()"
+                                >
+                                    Reset
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </form>
+                    <br/>
+
+                    <!--                        <c-col [md]="12" style="padding-left: 5px">-->
+                    <!--                            <div class="input-group">-->
+                    <!--                                <div class="input-group-prepend">-->
+                    <!--                  <span class="input-group-text"-->
+                    <!--                  ><i class="cil-search"></i-->
+                    <!--                  ></span>-->
+                    <!--                                </div>-->
+                    <!--                                <input-->
+                    <!--                                        cInput-->
+                    <!--                                        placeholder="Search Here"-->
+                    <!--                                        (keyup)="quickSearch_internal()"-->
+                    <!--                                        [(ngModel)]="searchValue"-->
+                    <!--                                />-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <c-row>
+                        <c-col [md]="12" style="padding-top: 20px;">
+                            <!--                    <form cForm class="d-flex" role="search">-->
+                            <!--          <div class="input-group">-->
+                            <!--            <div class="input-group-prepend">-->
+                            <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+                            <!--            </div>-->
+                            <!--            <input cInput cFormControl placeholder="Search Here"
+                             (keyup)="quickSearch()"
+                              [(ngModel)]="searchValue">-->
+                            <!--          </div>-->
+                            <c-input-group class="mb-3">
+                                <span cInputGroupText id="basic-addontwentymarks">Search</span>
+                                <input aria-describedby="basic-addon1"
+                                       aria-label="Username"
+                                       cFormControl
+                                       placeholder="Search here"
+                                       [(ngModel)]="searchValue"
+                                       (keyup)="quickSearch()"
+                                />
+                            </c-input-group>
+                            <!--                    </form>-->
+                        </c-col>
+                    </c-row>
+                    <br/>
+
+                    <div>
+                        <div class="example-header">
+                            Page Size:
+                            <select
+                                    style="
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    color: #495057;
+                    box-shadow: none;
+                    border-radius: 0.25rem;
+                    border: 1px solid #dde6e9;
+                  "
+                                    (change)="onPageSizeChanged()"
+                                    id="page-size"
+                            >
+                                <option value="10" selected="">10</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="500">500</option>
+                                <option value="1000">1000</option>
+                            </select>
+                        </div>
+                        <br/>
+                        <ag-grid-angular
+                                style="width: 100%; height: 300px"
+                                class="ag-theme-alpine"
+                                [rowData]="rowss"
+                                [gridOptions]="internal_gridOptions"
+                                [columnDefs]="columnDefs_marks"
+                                (gridReady)="onGridReady_internal($event)"
+                                (rowSelected)="onRowSelectedEvent_internal($event)"
+                                [pagination]="true"
+                                [paginationPageSize]="paginationPageSize"
+                                (selectionChanged)="onSelectionChanged_internal($event)"
+                        >
+                        </ag-grid-angular>
+                    </div>
+                </c-tab-pane>
+                <c-tab-pane class="p-3">
+                    <form cForm
+                            [formGroup]="DeleteCancelForm"
+                            (keydown.enter)="$event.preventDefault()"
+                            (ngSubmit)="DeleteCancelStudent()"
+                    >
+                        <c-row>
+                            <c-col [md]="6">
+                                <label>Aadhaar No.:</label>
+                                <input
+                                        type="number"
+                                        class="form-control"
+                                        formControlName="aadhaar"
+                                        placeholder="Enter Aadhaar No."
+                                />
+                                <span
+                                        *ngIf="
+                      DeleteCancelForm.get('aadhaar')?.invalid &&
+                      DeleteCancelForm.get('aadhaar')?.touched
+                    "
+                                        class="text-danger"
+                                >aadhaar no. is required</span
+                                >
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 23px">
+                                <button cButton
+                                        type="submit"
+                                        [disabled]="DeleteCancelForm.invalid"
+                                        class="btn btn-success"
+                                >
+                                    Delete
+                                </button>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 23px">
+                                <button cButton
+                                        type="reset"
+                                        (click)="resetAll()"
+                                        class="btn btn-danger"
+                                >
+                                    Reset
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </form>
+                </c-tab-pane>
+                <c-tab-pane class="p-3">
+                    <form cForm
+                            [formGroup]="MergeInternalmarksForm"
+                            (keydown.enter)="$event.preventDefault()"
+                    >
+                        <c-row>
+                            <c-col [md]="6">
+                                <label>Batch:</label>
+                                <div class="ng-autocomplete" style="width: 100%">
+                                    <ng-autocomplete
+                                            [data]="Batchs"
+                                            [searchKeyword]="Batchkeyword"
+                                            (selected)="selectInternalBatch($event)"
+                                            (inputChanged)="onChangeSearch($event)"
+                                            (inputFocused)="onFocused($event)"
+                                            [itemTemplate]="batTemplate"
+                                            [notFoundTemplate]="notFoundTemplate"
+                                            placeholder="Select Batch"
+                                    >
+                                    </ng-autocomplete>
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>User Exam:</label>
+                                <select
+                                        [(ngModel)]="SelectedSemester"
+                                        formControlName="Semester_Name"
+                                        class="form-control"
+                                        (change)="onChangeInternalSemesterSelect()"
+                                >
+                                    <option disabled>Select Semester</option>
+                                    <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                                        {{ sem.Userexamname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      MergeInternalmarksForm.get('Semester_Name')?.invalid &&
+                      MergeInternalmarksForm.get('Semester_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >Semester is required</span
+                                >
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label>Subject Name:</label>
+                                <select
+                                        [(ngModel)]="SelectedBatSubjects"
+                                        formControlName="SubjectName"
+                                        class="form-control"
+                                        (change)="onChangeBatSubjectsSelect()"
+                                >
+                                    <option disabled>Select Subject Name</option>
+                                    <option
+                                            *ngFor="let subject of SubjectName"
+                                            [ngValue]="subject"
+                                    >
+                                        {{ subject.Subject_name }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      MergeInternalmarksForm.get('SubjectName')?.invalid &&
+                      MergeInternalmarksForm.get('SubjectName')?.touched
+                    "
+                                        class="text-danger"
+                                >field is required</span
+                                >
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>Exam 1:</label>
+                                <select
+                                        [(ngModel)]="SelectedInternalExam"
+                                        formControlName="Internal_Name"
+                                        class="form-control"
+                                        (change)="onChangeInternalExamSelect()"
+                                >
+                                    <option disabled>Select Exam</option>
+                                    <option *ngFor="let exam of InternalExam" [ngValue]="exam">
+                                        {{ exam.Userexamname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      MergeInternalmarksForm.get('Internal_Name')?.invalid &&
+                      MergeInternalmarksForm.get('Internal_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >exam 1 is required</span
+                                >
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>Exam 2:</label>
+                                <select
+                                        [(ngModel)]="SelectedSecondInternalExam"
+                                        formControlName="Second_Internal_Name"
+                                        class="form-control"
+                                        (change)="onChangeSecondInternalExamSelect()"
+                                >
+                                    <option disabled>Select Exam</option>
+                                    <option *ngFor="let exam of InternalExam" [ngValue]="exam">
+                                        {{ exam.Userexamname }}
+                                    </option>
+                                </select>
+                                <span
+                                        *ngIf="
+                      MergeInternalmarksForm.get('Second_Internal_Name')
+                        ?.invalid &&
+                      MergeInternalmarksForm.get('Second_Internal_Name')?.touched
+                    "
+                                        class="text-danger"
+                                >exam 2 is required</span
+                                >
+                            </c-col>
+
+                            <c-col [md]="2" style="padding-top: 23px">
+                                <button cButton
+                                        type="submit"
+                                        class="btn btn-success"
+                                        (click)="DownloadInternal()"
+                                >
+                                    Download
+                                </button>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 23px">
+                                <button cButton
+                                        type="reset"
+                                        (click)="resetAll()"
+                                        class="btn btn-danger"
+                                >
+                                    Reset
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </form>
+                </c-tab-pane>
+            </c-tab-content>
+        </c-card-body>
+    </c-card>
+</div>

@@ -1,0 +1,52 @@
+<!--sidebar-->
+<c-sidebar
+    #sidebar1="cSidebar"
+    class="d-print-none sidebar sidebar-fixed"
+    id="sidebar1"
+    visible
+>
+    <!--  <c-sidebar-brand-->
+    <!--          [brandFull]="{-->
+    <!--      src: 'assets/img/brand/coreui-pro-angular-white.svg',-->
+    <!--      width: 190,-->
+    <!--      height: 35,-->
+    <!--      alt: 'CoreUI Logo'-->
+    <!--    }"-->
+    <!--          [brandNarrow]="{-->
+    <!--      src: 'assets/img/brand/coreui-signet-white.svg',-->
+    <!--      width: 46,-->
+    <!--      height: 46,-->
+    <!--      alt: 'CoreUI Logo'-->
+    <!--    }"-->
+    <!--          [routerLink]="[]"-->
+    <!--  />-->
+    <c-sidebar-header>
+       <h4>Eazy Institute</h4>
+    </c-sidebar-header>
+    <ng-scrollbar pointerEventsMethod="scrollbar" style="background: white">
+        <c-sidebar-nav [navItems]="navItems" dropdownMode="close"/>
+    </ng-scrollbar>
+<!--    <c-sidebar-toggler-->
+<!--            *ngIf="!sidebar1.narrow"-->
+<!--            cSidebarToggle="sidebar1"-->
+<!--            toggle="unfoldable"-->
+<!--    />-->
+</c-sidebar>
+
+<!--aside-->
+<app-default-aside style="display: none;"/>
+
+<!--main-->
+<div class="wrapper d-flex flex-column min-vh-100 bg-light dark:bg-transparent">
+    <!--app-header-->
+    <app-default-header class="mb-4 d-print-none header header-sticky" position="sticky"
+                        sidebarId="sidebar1"/>
+    <!--app-body-->
+    <div class="body  flex-grow-1 px-3">
+        <c-container [fluid]="true">
+            <router-outlet/>
+        </c-container>
+    </div>
+    <!--app footer-->
+    <app-default-footer/>
+</div>

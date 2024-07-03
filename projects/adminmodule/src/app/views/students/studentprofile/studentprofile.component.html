@@ -1,0 +1,3086 @@
+<script src="studentprofile.component.ts"></script>
+<div>
+  <div>
+    <h2>Student Profile</h2>
+    <hr />
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <form cForm [formGroup]="ShowStudentForm">
+        <c-row>
+          <c-col [sm]="4">
+            <label cLabel for="aadharNo" class="required"
+              >Student Aadhar Number</label
+            >
+            <input
+              cFormControl
+              id="aadharNo"
+              type="number"
+              formControlName="aadharNo"
+              autocomplete="off"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || ssf['aadharNo'].touched) &&
+                  ssf['aadharNo'].errors,
+                'is-valid': ssf['aadharNo'].touched && !ssf['aadharNo'].errors
+              }"
+              class="form-control"
+              placeholder="Enter your Aadhar Number"
+            />
+            <div
+              *ngIf="submitted && ssf['aadharNo'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="f['aadharNo'].errors['required']">
+                Aadhar Number is required
+              </div>
+              <div *ngIf="f['aadharNo'].errors['minlength']">
+                Aadhar Number must be of 12 characters
+              </div>
+            </div>
+          </c-col>
+
+          <c-col [sm]="6">
+            <label cLabel class="required">Batch</label>
+            <select
+              cSelect
+              [(ngModel)]="Selected_batchname"
+              class="form-control"
+              formControlName="userbatch"
+              (change)="selectBatch($event)"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || ssf['userbatch'].touched) &&
+                  ssf['userbatch'].errors,
+                'is-valid': ssf['userbatch'].touched && !ssf['userbatch'].errors
+              }"
+            >
+              <option value="" disabled selected>--- Please Select ---</option>
+              <option *ngFor="let data of BatchNames" [ngValue]="data">
+                {{ data.Batch_Name }}
+              </option>
+            </select>
+          </c-col>
+
+          <c-col [sm]="2" style="margin-top: 20px">
+            <button
+              cButton
+              type="submit"
+              class="btn btn-info"
+              (click)="ShowStudent()"
+            >
+              &nbsp;&nbsp;&nbsp;&nbsp; Show &nbsp;&nbsp;&nbsp;&nbsp;
+            </button>
+          </c-col>
+        </c-row>
+      </form>
+      <form cForm [formGroup]="studentDetailsForm">
+        <c-row>
+          <c-col [sm]="3">
+            <label for="firstname" class="required">First Name</label>
+            <input
+              id="firstname"
+              type="text"
+              formControlName="firstname"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || sdf['firstname'].touched) &&
+                  sdf['firstname'].errors,
+                'is-valid': sdf['firstname'].touched && !sdf['firstname'].errors
+              }"
+              class="form-control capitalize"
+              placeholder="Enter your Firstname"
+            />
+            <div
+              *ngIf="submitted && sdf['firstname'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="sdf.firstname.errors.required">
+                First Name is required
+              </div>
+            </div>
+          </c-col>
+
+          <c-col [sm]="3">
+            <label for="lastname">Last Name/ Surname</label>
+            <input
+              type="text"
+              formControlName="lastname"
+              class="form-control capitalize"
+              id="lastname"
+              placeholder="Enter your Lastname"
+            />
+            <!-- <div *ngIf="submitted && f1.lastName.errors" class="invalid-feedback">
+                              <div *ngIf="f1.lastName.errors.required">Last Name is required</div>
+                          </div> -->
+          </c-col>
+
+          <c-col [sm]="3">
+            <label for="fathername" class="required">Father's Name</label>
+            <input
+              type="text"
+              formControlName="fathername"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || sdf['fathername'].touched) &&
+                  sdf['fathername'].errors,
+                'is-valid':
+                  sdf['fathername'].touched && !sdf['fathername'].errors
+              }"
+              class="form-control capitalize"
+              id="fathername"
+              placeholder="Enter your Father's First Name"
+            />
+            <div
+              *ngIf="submitted && sdf['fathername'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="sdf.fathername.errors.required">
+                Father First Name is required
+              </div>
+            </div>
+          </c-col>
+
+          <c-col [sm]="3">
+            <label for="mothername" class="required">Mother's Name</label>
+            <input
+              id="mothername"
+              type="text"
+              formControlName="mothername"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || sdf['mothername'].touched) &&
+                  sdf['mothername'].errors,
+                'is-valid':
+                  sdf['mothername'].touched && !sdf['mothername'].errors
+              }"
+              class="form-control capitalize"
+              placeholder="Enter your Mother's First Name"
+            />
+            <div
+              *ngIf="submitted && sdf['mothername'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="sdf.mothername.errors.required">
+                Mother First Name is required
+              </div>
+            </div>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [sm]="3">
+            <label for="gender">Gender</label>
+            <select
+              cSelect
+              id="gender"
+              [(ngModel)]="selctgen"
+              formControlName="gender"
+              class="form-control"
+            >
+              <option value="" disabled selected>--- Please Select ---</option>
+              <option *ngFor="let gender of gender" [value]="gender">
+                {{ gender }}
+              </option>
+            </select>
+          </c-col>
+          <!--          <c-col [sm]="3">-->
+          <!--            <label for="gender" class="required">Gender</label>-->
+          <!--            <select-->
+          <!--              cSelect-->
+          <!--              id="gender"-->
+          <!--              formControlName="gender"-->
+          <!--              class="form-control"-->
+          <!--            >-->
+          <!--              <option value="" disabled selected>-&#45;&#45; Please Select -&#45;&#45;</option>-->
+          <!--              <option *ngFor="let genders of gender" [value]="gender">-->
+          <!--                {{ genders }}-->
+          <!--              </option>-->
+          <!--            </select>-->
+          <!--            <div-->
+          <!--              *ngIf="submitted && sdf['gender'].errors"-->
+          <!--              class="invalid-feedback"-->
+          <!--            >-->
+          <!--              <div *ngIf="sdf.gender.errors.required">Gender is required</div>-->
+          <!--            </div>-->
+          <!--          </c-col>-->
+          <c-col [sm]="3">
+            <label for="dob" class="required">Date of Birth</label>
+            <input
+              id="dob"
+              type="date"
+              class="form-control capitalize"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || sdf['dob'].touched) && sdf['dob'].errors,
+                'is-valid': sdf['dob'].touched && !sdf['dob'].errors
+              }"
+              formControlName="dob"
+              placeholder="Enter your Date of Birth"
+            />
+            <!-- <ng-month-picker formControlName="dob"></ng-month-picker> -->
+            <div
+              *ngIf="submitted && sdf['dob'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="sdf.dob.errors.required">
+                Date of Birth is required
+              </div>
+            </div>
+          </c-col>
+          <c-col [sm]="3">
+            <label for="placeofbirth">Place of Birth</label>
+            <input
+              id="placeofbirth"
+              type="text"
+              class="form-control capitalize"
+              formControlName="placeofbirth"
+              placeholder="Place of Birth"
+            />
+          </c-col>
+          <c-col [sm]="3">
+            <label for="religion">Religion</label>
+            <select
+              cSelect
+              id="religion"
+              formControlName="religion"
+              class="form-control"
+            >
+              <option value="" disabled selected>--- Please Select ---</option>
+              <option *ngFor="let religion of religion" [value]="religion">
+                {{ religion }}
+              </option>
+            </select>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [sm]="3">
+            <label for="mothertongue">Mother Tongue</label>
+            <select
+              cSelect
+              id="mothertongue"
+              formControlName="mothertongue"
+              class="form-control"
+            >
+              <option value="" disabled selected>--- Please Select ---</option>
+              <option
+                *ngFor="let mother_tongue of mother_tongue"
+                [value]="mother_tongue"
+              >
+                {{ mother_tongue }}
+              </option>
+            </select>
+          </c-col>
+          <c-col [sm]="3">
+            <label for="marital_status">Marital Status</label>
+            <select
+              cSelect
+              id="marital_status"
+              formControlName="marital_status"
+              class="form-control"
+            >
+              <option value="" disabled selected>--- Please Select ---</option>
+              <option
+                *ngFor="let martial_status of martial_status"
+                [value]="martial_status"
+              >
+                {{ martial_status }}
+              </option>
+            </select>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [sm]="6">
+            <label for="applicant_name_on_marksheet" class="required"
+              >Name on Statement of Marks / Leaving Certificate</label
+            >
+            <input
+              id="applicant_name_on_marksheet"
+              type="text"
+              formControlName="applicant_name_on_marksheet"
+              [ngClass]="{
+                'is-invalid':
+                  (submitted || sdf['applicant_name_on_marksheet'].touched) &&
+                  sdf['applicant_name_on_marksheet'].errors,
+                'is-valid':
+                  sdf['applicant_name_on_marksheet'].touched &&
+                  !sdf['applicant_name_on_marksheet'].errors
+              }"
+              class="form-control capitalize"
+              placeholder="Name on Statement of Marks / Leaving Certificate"
+            />
+            <div
+              *ngIf="submitted && sdf['applicant_name_on_marksheet'].errors"
+              class="invalid-feedback"
+            >
+              <div *ngIf="sdf.applicant_name_on_marksheet.errors.required">
+                Full Name required as on Marksheet/LC
+              </div>
+            </div>
+          </c-col>
+          <c-col [sm]="3">
+            <label for="name_change_after_passing"
+              >Name changes after Passing Exam</label
+            >
+            <select
+              cSelect
+              id="name_change_after_passing"
+              formControlName="name_change_after_passing"
+              class="form-control"
+            >
+              <option value="" selected disabled>--- Please Select ---</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </c-col>
+        </c-row>
+        <br />
+        <c-row style="justify-content: center">
+          <!-- [disabled]="
+          studentDetailsForm.invalid" || this.get_personaldetail.firstname.length -->
+          <c-col [sm]="3">
+            <button
+              cButton
+              type="submit"
+              size="md"
+              (click)="onSavedetails()"
+              class="btn btn-success"
+            >
+              Save
+            </button>
+          </c-col>
+        </c-row>
+
+        <br />
+      </form>
+
+      <!-- *ngIf="hidepersonaltab" -->
+      <div class="col-md-12">
+        <c-nav variant="tabs">
+          <a
+            [active]="true"
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="0"
+            cNavLink
+            >PersonalDetails&nbsp;
+            <c-badge
+              *ngIf="!this.get_personaldetail?.pagesubmited"
+              color="primary"
+              >Pending
+            </c-badge>
+            <c-badge
+              *ngIf="this.get_personaldetail?.pagesubmited"
+              color="success"
+            >
+              Completed
+            </c-badge>
+          </a>
+
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink
+            >Reservation Details&nbsp;
+            <c-badge
+              *ngIf="!this.get_personaldetail?.reservationsubmited"
+              color="primary"
+              >Pending
+            </c-badge>
+            <c-badge
+              *ngIf="this.get_personaldetail?.reservationsubmited"
+              color="success"
+              >Completed
+            </c-badge>
+          </a>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink
+            >Education Details&nbsp;
+            <c-badge
+              *ngIf="!this.get_personaldetail?.educationsubmited"
+              color="primary"
+              >Pending
+            </c-badge>
+            <c-badge
+              *ngIf="this.get_personaldetail?.educationsubmited"
+              color="success"
+              >Completed
+            </c-badge>
+          </a>
+
+          <!--          <a-->
+          <!--            [cTabContent]="tabContent"-->
+          <!--            [tabPaneIdx]="3"-->
+          <!--            [disabled]="tabfourdisable"-->
+          <!--            cNavLink-->
+          <!--          >Document Uploads&nbsp;-->
+          <!--            <c-badge *ngIf="!this.get_personaldetail?.documentsubmited"-->
+          <!--                     color="primary">Pending-->
+          <!--            </c-badge>-->
+          <!--            <c-badge *ngIf="this.get_personaldetail?.documentsubmited"-->
+          <!--                     color="success">Completed-->
+          <!--            </c-badge>-->
+          <!--          </a>-->
+
+          <a
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="3"
+            [disabled]="tabfivedisable"
+            cNavLink
+            >Final Submit&nbsp;
+            <!--                    <c-badge color="primary">Pending</c-badge>-->
+            <!--                    <c-badge color="success">Completed</c-badge>-->
+          </a>
+        </c-nav>
+
+        <c-tab-content
+          (activeTabPaneIdxChange)="onTabChange($event)"
+          #tabContent="cTabContent"
+          [activeTabPaneIdx]="activePane"
+        >
+          <c-tab-pane class="p-3">
+            <div class="row">
+              <div class="col-md-12">
+                <c-accordion>
+                  <c-accordion-item
+                    #item0="cAccordionItem"
+                    [visible]="openoneacc"
+                  >
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button
+                        (click)="item0.toggleItem()"
+                        [collapsed]="!item0.visible"
+                        cAccordionButton
+                      >
+                        Upload Personal Photo & Signature:
+                        <c-badge
+                          *ngIf="!this.get_personaldetail?.photosubmited"
+                          color="danger"
+                        >
+                          Pending
+                        </c-badge>
+                        <c-badge
+                          *ngIf="this.get_personaldetail?.photosubmited"
+                          color="success"
+                        >
+                          Completed
+                        </c-badge>
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <div class="accordion-body">
+                        <form
+                          [formGroup]="Profilepictform"
+                          (keydown.enter)="$event.preventDefault()"
+                        >
+                          <c-callout color="primary">
+                            <c-row>
+                              <c-col [md]="3">
+                                <h3><label>Upload Personal Photo:</label></h3>
+                                <input
+                                  type="file"
+                                  (change)="showPreview($event)"
+                                  formControlName="upload"
+                                  class="fileInputProfile"
+                                />
+                                <span
+                                  *ngIf="
+                                    picture_fld?.invalid && picture_fld?.touched
+                                  "
+                                  class="text-danger"
+                                  >image is required</span
+                                >
+                              </c-col>
+                            </c-row>
+
+                            <br />
+
+                            <c-row>
+                              <c-col [sm]="6">
+                                <c-card class="mb-6 w-75 h-100">
+                                  <c-card-body>
+                                    <h5 cCardTitle>
+                                      Crop image for perfect face.
+                                    </h5>
+                                    <p cCardText>
+                                      <image-cropper
+                                        [imageChangedEvent]="imageChangedEvent"
+                                        [maintainAspectRatio]="false"
+                                        [containWithinAspectRatio]="
+                                          containWithinAspectRatio
+                                        "
+                                        [aspectRatio]="4 / 3"
+                                        [resizeToWidth]="256"
+                                        [cropperMinHeight]="150"
+                                        [cropperMinWidth]="130"
+                                        [onlyScaleDown]="true"
+                                        [roundCropper]="false"
+                                        [canvasRotation]="canvasRotation"
+                                        [transform]="transform"
+                                        [alignImage]="'left'"
+                                        format="png"
+                                        (imageCropped)="imageCropped($event)"
+                                        (imageLoaded)="imageLoaded($event)"
+                                        (cropperReady)="cropperReady()"
+                                        (loadImageFailed)="loadImageFailed()"
+                                      ></image-cropper>
+                                    </p>
+                                  </c-card-body>
+                                </c-card>
+                              </c-col>
+                              <c-col [sm]="6">
+                                <c-card class="mb-6 w-75 h-100">
+                                  <c-card-body>
+                                    <h5 cCardTitle>Preview Image</h5>
+                                    <p cCardText>
+                                      <img
+                                        [src]="
+                                          croppedImage || ProfilephotoImage
+                                        "
+                                        [style.border]="
+                                          croppedImage
+                                            ? '1px solid black'
+                                            : 'none'
+                                        "
+                                        with="300"
+                                        height="300"
+                                        class="center"
+                                      />
+                                    </p>
+                                  </c-card-body>
+                                </c-card>
+                              </c-col>
+                            </c-row>
+                          </c-callout>
+
+                          <c-callout color="success">
+                            <c-row>
+                              <c-col [md]="3">
+                                <h3><label>Upload signature:</label></h3>
+                                <input
+                                  type="file"
+                                  (change)="showPreview_sign($event)"
+                                  formControlName="upload_signature"
+                                  class="fileInputProfile"
+                                />
+                              </c-col>
+                            </c-row>
+
+                            <br />
+
+                            <c-row>
+                              <c-col [sm]="6">
+                                <c-card class="mb-6 w-75 h-100">
+                                  <c-card-body>
+                                    <h5 cCardTitle>
+                                      Crop image for signature.
+                                    </h5>
+                                    <p cCardText>
+                                      <image-cropper
+                                        [imageChangedEvent]="
+                                          imageChanged_signEvent
+                                        "
+                                        [maintainAspectRatio]="false"
+                                        [containWithinAspectRatio]="
+                                          containWithinAspectRatio
+                                        "
+                                        [aspectRatio]="4 / 3"
+                                        [resizeToWidth]="256"
+                                        [cropperMinHeight]="150"
+                                        [cropperMinWidth]="130"
+                                        [onlyScaleDown]="true"
+                                        [roundCropper]="false"
+                                        [canvasRotation]="signcanvasRotation"
+                                        [transform]="signtransform"
+                                        [alignImage]="'left'"
+                                        format="png"
+                                        (imageCropped)="
+                                          image_signCropped($event)
+                                        "
+                                        (imageLoaded)="imagesignLoaded($event)"
+                                        (cropperReady)="cropperSignReady()"
+                                        (loadImageFailed)="
+                                          loadSignImageFailed()
+                                        "
+                                      ></image-cropper>
+                                    </p>
+                                  </c-card-body>
+                                </c-card>
+                              </c-col>
+                              <c-col [sm]="6">
+                                <c-card class="mb-6 w-75 h-100">
+                                  <c-card-body>
+                                    <h5 cCardTitle>Preview Image</h5>
+
+                                    <p cCardText>
+                                      <img
+                                        [src]="
+                                          croppedsignImage || SignatureImage
+                                        "
+                                        [style.border]="
+                                          croppedsignImage
+                                            ? '1px solid black'
+                                            : 'none'
+                                        "
+                                        with="300"
+                                        height="300"
+                                        class="center"
+                                      />
+                                    </p>
+                                  </c-card-body>
+                                </c-card>
+                              </c-col>
+                            </c-row>
+                          </c-callout>
+                        </form>
+
+                        <c-row
+                          class="d-grid gap-2 d-md-flex justify-content-md-center"
+                        >
+                          <c-col [sm]="3">
+                            <button
+                              (click)="UploadImage()"
+                              [disabled]="Profilepictform.invalid"
+                              class="btn btn-success"
+                            >
+                              Submit
+                            </button>
+                          </c-col>
+                        </c-row>
+                      </div>
+                    </ng-template>
+                  </c-accordion-item>
+
+                  <c-accordion-item
+                    #item1="cAccordionItem"
+                    [visible]="opentwoacc"
+                  >
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button
+                        (click)="item1.toggleItem()"
+                        [collapsed]="!item1.visible"
+                        cAccordionButton
+                      >
+                        Parent Details
+                        <c-badge
+                          *ngIf="!this.get_personaldetail?.parentsubmited"
+                          color="danger"
+                        >
+                          Pending
+                        </c-badge>
+                        <c-badge
+                          *ngIf="this.get_personaldetail?.parentsubmited"
+                          color="success"
+                        >
+                          Completed
+                        </c-badge>
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <form cForm [formGroup]="parentDetailsForm">
+                        <div class="accordion-body">
+                          <div>
+                            <h5>Parents Details</h5>
+                            <hr />
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="parentsemailid"
+                                >Parents/Guardians Email ID</label
+                              >
+                              <input
+                                id="parentsemailid"
+                                type="text"
+                                formControlName="parentsemailid"
+                                class="form-control"
+                                placeholder="Parents/Guardians Email ID"
+                              />
+                            </div>
+                            <div class="form-group col-sm-4">
+                              <label for="parentsmobile" class="required"
+                                >Parents/Guardians Mobile Number</label
+                              >
+                              <input
+                                id="parentsmobile"
+                                type="number"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      pdf['parentsmobile'].touched) &&
+                                    pdf['parentsmobile'].errors,
+                                  'is-valid':
+                                    pdf['parentsmobile'].touched &&
+                                    !pdf['parentsmobile'].errors
+                                }"
+                                formControlName="parentsmobile"
+                                class="form-control"
+                                placeholder="Parents/Guardians Mobile Number"
+                              />
+                              <div
+                                *ngIf="submitted && pdf['parentsmobile'].errors"
+                                class="invalid-feedback"
+                              >
+                                <div *ngIf="pdf.parentsmobile.errors.required">
+                                  Guardian Mobile Number is required
+                                </div>
+                                <div *ngIf="pdf.parentsmobile.errors.minlength">
+                                  Mobile Number must have 10 characters
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-sm-4">
+                              <label for="relationtype" class="required"
+                                >Relation Type</label
+                              >
+                              <select
+                                id="relationtype"
+                                formControlName="relationtype"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      pdf['relationtype'].touched) &&
+                                    pdf['relationtype'].errors,
+                                  'is-valid':
+                                    pdf['relationtype'].touched &&
+                                    !pdf['relationtype'].errors
+                                }"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let relation of relation"
+                                  [value]="relation"
+                                >
+                                  {{ relation }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="submitted && pdf['relationtype'].errors"
+                                class="invalid-feedback"
+                              >
+                                <div *ngIf="pdf.relationtype.errors.required">
+                                  Relation Type is required
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label class="required" for="occupation_guardian"
+                                >Occupation</label
+                              >
+                              <select
+                                id="occupation_guardian"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      pdf['occupation_guardian'].touched) &&
+                                    pdf['occupation_guardian'].errors,
+                                  'is-valid':
+                                    pdf['occupation_guardian'].touched &&
+                                    !pdf['occupation_guardian'].errors
+                                }"
+                                formControlName="occupation_guardian"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let occupation of occupation"
+                                  [value]="occupation"
+                                >
+                                  {{ occupation }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="
+                                  submitted && pdf['occupation_guardian'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    pdf.occupation_guardian.errors.required
+                                  "
+                                >
+                                  Occupation is required
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="form-group col-md-5">
+                              <label for="annual_income"
+                                >Annual Income of Guardian</label
+                              >
+
+                              <select
+                                id="annual_income"
+                                formControlName="annual_income"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let annual_income of annual_income"
+                                  [value]="annual_income"
+                                >
+                                  {{ annual_income }}
+                                </option>
+                              </select>
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label for="ebc"
+                                >Economic Backward Class(EBC)</label
+                              >
+                              <select
+                                id="ebc"
+                                formControlName="ebc"
+                                class="form-control"
+                              >
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <c-row style="justify-content: center">
+                            <c-col [md]="3" style="padding-top: 22px">
+                              <button
+                                type="submit"
+                                [disabled]="
+                                  parentDetailsForm.invalid ||
+                                  this.oSession.isprofilesubmited == 'true'
+                                "
+                                class="btn btn-success"
+                                (click)="IU_Parents()"
+                              >
+                                Save
+                              </button>
+                            </c-col>
+                          </c-row>
+                        </div>
+                      </form>
+                    </ng-template>
+                  </c-accordion-item>
+
+                  <c-accordion-item #item2="cAccordionItem" [visible]="false">
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button
+                        (click)="item2.toggleItem()"
+                        [collapsed]="!item2.visible"
+                        cAccordionButton
+                      >
+                        Address Details
+                        <c-badge
+                          *ngIf="!this.get_personaldetail?.addresssubmited"
+                          color="danger"
+                        >
+                          Pending
+                        </c-badge>
+                        <c-badge
+                          *ngIf="this.get_personaldetail?.addresssubmited"
+                          color="success"
+                        >
+                          Completed
+                        </c-badge>
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <form cForm [formGroup]="addressDetailsForm">
+                        <div class="accordion-body">
+                          <div class="row">
+                            <div class="form group col-md-6">
+                              <label for="correpondence_flatno" class="required"
+                                >Flat No / Building Name / House No / Block
+                                No</label
+                              >
+                              <input
+                                id="correpondence_flatno"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_flatno'].touched) &&
+                                    adf['correpondence_flatno'].errors,
+                                  'is-valid':
+                                    adf['correpondence_flatno'].touched &&
+                                    !adf['correpondence_flatno'].errors
+                                }"
+                                formControlName="correpondence_flatno"
+                                class="form-control capitalize"
+                                placeholder="Flat No / Building Name / House No / Block No"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_flatno'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_flatno.errors.required
+                                  "
+                                >
+                                  Flat Number is required
+                                </div>
+                                <!-- <div *ngIf="f4.corFlatNo.errors.pattern">Only Alphabets, Numbers and Spaces allowed</div>
+                                                                    <div *ngIf="f4.corFlatNo.errors.maxlength">Maximum Length 60 in allowed</div> -->
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label
+                                for="correpondence_colonyname"
+                                class="required"
+                                >Street Name / Area Name / Colony Name / Ward
+                                Name</label
+                              >
+                              <input
+                                id="correpondence_colonyname"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_colonyname']
+                                        .touched) &&
+                                    adf['correpondence_colonyname'].errors,
+                                  'is-valid':
+                                    adf['correpondence_colonyname'].touched &&
+                                    !adf['correpondence_colonyname'].errors
+                                }"
+                                formControlName="correpondence_colonyname"
+                                class="form-control capitalize"
+                                placeholder="Street Name / Area Name / Colony Name / Ward Name"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_colonyname'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_colonyname.errors.required
+                                  "
+                                >
+                                  Area Name is required
+                                </div>
+                                <!-- <div *ngIf="f4.corArea.errors.pattern">Only Alphabets, Numbers and Spaces
+                                                                        allowed</div> -->
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_colonyname.errors
+                                      .maxlength
+                                  "
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="correpondence_villagename"
+                                >Additional Address</label
+                              >
+                              <input
+                                id="correpondence_villagename"
+                                type="text"
+                                formControlName="correpondence_villagename"
+                                class="form-control capitalize"
+                                placeholder="Additional Address"
+                              />
+                              <!-- <div *ngIf="f4.corVillageName.errors.pattern">Only Alphabets, Numbers and
+                                                                      Spaces allowed</div> -->
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="correpondence_landmark"
+                                >LandMark</label
+                              >
+                              <input
+                                id="correpondence_landmark"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_landmark'].touched) &&
+                                    adf['correpondence_landmark'].errors,
+                                  'is-valid':
+                                    adf['correpondence_landmark'].touched &&
+                                    !adf['correpondence_landmark'].errors
+                                }"
+                                formControlName="correpondence_landmark"
+                                class="form-control capitalize"
+                                placeholder="LandMark"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_landmark'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <!-- <div *ngIf="f4.corLandmark.errors.pattern">Only Alphabets, Numbers and
+                                                                        Spaces</div> -->
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_landmark.errors.maxlength
+                                  "
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label
+                                for="correpondence_location_area"
+                                class="required"
+                                >Location Area</label
+                              >
+                              <select
+                                id="correpondence_location_area"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_location_area']
+                                        .touched) &&
+                                    adf['correpondence_location_area'].errors,
+                                  'is-valid':
+                                    adf['correpondence_location_area']
+                                      .touched &&
+                                    !adf['correpondence_location_area'].errors
+                                }"
+                                formControlName="correpondence_location_area"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let location_area of location_area"
+                                  [value]="location_area"
+                                >
+                                  {{ location_area }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_location_area'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_location_area.errors
+                                      .required
+                                  "
+                                >
+                                  Location Area is required
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label
+                                for="correpondence_country"
+                                class="required"
+                                >Country</label
+                              >
+                              <select
+                                id="correpondence_country"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_country'].touched) &&
+                                    adf['correpondence_country'].errors,
+                                  'is-valid':
+                                    adf['correpondence_country'].touched &&
+                                    !adf['correpondence_country'].errors
+                                }"
+                                formControlName="correpondence_country"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let country of country"
+                                  [value]="country"
+                                >
+                                  {{ country }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_country'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_country.errors.required
+                                  "
+                                >
+                                  Country is required
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="correpondence_state" class="required"
+                                >State</label
+                              >
+                              <select
+                                id="correpondence_state"
+                                formControlName="correpondence_state"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_state'].touched) &&
+                                    adf['correpondence_state'].errors,
+                                  'is-valid':
+                                    adf['correpondence_state'].touched &&
+                                    !adf['correpondence_state'].errors
+                                }"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let state of state"
+                                  [value]="state"
+                                >
+                                  {{ state }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="
+                                  submitted && adf['correpondence_state'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_state.errors.required
+                                  "
+                                >
+                                  State is required
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label
+                                class="required"
+                                for="correpondence_district"
+                                >District</label
+                              >
+                              <input
+                                id="correpondence_district"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_district'].touched) &&
+                                    adf['correpondence_district'].errors,
+                                  'is-valid':
+                                    adf['correpondence_district'].touched &&
+                                    !adf['correpondence_district'].errors
+                                }"
+                                formControlName="correpondence_district"
+                                class="form-control capitalize"
+                                placeholder="District"
+                              />
+                              <!--                                <select-->
+                              <!--                                  id="correpondence_district"-->
+
+                              <!--                                  [ngClass]="{-->
+                              <!--                                    'is-invalid':-->
+                              <!--                                      (submitted ||-->
+                              <!--                                        adf['correpondence_district'].touched) &&-->
+                              <!--                                      adf['correpondence_district'].errors,-->
+                              <!--                                    'is-valid':-->
+                              <!--                                      adf['correpondence_district'].touched &&-->
+                              <!--                                      !adf['correpondence_district'].errors-->
+                              <!--                                  }"-->
+                              <!--                                  formControlName="correpondence_district"-->
+                              <!--                                  class="form-control"-->
+                              <!--                                >-->
+                              <!--                                  <option value="" disabled selected>-->
+                              <!--                                    -&#45;&#45; Please Select -&#45;&#45;-->
+                              <!--                                  </option>-->
+                              <!--                                  <option-->
+                              <!--                                    *ngFor="let district of district"-->
+                              <!--                                    [value]="district"-->
+                              <!--                                  >-->
+                              <!--                                    {{ district }}-->
+                              <!--                                  </option>-->
+                              <!--                                </select>-->
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_district'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf['correpondence_district'].errors
+                                      .required
+                                  "
+                                >
+                                  District is required
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="correpondence_city" class="required"
+                                >City</label
+                              >
+                              <input
+                                id="correpondence_city"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_city'].touched) &&
+                                    adf['correpondence_city'].errors,
+                                  'is-valid':
+                                    adf['correpondence_city'].touched &&
+                                    !adf['correpondence_city'].errors
+                                }"
+                                formControlName="correpondence_city"
+                                class="form-control capitalize"
+                                placeholder="City"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted && adf['correpondence_city'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="adf.correpondence_city.errors.required"
+                                >
+                                  City is required
+                                </div>
+                                <!-- <div *ngIf="f4.corCity.errors.pattern">Only Alphabets, Numbers and Spaces
+                                                                        allowed</div> -->
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_city.errors.maxlength
+                                  "
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label
+                                for="correpondence_pincode"
+                                class="required"
+                                >Pincode</label
+                              >
+                              <input
+                                id="correpondence_pincode"
+                                type="number"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf['correpondence_pincode'].touched) &&
+                                    adf['correpondence_pincode'].errors,
+                                  'is-valid':
+                                    adf['correpondence_pincode'].touched &&
+                                    !adf['correpondence_pincode'].errors
+                                }"
+                                formControlName="correpondence_pincode"
+                                class="form-control capitalize"
+                                placeholder="Pincode"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf['correpondence_pincode'].errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_pincode.errors.required
+                                  "
+                                >
+                                  Pincode is required
+                                </div>
+                                <div
+                                  *ngIf="
+                                    adf.correpondence_pincode.errors.minlength
+                                  "
+                                >
+                                  Pincode can contain only 6 characters
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- <input type="checkbox" [checked]="false" (change)="updateAddress($event)"> -->
+                          <div class="row">
+                            <div class="col-md-3">
+                              <label for="same_as_permenant"
+                                >Same as Permanent Address?</label
+                              >
+                              <select
+                                id="same_as_permenant"
+                                formControlName="same_as_permenant"
+                                class="form-control"
+                                (change)="updateAddress($event.target.value)"
+                              >
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <h4>Permanent Address</h4>
+                          <div class="row">
+                            <div class="form group col-md-6">
+                              <label for="permanent_flatno" class="required"
+                                >Flat No / Building Name / House No / Block
+                                No</label
+                              >
+                              <input
+                                id="permanent_flatno"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_flatno.touched) &&
+                                    adf.permanent_flatno.errors,
+                                  'is-valid':
+                                    adf.permanent_flatno.touched &&
+                                    !adf.permanent_flatno.errors
+                                }"
+                                formControlName="permanent_flatno"
+                                class="form-control capitalize"
+                                placeholder="Flat No / Building Name / House No / Block No"
+                              />
+                              <div
+                                *ngIf="submitted && adf.permanent_flatno.errors"
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="adf.permanent_flatno.errors.required"
+                                >
+                                  Flat Number is required
+                                </div>
+                                <!-- <div *ngIf="f4.perFlatNo.errors.pattern">Only Alphabets, Numbers and Spaces allowed</div> -->
+                                <div
+                                  *ngIf="adf.permanent_flatno.errors.maxlength"
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label for="permanent_colonyname" class="required"
+                                >Street Name / Area Name / Colony Name / Ward
+                                Name</label
+                              >
+                              <input
+                                id="permanent_colonyname"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_colonyname.touched) &&
+                                    adf.permanent_colonyname.errors,
+                                  'is-valid':
+                                    adf.permanent_colonyname.touched &&
+                                    !adf.permanent_colonyname.errors
+                                }"
+                                formControlName="permanent_colonyname"
+                                class="form-control capitalize"
+                                placeholder="Street Name / Area Name / Colony Name / Ward Name"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted && adf.permanent_colonyname.errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.permanent_colonyname.errors.required
+                                  "
+                                >
+                                  Area Name is required
+                                </div>
+                                <!-- <div *ngIf="f4.perArea.errors.pattern">Only Alphabets, Numbers and
+                                                                        Spaces allowed</div> -->
+                                <div
+                                  *ngIf="
+                                    adf.permanent_colonyname.errors.maxlength
+                                  "
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="permanent_villagename"
+                                >Additional Address</label
+                              >
+                              <input
+                                id="permanent_villagename"
+                                type="text"
+                                formControlName="permanent_villagename"
+                                class="form-control capitalize"
+                                placeholder="Additional Address"
+                              />
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="permanent_landmark">LandMark</label>
+                              <input
+                                id="permanent_landmark"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_landmark.touched) &&
+                                    adf.permanent_landmark.errors,
+                                  'is-valid':
+                                    adf.permanent_landmark.touched &&
+                                    !adf.permanent_landmark.errors
+                                }"
+                                formControlName="permanent_landmark"
+                                class="form-control capitalize"
+                                placeholder="LandMark"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted && adf.permanent_landmark.errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <!-- <div *ngIf="f4.perLandmark.errors.pattern">Only Alphabets, Numbers and
+                                                                        Spaces</div> -->
+                                <div
+                                  *ngIf="
+                                    adf.permanent_landmark.errors.maxlength
+                                  "
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label
+                                for="permanent_location_area"
+                                class="required"
+                                >Location Area</label
+                              >
+                              <select
+                                id="permanent_location_area"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_location_area.touched) &&
+                                    adf.permanent_location_area.errors,
+                                  'is-valid':
+                                    adf.permanent_location_area.touched &&
+                                    !adf.permanent_location_area.errors
+                                }"
+                                formControlName="permanent_location_area"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let location_area of location_area"
+                                  [value]="location_area"
+                                >
+                                  {{ location_area }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="
+                                  submitted &&
+                                  adf.permanent_location_area.errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="
+                                    adf.permanent_location_area.errors.required
+                                  "
+                                >
+                                  Location Area is required
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="form-group col-md-4">
+                              <label for="permanent_country" class="required"
+                                >Country</label
+                              >
+                              <select
+                                id="permanent_country"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_country.touched) &&
+                                    adf.permanent_country.errors,
+                                  'is-valid':
+                                    adf.permanent_country.touched &&
+                                    !adf.permanent_country.errors
+                                }"
+                                formControlName="permanent_country"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let country of country"
+                                  [value]="country"
+                                >
+                                  {{ country }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="
+                                  submitted && adf.permanent_country.errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="adf.permanent_country.errors.required"
+                                >
+                                  Country is required
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="permanent_state" class="required"
+                                >State</label
+                              >
+                              <select
+                                id="permanent_state"
+                                formControlName="permanent_state"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_state.touched) &&
+                                    adf.permanent_state.errors,
+                                  'is-valid':
+                                    adf.permanent_state.touched &&
+                                    !adf.permanent_state.errors
+                                }"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let state of state"
+                                  [value]="state"
+                                >
+                                  {{ state }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="submitted && adf.permanent_state.errors"
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="adf.permanent_state.errors.required"
+                                >
+                                  State is required
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="permanent_district" class="required"
+                                >District</label
+                              ><input
+                                id="permanent_district"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_district.touched) &&
+                                    adf.permanent_district.errors,
+                                  'is-valid':
+                                    adf.permanent_district.touched &&
+                                    !adf.permanent_district.errors
+                                }"
+                                formControlName="permanent_district"
+                                class="form-control capitalize"
+                                placeholder="District"
+                              />
+                              <!--                                <select-->
+                              <!--                                  id="permanent_district"-->
+
+                              <!--                                  [ngClass]="{-->
+                              <!--                                    'is-invalid':-->
+                              <!--                                      (submitted ||-->
+                              <!--                                        adf.permanent_district.touched) &&-->
+                              <!--                                      adf.permanent_district.errors,-->
+                              <!--                                    'is-valid':-->
+                              <!--                                      adf.permanent_district.touched &&-->
+                              <!--                                      !adf.permanent_district.errors-->
+                              <!--                                  }"-->
+                              <!--                                  formControlName="permanent_district"-->
+                              <!--                                  class="form-control"-->
+                              <!--                                >-->
+                              <!--                                  <option value="" disabled selected>-->
+                              <!--                                    -&#45;&#45; Please Select -&#45;&#45;-->
+                              <!--                                  </option>-->
+                              <!--                                  <option-->
+                              <!--                                    *ngFor="let district of district"-->
+                              <!--                                    [value]="district"-->
+                              <!--                                  >-->
+                              <!--                                    {{ district }}-->
+                              <!--                                  </option>-->
+                              <!--                                </select>-->
+                              <div
+                                *ngIf="
+                                  submitted && adf.permanent_district.errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="adf.permanent_district.errors.required"
+                                >
+                                  District is required
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <!--                              <div class="form-group col-md-4">-->
+                            <!--                                <label for="permanent_taluka" class="required"-->
+                            <!--                                >Tehsil / Taluka-->
+                            <!--                                </label>-->
+                            <!--                                <input-->
+                            <!--                                  id="permanent_taluka"-->
+
+                            <!--                                  type="text"-->
+                            <!--                                  [ngClass]="{-->
+                            <!--                                    'is-invalid':-->
+                            <!--                                      (submitted ||-->
+                            <!--                                        adf.permanent_taluka.touched) &&-->
+                            <!--                                      adf.permanent_taluka.errors,-->
+                            <!--                                    'is-valid':-->
+                            <!--                                      adf.permanent_taluka.touched &&-->
+                            <!--                                      !adf.permanent_taluka.errors-->
+                            <!--                                  }"-->
+                            <!--                                  formControlName="permanent_taluka"-->
+                            <!--                                  class="form-control capitalize"-->
+                            <!--                                  placeholder="Tehsil / Taluka"-->
+                            <!--                                />-->
+                            <!--                                <div-->
+                            <!--                                  *ngIf="-->
+                            <!--                                    submitted && adf.permanent_taluka.errors-->
+                            <!--                                  "-->
+                            <!--                                  class="invalid-feedback"-->
+                            <!--                                >-->
+                            <!--                                  <div-->
+                            <!--                                    *ngIf="adf.permanent_taluka.errors.required"-->
+                            <!--                                  >-->
+                            <!--                                    Tehsil / Taluka is required-->
+                            <!--                                  </div>-->
+                            <!--                                  &lt;!&ndash; <div *ngIf="f4.perTaluka.errors.pattern">Only Alphabets, Numbers and-->
+                            <!--                                                                          Spaces</div> &ndash;&gt;-->
+                            <!--                                  <div-->
+                            <!--                                    *ngIf="adf.permanent_taluka.errors.maxlength"-->
+                            <!--                                  >-->
+                            <!--                                    Maximum Length 60 in allowed-->
+                            <!--                                  </div>-->
+                            <!--                                </div>-->
+                            <!--                              </div>-->
+                            <div class="form-group col-md-4">
+                              <label for="permanent_city" class="required"
+                                >City</label
+                              >
+                              <input
+                                id="permanent_city"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted || adf.permanent_city.touched) &&
+                                    adf.permanent_city.errors,
+                                  'is-valid':
+                                    adf.permanent_city.touched &&
+                                    !adf.permanent_city.errors
+                                }"
+                                formControlName="permanent_city"
+                                class="form-control capitalize"
+                                placeholder="City"
+                              />
+                              <div
+                                *ngIf="submitted && adf.permanent_city.errors"
+                                class="invalid-feedback"
+                              >
+                                <div *ngIf="adf.permanent_city.errors.required">
+                                  City is required
+                                </div>
+                                <!-- <div *ngIf="f4.perCity.errors.pattern">Only Alphabets, Numbers and
+                                                                        Spaces</div> -->
+                                <div
+                                  *ngIf="adf.permanent_city.errors.maxlength"
+                                >
+                                  Maximum Length 60 in allowed
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-md-4">
+                              <label for="permanent_pincode" class="required"
+                                >Pincode</label
+                              >
+                              <input
+                                id="permanent_pincode"
+                                type="number"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      adf.permanent_pincode.touched) &&
+                                    adf.permanent_pincode.errors,
+                                  'is-valid':
+                                    adf.permanent_pincode.touched &&
+                                    !adf.permanent_pincode.errors
+                                }"
+                                formControlName="permanent_pincode"
+                                class="form-control capitalize"
+                                placeholder="Pincode"
+                              />
+                              <div
+                                *ngIf="
+                                  submitted && adf.permanent_pincode.errors
+                                "
+                                class="invalid-feedback"
+                              >
+                                <div
+                                  *ngIf="adf.permanent_pincode.errors.required"
+                                >
+                                  Pincode is required
+                                </div>
+                                <div
+                                  *ngIf="adf.permanent_pincode.errors.minlength"
+                                >
+                                  Pincode can contain only 6 characters
+                                </div>
+                              </div>
+                            </div>
+
+                            <c-row
+                              class="d-grid gap-2 d-md-flex justify-content-md-center"
+                            >
+                              <c-col [md]="3" style="padding-top: 22px">
+                                <button
+                                  [disabled]="
+                                    addressDetailsForm.invalid ||
+                                    this.oSession.isprofilesubmited == 'true'
+                                  "
+                                  type="submit"
+                                  class="btn btn-success"
+                                  (click)="IU_Address()"
+                                >
+                                  Save
+                                </button>
+                              </c-col>
+                            </c-row>
+                          </div>
+                        </div>
+                      </form>
+                    </ng-template>
+                  </c-accordion-item>
+                  <c-accordion-item #item3="cAccordionItem" [visible]="false">
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button
+                        (click)="item3.toggleItem()"
+                        [collapsed]="!item3.visible"
+                        cAccordionButton
+                      >
+                        Nationality status & Nominee Details for Insurance
+
+                        <c-badge
+                          *ngIf="!this.get_personaldetail?.nationalitysubmited"
+                          color="danger"
+                        >
+                          Pending
+                        </c-badge>
+                        <c-badge
+                          *ngIf="this.get_personaldetail?.nationalitysubmited"
+                          color="success"
+                        >
+                          Completed
+                        </c-badge>
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <form cForm [formGroup]="nationalitynomineeForm">
+                        <div class="accordion-body">
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="country" class="required"
+                                >Country of Citizenship</label
+                              >
+                              <select
+                                id="country"
+                                formControlName="country"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let country of country"
+                                  [value]="country"
+                                >
+                                  {{ country }}
+                                </option>
+                              </select>
+                            </div>
+                            <div class="form-group col-sm-6">
+                              <label for="state" class="required"
+                                >Domicile State</label
+                              >
+                              <select
+                                id="state"
+                                formControlName="state"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted || nnf['state'].touched) &&
+                                    nnf['state'].errors,
+                                  'is-valid':
+                                    nnf['state'].touched && !nnf['state'].errors
+                                }"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let state of state"
+                                  [value]="state"
+                                >
+                                  {{ state }}
+                                </option>
+                              </select>
+                              <div
+                                *ngIf="submitted && nnf['state'].errors"
+                                class="invalid-feedback"
+                              >
+                                <div *ngIf="nnf.state.errors.required">
+                                  Domicile State required
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <br />
+
+                          <div class="row">
+                            <div class="form-group col-sm-6">
+                              <label for="nomineename" class="required"
+                                >Nominee Name</label
+                              >
+                              <input
+                                id="nomineename"
+                                type="text"
+                                class="form-control capitalize"
+                                formControlName="nomineename"
+                                placeholder="Nominee Name"
+                              />
+                            </div>
+                            <div class="form-group col-sm-3">
+                              <label for="nomineedob" class="required"
+                                >Nominee Date of Birth</label
+                              >
+                              <input
+                                id="nomineedob"
+                                type="date"
+                                class="form-control capitalize"
+                                formControlName="nomineedob"
+                                placeholder="Nominee Date of Birth"
+                              />
+                            </div>
+                            <div class="form-group col-sm-3">
+                              <label for="nomineerelation" class="required"
+                                >Nominee Relation with Student</label
+                              >
+                              <select
+                                id="nomineerelation"
+                                formControlName="nomineerelation"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="
+                                    let nominee_relation of nominee_relation
+                                  "
+                                  [value]="nominee_relation"
+                                >
+                                  {{ nominee_relation }}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <c-row
+                            class="d-grid gap-2 d-md-flex justify-content-md-center"
+                          >
+                            <c-col [md]="3" style="padding-top: 22px">
+                              <button
+                                [disabled]="
+                                  nationalitynomineeForm.invalid ||
+                                  this.oSession.isprofilesubmited == 'true'
+                                "
+                                type="submit"
+                                class="btn btn-success"
+                                (click)="IU_Nationalty()"
+                              >
+                                Save
+                              </button>
+                            </c-col>
+                          </c-row>
+                        </div>
+                      </form>
+                    </ng-template>
+                  </c-accordion-item>
+                  <c-accordion-item #item4="cAccordionItem" [visible]="false">
+                    <ng-template cTemplateId="accordionHeaderTemplate">
+                      <button
+                        (click)="item4.toggleItem()"
+                        [collapsed]="!item3.visible"
+                        cAccordionButton
+                      >
+                        Other Details
+
+                        <c-badge
+                          *ngIf="!this.get_personaldetail?.othersubmited"
+                          color="danger"
+                        >
+                          Pending
+                        </c-badge>
+                        <c-badge
+                          *ngIf="this.get_personaldetail?.othersubmited"
+                          color="success"
+                        >
+                          Completed
+                        </c-badge>
+                      </button>
+                    </ng-template>
+                    <ng-template cTemplateId="accordionBodyTemplate">
+                      <form cForm [formGroup]="otherDetailsForm">
+                        <div class="accordion-body">
+                          <div class="row">
+                            <div class="form-group col-sm-3">
+                              <label for="Pan">Pancard Number</label>
+                              <input
+                                id="Pan"
+                                type="text"
+                                class="form-control capitalize"
+                                formControlName="Pan"
+                                placeholder="Pancard Number"
+                              />
+                            </div>
+                            <div class="form-group col-sm-3">
+                              <label for="voterid">Voter Id</label>
+                              <input
+                                id="voterid"
+                                type="text"
+                                class="form-control capitalize"
+                                formControlName="voterid"
+                                placeholder="Voter Id"
+                              />
+                            </div>
+                            <div class="form-group col-sm-3">
+                              <label for="educationgap" class="required"
+                                >Education Gap (in yrs)</label
+                              >
+                              <input
+                                id="educationgap"
+                                type="text"
+                                [ngClass]="{
+                                  'is-invalid':
+                                    (submitted ||
+                                      odf['educationgap'].touched) &&
+                                    odf['educationgap'].errors,
+                                  'is-valid':
+                                    odf['educationgap'].touched &&
+                                    !odf['educationgap'].errors
+                                }"
+                                class="form-control"
+                                formControlName="educationgap"
+                                placeholder="Education Gap (in yrs)"
+                              />
+                              <div
+                                *ngIf="submitted && odf['educationgap'].errors"
+                                class="invalid-feedback"
+                              >
+                                <div *ngIf="odf.educationgap.errors.required">
+                                  Area Name is required
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                              <label for="bloodgroup" class="required"
+                                >Blood Group</label
+                              >
+                              <select
+                                id="bloodgroup"
+                                formControlName="bloodgroup"
+                                class="form-control"
+                              >
+                                <option value="" disabled selected>
+                                  --- Please Select ---
+                                </option>
+                                <option
+                                  *ngFor="let bloodgroup of bloodgroup"
+                                  [value]="bloodgroup"
+                                >
+                                  {{ bloodgroup }}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="form-group col-sm-3">
+                              <label for="maxqualification_family"
+                                >Max Qualification in family</label
+                              >
+                              <input
+                                id="maxqualification_family"
+                                type="text"
+                                class="form-control capitalize"
+                                formControlName="maxqualification_family"
+                                placeholder="Maximum Qualification in family"
+                              />
+                            </div>
+                            <div class="form-group col-sm-3">
+                              <label for="organ_donation"
+                                >Willingness of Organ Donation</label
+                              >
+                              <select
+                                id="organ_donation"
+                                formControlName="organ_donation"
+                                class="form-control"
+                              >
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <c-row
+                            class="d-grid gap-2 d-md-flex justify-content-md-center"
+                          >
+                            <c-col [md]="3" style="padding-top: 22px">
+                              <button
+                                [disabled]="
+                                  otherDetailsForm.invalid ||
+                                  this.oSession.isprofilesubmited == 'true'
+                                "
+                                type="submit"
+                                class="btn btn-success"
+                                (click)="IU_Others()"
+                              >
+                                Save
+                              </button>
+                            </c-col>
+                          </c-row>
+                        </div>
+                      </form>
+                    </ng-template>
+                  </c-accordion-item>
+                  <br />
+
+                  <form
+                    *ngIf="checkbox_personal"
+                    [formGroup]="checkfinalSubmit"
+                    (keydown.enter)="$event.preventDefault()"
+                  >
+                    <h5 style="color: red">Note:&nbsp;</h5>
+                    <c-form-check>
+                      <input
+                        cFormCheckInput
+                        formControlName="checkprofile"
+                        type="checkbox"
+                      />
+                    </c-form-check>
+                    <label>
+                      <b style="color: black"
+                        >&nbsp;&nbsp;Please make sure you have uploaded the
+                        correct details.Once you have submitted you are not
+                        allowed to make any changes.
+                      </b></label
+                    >
+
+                    <br />
+                    <br />
+
+                    <c-row style="justify-content: center">
+                      <c-col [md]="4">
+                        <button
+                          type="submit"
+                          (click)="PersonalSubmit()"
+                          [disabled]="
+                            checkfinalSubmit.invalid ||
+                            this.oSession.isprofilesubmited == 'true'
+                          "
+                          cButton
+                          color="success"
+                        >
+                          Submit
+                          <!-- <c-icon name="cil-dollar"></c-icon> Proceed to Payment -->
+                        </button>
+                      </c-col>
+                    </c-row>
+                  </form>
+                </c-accordion>
+
+                <br />
+              </div>
+            </div>
+          </c-tab-pane>
+
+          <c-tab-pane class="p-3">
+            <form cForm [formGroup]="reservationdetailForm">
+              <h5>Caste Reservation Details</h5>
+
+              <c-row>
+                <c-col [md]="3">
+                  <label for="opencategory">Show Category</label>
+                  <select
+                    id="opencategory"
+                    formControlName="opencategory"
+                    (change)="Opencategory()"
+                    class="form-control"
+                  >
+                    <option value="" selected disabled>
+                      --- Please Select ---
+                    </option>
+                    <option value="OPEN">Open/General</option>
+                    <option value="RESERVED">Reserved</option>
+
+                    <!--                    <option *ngFor="let data of Categorydata" [ngValue]="data.id">-->
+                    <!--                      {{data.name}}-->
+                    <!--                    </option>-->
+                  </select>
+                </c-col>
+                <!--                                        <div class="form-group col-md-5">-->
+                <!--                                            <label for="parallel_reservation"-->
+                <!--                                            >Parallel / Horizontal Reservation</label-->
+                <!--                                            >-->
+                <!--                                            <select-->
+                <!--                                                    id="parallel_reservation"-->
+                <!--                                                    formControlName="parallel_reservation"-->
+                <!--                                                    class="form-control"-->
+                <!--                                            >-->
+                <!--                                                <option value="" disabled selected>-->
+                <!--                                                    -&#45;&#45; Please Select -&#45;&#45;-->
+                <!--                                                </option>-->
+                <!--                                                <option-->
+                <!--                                                        *ngFor="let reservation of reservation"-->
+                <!--                                                        [value]="reservation"-->
+                <!--                                                >-->
+                <!--                                                    {{ reservation }}-->
+                <!--                                                </option>-->
+                <!--                                            </select>-->
+                <!--                                        </div>-->
+              </c-row>
+              <div
+                *ngIf="
+                  this.reservationdetailForm.controls['opencategory'].value ==
+                  'RESERVED'
+                "
+              >
+                <c-row>
+                  <c-col [md]="3">
+                    <label class="required" for="category">Category</label>
+                    <select
+                      id="category"
+                      [ngClass]="{
+                        'is-invalid':
+                          (reservationSubmit || rdf['category'].touched) &&
+                          rdf['category'].errors,
+                        'is-valid':
+                          rdf['category'].touched && !rdf['category'].errors
+                      }"
+                      formControlName="category"
+                      class="form-control"
+                    >
+                      <option value="" disabled>--- Please Select ---</option>
+                      <option
+                        *ngFor="let category of category"
+                        [value]="category"
+                      >
+                        {{ category }}
+                      </option>
+                    </select>
+                    <div
+                      *ngIf="reservationSubmit && rdf['category'].errors"
+                      class="invalid-feedback"
+                    >
+                      <div *ngIf="rdf.category.errors.required">
+                        Category is required
+                      </div>
+                    </div>
+                  </c-col>
+                  <c-col [md]="3">
+                    <label for="subcategory">Sub Category</label>
+                    <input
+                      id="subcategory"
+                      type="text"
+                      formControlName="subcategory"
+                      class="form-control capitalize"
+                      placeholder="Sub Category"
+                    />
+                    <!-- <div *ngIf="reservationSubmit && f6.subCategory.errors"
+                                                class="invalid-feedback">
+                                                <div *ngIf="f6.subCategory.errors.required">Sub-Category is required
+                                                </div>
+                                            </div> -->
+                  </c-col>
+                  <c-col [md]="3">
+                    <h6>Upload PDF</h6>
+                    <input
+                      aria-label="file example"
+                      cFormControl
+                      accept="image/jpeg,image/jpg,image/png,.pdf"
+                      id="validationTextupload_caste"
+                      (change)="xlsxUpload_category($event)"
+                      type="file"
+                    />
+                  </c-col>
+                </c-row>
+              </div>
+
+              <br />
+              <div>
+                <!-- <div style="float: right;">
+                                                  <button type="submit" class="btn btn-sm btn-primary"><i
+                                                          class="fa fa-plus"></i>
+                                                      &nbsp;Add</button>
+                                              </div> -->
+                <h5>Special Abled Details</h5>
+                <hr />
+              </div>
+
+              <c-col [md]="3">
+                <label for="checkspeciallyabled">Specially Abled?</label>
+                <select
+                  id="checkspeciallyabled"
+                  formControlName="checkspeciallyabled"
+                  class="form-control"
+                >
+                  <option value="" selected disabled>
+                    --- Please Select ---
+                  </option>
+                  <option value="YES">Yes</option>
+                  <option value="NO">No</option>
+                </select>
+              </c-col>
+
+              <div
+                class="row"
+                *ngIf="
+                  this.reservationdetailForm.controls['checkspeciallyabled']
+                    .value == 'YES'
+                "
+              >
+                <div class="form-group col-md-4">
+                  <label for="specially_abled">Special Abled</label>
+
+                  <select
+                    id="specially_abled"
+                    formControlName="specially_abled"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      --- Please Select ---
+                    </option>
+                    <option
+                      *ngFor="let specially_abled of specially_abled"
+                      [value]="specially_abled"
+                    >
+                      {{ specially_abled }}
+                    </option>
+                  </select>
+                </div>
+                <div class="form-group col-md-2">
+                  <label for="percentage">Percentage %</label>
+                  <input
+                    id="percentage"
+                    type="number"
+                    formControlName="percentage"
+                    class="form-control capitalize"
+                    placeholder="Percentage"
+                  />
+                </div>
+                <div class="form-group col-md-3">
+                  <label for="udid_no">UDID Number</label>
+                  <input
+                    id="udid_no"
+                    type="text"
+                    formControlName="udid_no"
+                    class="form-control capitalize"
+                    placeholder="UDID No"
+                  />
+                </div>
+
+                <c-col [md]="3">
+                  <h6>Upload PDF</h6>
+                  <input
+                    aria-label="file example"
+                    cFormControl
+                    accept="image/jpeg,image/jpg,image/png,.pdf"
+                    id="validationTextupload_abled"
+                    (change)="xlsxUpload_eligible($event)"
+                    type="file"
+                  />
+                </c-col>
+              </div>
+
+              <br />
+              <div>
+                <!-- <div style="float: right;">
+                                                  <button type="submit" class="btn btn-sm btn-primary"><i
+                                                          class="fa fa-plus">&nbsp;Add
+                                                          Activity</i></button>
+                                              </div> -->
+                <h5>Other Reservation Details</h5>
+                <hr />
+              </div>
+              <c-col [md]="3">
+                <label for="checkotherreservation">Reservation?</label>
+                <select
+                  id="checkotherreservation"
+                  formControlName="checkotherreservation"
+                  class="form-control"
+                >
+                  <option value="" selected disabled>
+                    --- Please Select ---
+                  </option>
+                  <option value="YES">Yes</option>
+                  <option value="NO">No</option>
+                </select>
+              </c-col>
+
+              <br />
+              <div
+                class="row"
+                *ngIf="
+                  this.reservationdetailForm.controls['checkotherreservation']
+                    .value == 'YES'
+                "
+              >
+                <div class="form-group col-md-5">
+                  <label for="parallel_reservation"
+                    >Parallel / Horizontal Reservation</label
+                  >
+                  <select
+                    id="parallel_reservation"
+                    formControlName="parallel_reservation"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      --- Please Select ---
+                    </option>
+                    <option
+                      *ngFor="let reservation of reservation"
+                      [value]="reservation"
+                    >
+                      {{ reservation }}
+                    </option>
+                  </select>
+                </div>
+
+                <c-col [md]="3">
+                  <h6>Upload PDF</h6>
+                  <input
+                    aria-label="file example"
+                    cFormControl
+                    accept="image/jpeg,image/jpg,image/png,.pdf"
+                    id="validationTextupload_reservation"
+                    (change)="xlsxUpload_reservation($event)"
+                    type="file"
+                  />
+                </c-col>
+              </div>
+
+              <br />
+
+              <div *ngIf="this.res_singlebatch?.Rationcard == 1">
+                <h5>Ration Card Upload</h5>
+
+                <hr />
+
+                <c-col [md]="3">
+                  <h6>Upload PDF</h6>
+                  <input
+                    aria-label="file example"
+                    cFormControl
+                    accept="image/jpeg,image/jpg,image/png,.pdf"
+                    id="validationTextupload_ration"
+                    (change)="xlsxUpload_ration($event)"
+                    type="file"
+                  />
+                </c-col>
+              </div>
+
+              <br />
+              <p></p>
+              <h5 style="color: red">Note:&nbsp;</h5>
+              <label>
+                <b style="color: black"
+                  >&nbsp;&nbsp;Please make sure you have uploaded the correct
+                  details.Once you have submitted you are not allowed to make
+                  any changes.
+                </b></label
+              >
+
+              <br />
+              <br />
+              <div style="padding-left: 45%">
+                <button
+                  type="submit"
+                  size="md"
+                  [disabled]="
+                    reservationdetailForm.invalid ||
+                    this.oSession.isprofilesubmited == 'true'
+                  "
+                  (click)="saveReservDetails()"
+                  class="btn btn-success"
+                >
+                  Save</button
+                >&nbsp;&nbsp;&nbsp;
+                <button
+                  type="reset"
+                  size="md"
+                  [attr.disabled]="changeStateReservation ? '' : null"
+                  class="btn btn-danger"
+                >
+                  Cancel
+                </button>
+              </div>
+              <br />
+            </form>
+          </c-tab-pane>
+
+          <c-tab-pane class="p-3">
+            <h5 style="color: red">
+              Note: Select education from table and update the following details
+              one by one. Once you have saved the education detail.You are not
+              allowed to make any changes.
+            </h5>
+
+            <ag-grid-angular
+              style="width: 100%; height: 300px"
+              class="ag-theme-alpine"
+              [rowData]="get_personaldetail?.education"
+              [gridOptions]="gridOptions_document"
+              [columnDefs]="columnDefs_document"
+              (gridReady)="onGridReady_document($event)"
+              [rowSelection]="rowSelection_document"
+              (rowSelected)="onRowSelected_documentEvent($event)"
+              [pagination]="true"
+              (selectionChanged)="onSelectiondocument_Changed($event)"
+            >
+            </ag-grid-angular>
+
+            <form [formGroup]="formGroup" class="form-horizontal">
+              <div>
+                <div class="form-group col-md-3">
+                  <label>Marksheet for</label>
+                  <input
+                    style="border: none; color: red; font-weight: bold"
+                    id="document_type"
+                    readonly
+                    type="text"
+                    formControlName="document_type"
+                    class="form-control capitalize"
+                    placeholder="Document type"
+                  />
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="form-group col-md-2">
+                  <label class="required" for="board">Board</label>
+                  <select
+                    id="board"
+                    [ngClass]="{
+                      'is-invalid':
+                        (SSCSubmit || edf['board'].touched) &&
+                        edf['board'].errors,
+                      'is-valid': edf['board'].touched && !edf['board'].errors
+                    }"
+                    formControlName="board"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      --- Please Select ---
+                    </option>
+
+                    <option value="Indian">Indian</option>
+                    <option value="Foreign">Foreign</option>
+                  </select>
+                  <div
+                    *ngIf="SSCSubmit && edf['board'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="edf.board.errors.required">
+                      Board is required
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="required" for="state">Select State</label>
+                  <select
+                    [ngClass]="{
+                      'is-invalid':
+                        (SSCSubmit || edf['state'].touched) &&
+                        edf['state'].errors,
+                      'is-valid': edf['state'].touched && !edf['state'].errors
+                    }"
+                    formControlName="state"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      --- Please Select ---
+                    </option>
+                    <option *ngFor="let state of state" [value]="state">
+                      {{ state }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="SSCSubmit && edf['state'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="edf.state.errors.required">
+                      State is required
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-7">
+                  <label class="required" for="education_board"
+                    >Select Board / University</label
+                  >
+                  <select
+                    id="education_board"
+                    [ngClass]="{
+                      'is-invalid':
+                        (SSCSubmit || edf['education_board'].touched) &&
+                        edf['education_board'].errors,
+                      'is-valid':
+                        edf['education_board'].touched &&
+                        !edf['education_board'].errors
+                    }"
+                    formControlName="education_board"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      --- Please Select ---
+                    </option>
+                    <option *ngFor="let board of board" [value]="board">
+                      {{ board }}
+                    </option>
+                  </select>
+                  <div
+                    *ngIf="SSCSubmit && edf['education_board'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="edf.education_board.errors.required">
+                      Board is required
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <!-- <div class="form-group col-md-9">
+                                                  <label class="required" for="schoolCollegeName">University College Name</label>
+                                                  <select [(ngModel)]="schoolCollegeName" [ngClass]="{ 'is-invalid': (SSCSubmit || f9.schoolCollegeName.touched) && f9.schoolCollegeName.errors,
+                                                      'is-valid': f9.schoolCollegeName.touched && !f9.schoolCollegeName.errors }"
+                                                      formControlName="schoolCollegeName" class="form-control">
+                                                      <option value="" disabled selected>--- Please Select ---</option>
+                                                      <option *ngFor="let college of college" [value]="college">
+                                                          {{college}}</option>
+                                                  </select>
+                                                  <div *ngIf="SSCSubmit && f9.schoolCollegeName.errors" class="invalid-feedback">
+                                                      <div *ngIf="f9.schoolCollegeName.errors.required">University/College is
+                                                          required
+                                                      </div>
+                                                  </div>
+                                              </div> -->
+                <div class="form-group col-md-5">
+                  <label for="college_name">School / College Name</label>
+                  <input
+                    id="college_name"
+                    type="text"
+                    formControlName="college_name"
+                    class="form-control capitalize"
+                    placeholder="University College Name"
+                  />
+                </div>
+
+                <c-col [sm]="2">
+                  <label for="datepass">Date of Passing</label>
+                  <input
+                    id="datepass"
+                    type="date"
+                    class="form-control capitalize"
+                    formControlName="datepass"
+                    placeholder="Place of Birth"
+                  />
+                </c-col>
+
+                <!--                                        <ng-month-picker [displayFormat]="" [(ngModel)]="dateOfPassing"-->
+                <!--                                                         formControlName="dateOfPassing">-->
+                <!--                                        </ng-month-picker>-->
+
+                <div class="form-group col-md-2">
+                  <label class="required" for="rollno">Seat No/Roll No</label>
+                  <input
+                    id="rollno"
+                    type="text"
+                    [ngClass]="{
+                      'is-invalid':
+                        (SSCSubmit || edf['rollno'].touched) &&
+                        edf['rollno'].errors,
+                      'is-valid': edf['rollno'].touched && !edf['rollno'].errors
+                    }"
+                    formControlName="rollno"
+                    class="form-control capitalize"
+                    placeholder="Seat No"
+                  />
+                  <div
+                    *ngIf="SSCSubmit && edf['rollno'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="edf.rollno.errors.required">
+                      Roll Number is required
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="required" for="marksheetno"
+                    >Marksheet / Certificate No</label
+                  >
+                  <input
+                    id="marksheetno"
+                    type="text"
+                    [ngClass]="{
+                      'is-invalid':
+                        (SSCSubmit || edf['marksheetno'].touched) &&
+                        edf['marksheetno'].errors,
+                      'is-valid':
+                        edf['marksheetno'].touched && !edf['marksheetno'].errors
+                    }"
+                    formControlName="marksheetno"
+                    class="form-control capitalize"
+                    placeholder="Marksheet No"
+                  />
+                  <div
+                    *ngIf="SSCSubmit && edf['marksheetno'].errors"
+                    class="invalid-feedback"
+                  >
+                    <div *ngIf="edf.marksheetno.errors.required">
+                      Marksheet Number is required
+                    </div>
+                  </div>
+                </div>
+                <!-- <select [(ngModel)]="gradeMarks" [ngClass]="{ 'is-invalid': (SSCSubmit || f9.gradeMarks.touched) && f9.gradeMarks.errors,
+                                                              'is-valid': f9.gradeMarks.touched && !f9.gradeMarks.errors }"
+                                                      formControlName="gradeMarks" class="form-control">
+                                                      <option value="" disabled selected>--- Please Select ---</option>
+                                                      <option value="Marks"> Marks </option>
+                                                      <option *ngFor="let marks of marks" [value]="marks">{{marks}}</option>
+                                                  </select> -->
+              </div>
+
+              <c-row>
+                <!--                        <div class="form-group col-md-2">-->
+                <!--                          <label class="required" for="gradesormarks">Marks</label>-->
+                <!--                          <input-->
+                <!--                            id="gradesormarks"-->
+                <!--                            readonly-->
+                <!--                            type="text"-->
+                <!--                            formControlName="gradesormarks"-->
+                <!--                            class="form-control capitalize"-->
+                <!--                            placeholder="Marks"-->
+                <!--                          />-->
+                <!--                          &lt;!&ndash; <div *ngIf="SSCSubmit && f9.gradeMarks.errors" class="invalid-feedback">-->
+                <!--                                                      <div *ngIf="f9.gradeMarks.errors.required">Grade/Marks is required</div>-->
+                <!--                                                  </div> &ndash;&gt;-->
+                <!--                        </div>-->
+
+                <div class="form-group col-md-3">
+                  <label class="required">SGPA</label>
+                  <select
+                    id="checkpercentagesgpa"
+                    formControlName="checkpercentagesgpa"
+                    [ngClass]="{
+                      'is-invalid':
+                        (SSCSubmit || edf['checkpercentagesgpa'].touched) &&
+                        edf['checkpercentagesgpa'].errors,
+                      'is-valid':
+                        edf['checkpercentagesgpa'].touched &&
+                        !edf['checkpercentagesgpa'].errors
+                    }"
+                    class="form-control"
+                  >
+                    <option value="" disabled selected>
+                      --- Please Select ---
+                    </option>
+
+                    <option value="YES">Yes</option>
+
+                    <option value="NO">No</option>
+
+                    <!--                            <option *ngFor="let Categorydata of Categorydata" [value]="Categorydata.value">-->
+                    <!--                              {{ Categorydata.value }}-->
+                    <!--                            </option>-->
+                  </select>
+                </div>
+
+                <div
+                  *ngIf="
+                    this.formGroup.controls['checkpercentagesgpa'].value == 'NO'
+                  "
+                >
+                  <c-row>
+                    <c-col [md]="2">
+                      <label class="required">Marks Obtained</label>
+
+                      <input
+                        type="number"
+                        [ngClass]="{
+                          'is-invalid':
+                            (SSCSubmit || edf.marksobtained.touched) &&
+                            edf.marksobtained.errors,
+                          'is-valid':
+                            edf.marksobtained.touched &&
+                            !edf.marksobtained.errors
+                        }"
+                        formControlName="marksobtained"
+                        class="form-control capitalize"
+                        placeholder="Obtained Marks"
+                      />
+                      <div
+                        *ngIf="SSCSubmit && edf.marksobtained.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="edf.marksobtained.errors.required">
+                          Marks Obtained is required
+                        </div>
+                      </div>
+                    </c-col>
+
+                    <c-col [md]="1">
+                      <label class="required">TotalMarks</label>
+                      <input
+                        type="number"
+                        (input)="PercentageCalculater()"
+                        [ngClass]="{
+                          'is-invalid':
+                            (SSCSubmit || edf.outoff.touched) &&
+                            edf.outoff.errors,
+                          'is-valid': edf.outoff.touched && !edf.outoff.errors
+                        }"
+                        formControlName="outoff"
+                        class="form-control capitalize"
+                        placeholder="Out Off"
+                      />
+                      <div
+                        *ngIf="SSCSubmit && edf.outoff.errors"
+                        class="invalid-feedback"
+                      >
+                        <div *ngIf="edf.outoff.errors.required">
+                          Marks Out Off is required
+                        </div>
+                      </div>
+                    </c-col>
+
+                    <c-col [md]="2">
+                      <label>Percentage % </label>
+                      <input
+                        readonly
+                        type="float"
+                        (input)="PercentageCalculater()"
+                        formControlName="percentage"
+                        class="form-control capitalize"
+                        placeholder="Percentage %"
+                      />
+                    </c-col>
+                  </c-row>
+                </div>
+
+                <div
+                  *ngIf="
+                    this.formGroup.controls['checkpercentagesgpa'].value ==
+                    'YES'
+                  "
+                  class="form-group col-md-2"
+                >
+                  <label>SGPA </label>
+                  <input
+                    step="0.01"
+                    type="number"
+                    formControlName="sgpa"
+                    class="form-control capitalize"
+                    placeholder="SGPA"
+                  />
+                </div>
+
+                <h5>
+                  Uploaded Files :
+                  {{ this.selected_document?.uploadedfilename }}
+                </h5>
+
+                <c-col [md]="3" style="margin-top: 26px">
+                  <c-input-group>
+                    <input
+                      aria-label="file example"
+                      cFormControl
+                      formControlName="file"
+                      accept="image/jpeg,image/jpg,image/png,.pdf"
+                      id="validationTextupload_callout"
+                      (change)="onFileChange($event)"
+                      type="file"
+                    />
+                  </c-input-group>
+                </c-col>
+
+                <div class="form-group col-md-2">
+                  <input
+                    hidden
+                    step="0.01"
+                    type="number"
+                    formControlName="sgpa_percentage"
+                    class="form-control capitalize"
+                    placeholder="SGPA"
+                  />
+                </div>
+              </c-row>
+
+              <br />
+              <c-row>
+                <c-col [md]="6">
+                  <a
+                    href="https://www.ilovepdf.com/compress_pdf"
+                    target="_blank"
+                    ><h5 style="color: red">
+                      Please compress your file before uploading.
+                    </h5></a
+                  >
+                </c-col>
+
+                <!--                          <div class="row">-->
+
+                <!--                            <span>Upload<input style="border: none;-->
+                <!--                           color: red; font-weight: bold"-->
+                <!--                                   readonly-->
+                <!--                                   type="text"-->
+                <!--                                   formControlName="document_type_name"-->
+                <!--                                   class="form-control capitalize"-->
+                <!--                                   placeholder="Document type"-->
+                <!--                            /></span>-->
+                <!--                          </div>-->
+                <!--                          <input-->
+                <!--                            aria-label="file example"-->
+                <!--                            cFormControl-->
+                <!--                            formControlName="file"-->
+                <!--                            accept=".pdf"-->
+                <!--                            id="validationTextupload_callout"-->
+                <!--                            (change)="onFileChange($event)"-->
+                <!--                            type="file"-->
+                <!--                          />-->
+
+                <c-col [md]="3"> </c-col>
+              </c-row>
+
+              <br />
+
+              <br />
+              <div style="padding-left: 42%">
+                <button
+                  type="submit"
+                  size="md"
+                  class="btn btn-success"
+                  (click)="saveEDUdetails()"
+                >
+                  Save</button
+                >&nbsp;&nbsp;&nbsp;
+                <!--                        <button type="reset" size="md" class="btn btn-danger">-->
+                <!--                          Cancel-->
+                <!--                        </button>-->
+              </div>
+            </form>
+            <br />
+
+            <div class="col-lg-12">
+              <div>
+                <form
+                  [formGroup]="checkfinaleducationSubmit"
+                  (keydown.enter)="$event.preventDefault()"
+                >
+                  <h5 style="color: red">Note:&nbsp;</h5>
+                  <c-form-check>
+                    <input
+                      cFormCheckInput
+                      formControlName="checkeducationsubmitted"
+                      type="checkbox"
+                    />
+                  </c-form-check>
+                  <label>
+                    <b style="color: black"
+                      >&nbsp;&nbsp;Please make sure you have uploaded the
+                      correct details.Once you have submitted you are not
+                      allowed to make any changes.
+                    </b></label
+                  >
+
+                  <br />
+                  <br />
+
+                  <c-row style="justify-content: center">
+                    <c-col [md]="4">
+                      <button
+                        type="submit"
+                        (click)="EducationSubmit()"
+                        [disabled]="
+                          this.checkbox_percentage ||
+                          this.oSession.isprofilesubmited == 'true'
+                        "
+                        cButton
+                        color="success"
+                      >
+                        Submit
+                        <!-- <c-icon name="cil-dollar"></c-icon> Proceed to Payment -->
+                      </button>
+                    </c-col>
+                  </c-row>
+                </form>
+              </div>
+            </div>
+          </c-tab-pane>
+
+          <c-tab-pane class="p-3">
+            <form cForm [formGroup]="finalsubmitForm">
+              <c-row style="justify-content: center">
+                <c-col *ngIf="finalsubmitForm.controls['checkOne'] as ctrl">
+                  <c-form-check>
+                    <input
+                      cFormCheckInput
+                      formControlName="checkOne"
+                      type="checkbox"
+                    />
+                    <label cFormCheckLabel>
+                      Undertaking for Ragging by Student: I have carefully read
+                      and fully understood the law prohibiting ragging and the
+                      directions of the Supreme Court and the Central/State
+                      Government in this regard. I have read carefully copy of
+                      the UGC Regulations on Curbing the Menace of Ragging in
+                      Higher Educational Institutions, 2009 available on the
+                      college website www.rjcollege.edu.in. I hereby undertake
+                      that (i) I will not indulge in any behavior or act that
+                      may come under the definition of ragging, (ii) I will not
+                      participate in or abet or propagate ragging in any form,
+                      (iii) I will not hurt anyone physically or psychologically
+                      or cause any other harm. (iv) I hereby agree that if found
+                      guilty of any aspect of ragging, I may be punished as per
+                      the provisions of the UGC Regulations mentioned above
+                      and/or as per the law in force. (v) I hereby affirm that I
+                      have not been expelled or debarred from admission by any
+                      institute. I hereby declare that I will fill Online Anti
+                      Ragging Undertaking on https://antiragging.in
+                    </label>
+                  </c-form-check>
+                  <br />
+                </c-col>
+              </c-row>
+              <c-row style="justify-content: center">
+                <c-col *ngIf="finalsubmitForm.controls['checktwo'] as ctrl">
+                  <c-form-check>
+                    <input
+                      cFormCheckInput
+                      formControlName="checktwo"
+                      id="checktwo"
+                      type="checkbox"
+                    />
+                    <label cFormCheckLabel for="checktwo">
+                      Declaration by Student: I hereby declare that, I have read
+                      the rules related to admission and the information filled
+                      in by me in this form is accurate and true to the best of
+                      my knowledge. I will be responsible for any discrepancy
+                      arising out of the form signed by me and I undertake that
+                      in absence of any document the final admission will not be
+                      granted and /or admission will stand cancel.
+                    </label>
+                  </c-form-check>
+                  <br />
+                </c-col>
+              </c-row>
+              <c-row style="justify-content: center">
+                <c-col *ngIf="finalsubmitForm.controls['checkthree'] as ctrl">
+                  <c-form-check>
+                    <input
+                      cFormCheckInput
+                      id="checkthree"
+                      type="checkbox"
+                      formControlName="checkthree"
+                    />
+
+                    <label cFormCheckLabel for="checkthree">
+                      Declaration by Guardian: I hereby permit my
+                      son/daughter/ward to join your college. The information
+                      supplied by him/her is correct to the best of my
+                      knowledge. I have acquainted myself with the rules and
+                      fees, dues to my son/duaghter/ward and to see that he/she
+                      observes.
+                    </label>
+                  </c-form-check>
+                  <br />
+                </c-col>
+              </c-row>
+
+              <c-row style="justify-content: center">
+                <c-col [sm]="3">
+                  <button
+                    cButton
+                    (click)="Final_ProfileSubmitted()"
+                    type="submit"
+                    size="md"
+                    [disabled]="
+                      finalsubmitForm.pristine || finalsubmitForm.invalid
+                    "
+                    class="btn btn-success"
+                  >
+                    Final Submit
+                  </button>
+                </c-col>
+              </c-row>
+            </form>
+          </c-tab-pane>
+        </c-tab-content>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Admission Form -->

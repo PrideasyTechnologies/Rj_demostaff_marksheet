@@ -1,0 +1,473 @@
+<c-row>
+  <c-col [lg]="12">
+    <c-card>
+      <c-card-header style="background-color: #f0f3f5">
+        <h4><b>Document Configuration</b></h4>
+      </c-card-header>
+      <c-card-body>
+        <c-row>
+          <c-col [md]="12" style="padding-top: 20px">
+            <c-input-group class="mb-3">
+              <span cInputGroupText id="basic-addon1">Search</span>
+              <input
+                aria-describedby="basic-addon1"
+                aria-label="Batch"
+                cFormControl
+                placeholder="Search here"
+                [(ngModel)]="searchValue"
+                (keyup)="quickSearch($event)"
+              />
+            </c-input-group>
+          </c-col>
+        </c-row>
+        <div class="fade-in">
+          <form
+            cForm
+            [formGroup]="educationdocumentForm"
+            (keydown.enter)="$event.preventDefault()"
+            autocomplete="off"
+            (ngSubmit)="Submit()"
+          >
+            <br />
+            <ag-grid-angular
+              style="width: 100%; height: 350px"
+              class="ag-theme-alpine"
+              [rowData]="Batchs"
+              [gridOptions]="gridOptions"
+              [columnDefs]="columnDefs"
+              [pagination]="true"
+              [paginationPageSize]="10"
+              (gridReady)="onGridReadydocument($event)"
+              [rowSelection]="rowSelection"
+              (selectionChanged)="onSelectionChanged($event)"
+            >
+            </ag-grid-angular>
+
+            <br />
+
+            <c-row>
+              <!-- <c-col [md]="3">
+                <label for="Documents">Document:</label>
+
+                <c-multi-select
+                  multiple
+                  valid
+                  [(ngModel)]="selected_docs"
+                  formControlName="Documents"
+                  visibleItems="10"
+                  required
+                >
+                  <c-multi-select-option
+                    *ngFor="let data of documentlist"
+                    [ngValue]="data"
+                    >{{ data.Document_name }}</c-multi-select-option
+                  >
+                </c-multi-select>
+
+                <span
+                  *ngIf="
+                    educationdocumentForm.get('Documents')?.invalid &&
+                    educationdocumentForm.get('Documents')?.touched
+                  "
+                  class="text-danger"
+                  >Documents are required</span
+                >
+              </c-col> -->
+
+              <c-col [md]="3">
+                <label for="Educationdetails">Education Details:</label>
+
+                <c-multi-select
+                  multiple
+                  [(ngModel)]="selected_edu"
+                  (valueChange)="xyz($event)"
+                  formControlName="Educationdetails"
+                  visibleItems="8"
+                >
+                  <c-multi-select-option
+                    *ngFor="let data of EducationDetaillist"
+                    [ngValue]="data"
+                    >{{ data.Education_details }}</c-multi-select-option
+                  >
+                </c-multi-select>
+
+                <span
+                  *ngIf="
+                    educationdocumentForm.get('Educationdetails')?.invalid &&
+                    educationdocumentForm.get('Educationdetails')?.touched
+                  "
+                  class="text-danger"
+                  >Education Details are required</span
+                >
+              </c-col>
+
+              <c-col
+                [md]="3"
+                *ngIf="educationdocumentForm.controls['Meritlist'] as ctrl"
+              >
+                <label for="Meritlist">Merit List</label>
+
+                <select
+                  id="Meritlist"
+                  [(ngModel)]="selectedmerit"
+                  cSelect
+                  formControlName="Meritlist"
+                  [valid]="
+                    ctrl.touched && ctrl.valid
+                      ? true
+                      : (submitted || ctrl.touched) && ctrl.invalid
+                      ? false
+                      : undefined
+                  "
+                >
+                  <option
+                    *ngFor="let selected_data of aSeelctededu"
+                    [value]="selected_data"
+                  >
+                    {{ selected_data }}
+                  </option>
+                </select>
+
+                <c-form-feedback
+                  *ngIf="submitted || ctrl.invalid"
+                  [valid]="!(submitted || ctrl.invalid)"
+                >
+                  <ng-container *ngIf="ctrl.errors as errors">
+                    <div *ngIf="errors.required">Merit List is required</div>
+                  </ng-container>
+                </c-form-feedback>
+              </c-col>
+
+              <c-col
+                [md]="3"
+                *ngIf="educationdocumentForm.controls['Admissionyear'] as ctrl"
+              >
+                <label for="finyear">Admission Year</label>
+                <input
+                  cFormControl
+                  id="Admissionyear"
+                  type="number"
+                  formControlName="Admissionyear"
+                  name="Admissionyear"
+                  class="form-control"
+                  placeholder="Enter Finyear"
+                  [valid]="
+                    ctrl.touched && ctrl.valid
+                      ? true
+                      : (submitted || ctrl.touched) && ctrl.invalid
+                      ? false
+                      : undefined
+                  "
+                  required
+                />
+                <c-form-feedback
+                  *ngIf="submitted || ctrl.invalid"
+                  [valid]="!(submitted || ctrl.invalid)"
+                >
+                  <ng-container *ngIf="ctrl.errors as errors">
+                    <div *ngIf="errors.required">
+                      Admission Year is required
+                    </div>
+                  </ng-container>
+                </c-form-feedback>
+              </c-col>
+ <!-- Ration card -->
+              <c-col
+                [md]="3"
+                *ngIf="
+                  educationdocumentForm.controls['Rationcard'] as ctrl
+                "
+              >
+                <c-form-check>
+
+                  <label for="Rationcard">Ration Card</label>
+
+                  <input
+                    class="mx-2"
+                    cFormCheckInput
+                    id="Rationcard"
+                    type="checkbox"
+                    formControlName="Rationcard"
+                    [(ngModel)]="Selected_RationCard"
+                    [valid]="
+                      ctrl.touched && ctrl.valid
+                        ? true
+                        : (submitted || ctrl.touched) && ctrl.invalid
+                        ? false
+                        : undefined
+                    "
+                  />
+                </c-form-check>
+
+                <c-form-feedback
+                  *ngIf="submitted || ctrl.invalid"
+                  [valid]="!(submitted || ctrl.invalid)"
+                >
+                  <ng-container *ngIf="ctrl.errors as errors">
+                    <div *ngIf="errors.required">Ration Card required ?</div>
+                  </ng-container>
+                </c-form-feedback>
+              </c-col>
+            </c-row>
+            <br />
+
+            <c-row>
+              <h3>Existing Students</h3>
+              <c-col
+                [md]="3"
+                *ngIf="
+                  educationdocumentForm.controls['Admissionstarted'] as ctrl
+                "
+              >
+                <c-form-check>
+
+                  <label for="Admissionstarted">Existing Students</label>
+
+                  <input
+                    class="mx-2"
+                    cFormCheckInput
+                    id="Admissionstarted"
+                    type="checkbox"
+                    formControlName="Admissionstarted"
+                    [(ngModel)]="Selected_Admission_started"
+                    [valid]="
+                      ctrl.touched && ctrl.valid
+                        ? true
+                        : (submitted || ctrl.touched) && ctrl.invalid
+                        ? false
+                        : undefined
+                    "
+                  />
+                </c-form-check>
+
+
+                <c-form-feedback
+                  *ngIf="submitted || ctrl.invalid"
+                  [valid]="!(submitted || ctrl.invalid)"
+                >
+                  <ng-container *ngIf="ctrl.errors as errors">
+                    <div *ngIf="errors.required">Admission Started or not?</div>
+                  </ng-container>
+                </c-form-feedback>
+              </c-col>
+            </c-row>
+
+            <c-callout color="primary">
+              <c-row>
+                <h3>Atkt Students Admission</h3>
+                <c-col
+                  [md]="3"
+                  *ngIf="
+                    educationdocumentForm.controls['Atkt_admission'] as ctrl
+                  "
+                >
+                <c-form-check>
+                  <label for="Atkt_admission">Atkt Students</label>
+
+                  <input
+                    class="mx-2"
+                    cFormCheckInput
+                    id="Atkt_admission"
+                    type="checkbox"
+                    formControlName="Atkt_admission"
+                    [(ngModel)]="Selected_Atkt_Admission"
+                    [valid]="
+                      ctrl.touched && ctrl.valid
+                        ? true
+                        : (submitted || ctrl.touched) && ctrl.invalid
+                        ? false
+                        : undefined
+                    "
+                  />
+                </c-form-check>
+
+
+                  <c-form-feedback
+                    *ngIf="submitted || ctrl.invalid"
+                    [valid]="!(submitted || ctrl.invalid)"
+                  >
+                    <ng-container *ngIf="ctrl.errors as errors">
+                      <div *ngIf="errors.required">
+                        Admission Started or not?
+                      </div>
+                    </ng-container>
+                  </c-form-feedback>
+                </c-col>
+
+                <c-col
+                  [md]="4"
+                  *ngIf="educationdocumentForm.controls['Atkt_message'] as ctrl"
+                >
+                  <label cLabel for="Atkt_message">Message</label>
+                  <textarea
+                    cFormControl
+                    id="Atkt_message"
+                    formControlName="Atkt_message"
+                    placeholder="Enter Message"
+                    rows="3"
+
+                  ></textarea>
+
+                </c-col>
+
+                <c-col
+                  [md]="3"
+                  *ngIf="
+                    educationdocumentForm.controls['Atkt_profilereq'] as ctrl
+                  "
+                >
+                  <c-form-check>
+                    <label cFormCheckLabel for="Atkt_profilereq"
+                      >Profile Required</label
+                    >
+                    <input
+                      cFormCheckInput
+                      id="Atkt_profilereq"
+                      type="checkbox"
+                      formControlName="Atkt_profilereq"
+                      [(ngModel)]="SelectedAtktProfile"
+                      [valid]="
+                        ctrl.touched && ctrl.valid
+                          ? true
+                          : (submitted || ctrl.touched) && ctrl.invalid
+                          ? false
+                          : undefined
+                      "
+                    />
+                  </c-form-check>
+
+                  <c-form-feedback
+                    *ngIf="submitted || ctrl.invalid"
+                    [valid]="!(submitted || ctrl.invalid)"
+                  >
+                    <ng-container *ngIf="ctrl.errors as errors">
+                      <div *ngIf="errors.required">Profile Required ?</div>
+                    </ng-container>
+                  </c-form-feedback>
+                </c-col>
+              </c-row>
+            </c-callout>
+
+            <c-callout color="warning">
+              <c-row>
+                <h3>Outside Students Admission</h3>
+                <c-col
+                  [md]="3"
+                  *ngIf="
+                    educationdocumentForm.controls['Outside_admission'] as ctrl
+                  "
+                >
+                  <label for="Outside_admission">Outside Students</label>
+
+                  <c-form-check>
+                    <label for="Outside_admission">Atkt Students</label>
+
+                    <input
+                     class="mx-2"
+                      cFormCheckInput
+                      id="Outside_admission"
+                      type="checkbox"
+                      formControlName="Outside_admission"
+                      [(ngModel)]="Selected_Outside_Admission"
+                      [valid]="
+                        ctrl.touched && ctrl.valid
+                          ? true
+                          : (submitted || ctrl.touched) && ctrl.invalid
+                          ? false
+                          : undefined
+                      "
+                    />
+                  </c-form-check>
+
+                  <c-form-feedback
+                    *ngIf="submitted || ctrl.invalid"
+                    [valid]="!(submitted || ctrl.invalid)"
+                  >
+                    <ng-container *ngIf="ctrl.errors as errors">
+                      <div *ngIf="errors.required">
+                        Admission Started or not?
+                      </div>
+                    </ng-container>
+                  </c-form-feedback>
+                </c-col>
+
+                <c-col
+                  [md]="4"
+                  *ngIf="
+                    educationdocumentForm.controls['Outside_message'] as ctrl
+                  "
+                >
+                  <label cLabel for="Outside_message">Message</label>
+                  <textarea
+                    cFormControl
+                    id="Outside_message"
+                    formControlName="Outside_message"
+                    placeholder="Enter Message"
+                    rows="3"
+
+                  ></textarea>
+
+                </c-col>
+
+                <c-col [md]="3" *ngIf="
+                educationdocumentForm.controls['Outside_profilereq'] as ctrl
+              ">
+                  <c-form-check>
+                    <label cFormCheckLabel for="Outside_profilereq"
+                      >Profile Required</label
+                    >
+                    <input
+                      cFormCheckInput
+                      id="Outside_profilereq"
+                      type="checkbox"
+                      formControlName="Outside_profilereq"
+                      [(ngModel)]="SelectedOutsideProfile"
+                      [valid]="
+                      ctrl.touched && ctrl.valid
+                        ? true
+                        : (submitted || ctrl.touched) && ctrl.invalid
+                        ? false
+                        : undefined
+                    "
+                    />
+                  </c-form-check>
+                  <c-form-feedback
+                    *ngIf="submitted || ctrl.invalid"
+                    [valid]="!(submitted || ctrl.invalid)"
+                  >
+                    <ng-container *ngIf="ctrl.errors as errors">
+                      <div *ngIf="errors.required">Profile Required ?</div>
+                    </ng-container>
+                  </c-form-feedback>
+                </c-col>
+              </c-row>
+            </c-callout>
+
+            <c-row style="justify-content: center">
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  class="btn btn-success text-white"
+                  type="submit"
+                  [disabled]="educationdocumentForm.invalid"
+                >
+                  Submit
+                </button>
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  class="btn btn-danger text-white"
+                  (click)="Cancel()"
+                >
+                  Cancel
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>

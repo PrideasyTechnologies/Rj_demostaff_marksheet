@@ -1,0 +1,81 @@
+<!-- <div>
+    <h3>Cancel Admission</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+    <c-card>
+        <c-card-header>
+            <h4><b>Fee UnAttachment</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <c-row>
+                <c-col [md]="8">
+                    <label for="Batch_Code">Batch:</label>
+
+                    <div class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" (selected)='selectBatch($event)'
+                            (inputChanged)='onChangeSearch($event)' (inputFocused)='onFocused($event)'
+                            [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate"
+                            placeholder="Select Batch">
+                        </ng-autocomplete>
+
+                        <ng-template #batTemplate let-bat>
+                            <a [innerHTML]="bat.Batch_Name"></a>
+                        </ng-template>
+
+                        <ng-template #notFoundTemplate let-notFound>
+                            <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                    </div>
+                </c-col>
+
+                <c-col [md]="2" style="padding-top: 24px;">
+                    <button cButton type="submit" size="md" (click)="ShowList()" class="btn btn-info">Show
+                    </button>
+                </c-col>
+                <c-col [md]="2" style="padding-top: 24px;">
+                    <button cButton type="submit" size="md" (click)="UnAttach()" class="btn btn-success">Unattach
+                    </button>
+                </c-col>
+            </c-row>
+        </c-card-body>
+
+      <c-row>
+        <c-col [md]="12" style="padding-top: 20px;">
+          <!--                    <form cForm class="d-flex" role="search">-->
+          <!--          <div class="input-group">-->
+          <!--            <div class="input-group-prepend">-->
+          <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+          <!--            </div>-->
+          <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+          <!--          </div>-->
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Search</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="Username"
+                   cFormControl
+                   placeholder="Search here"
+                   [(ngModel)]="searchValue"
+                   (keyup)="quickSearch()"
+            />
+          </c-input-group>
+          <!--                    </form>-->
+        </c-col>
+      </c-row>
+        <c-card-body>
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                             [rowData]="rowss"
+                             [gridOptions]="gridOptions"
+                             [columnDefs]="columnDefs"
+                             [pagination]="true"
+                             [paginationPageSize]="10"
+                             (gridReady)="onGridReady($event)"
+                             (rowSelected)="onRowSelectedEvent($event)"
+                rowSelection="multiple"
+                (selectionChanged)="onSelectionChanged($event)">
+            </ag-grid-angular>
+        </c-card-body>
+
+    </c-card>
+</div>

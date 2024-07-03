@@ -1,0 +1,56 @@
+<!-- <div>
+    <h3>Fee Structure Attachment For All Students.</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+    <c-card>
+        <c-card-header>
+            <h4><b>Fee Structure Attachment For All Students.</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <form cForm [formGroup]="feesAttachmentForm" (keydown.enter)="$event.preventDefault()"
+                (ngSubmit)="AllAttachDialog()">
+
+                <c-row>
+                    <c-col [md]="5">
+                        <label for="Batch_Code">Batch:</label>
+                        <div id="Batch_Code" class="ng-autocomplete" style="width: 100%;">
+                            <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword"
+                                (selected)='selectBatch($event)' (inputChanged)='onChangeSearch($event)'
+                                (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                [notFoundTemplate]="notFoundTemplate" placeholder="Select Batch">
+                            </ng-autocomplete>
+
+                            <ng-template #batTemplate let-bat>
+                                <a [innerHTML]="bat.Batch_Name"></a>
+                            </ng-template>
+
+                            <ng-template #notFoundTemplate let-notFound>
+                                <div [innerHTML]="notFound"></div>
+                            </ng-template>
+                        </div>
+
+                    </c-col>
+
+                    <c-col [md]="5">
+                        <label for="Term_Name">Term Name:</label>
+                        <select
+                                id ="Term_Name"
+                                [(ngModel)]="SelectedTerm" formControlName="Term_Name" class="form-control"
+                            (change)="onChangeTermSelect()">
+                            <option *ngFor="let term of Terms" [ngValue]="term">{{term.Term_Name}}</option>
+                        </select>
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 23px;">
+                        <button cButton type="submit" [disabled]="feesAttachmentForm.invalid" size="md"
+                            class="btn btn-info">
+                            <c-spinner  *ngIf="attachloader" aria-hidden="false" size="sm"></c-spinner>
+                            Attach All
+                        </button>
+                    </c-col>
+                </c-row>
+            </form>
+        </c-card-body>
+    </c-card>
+</div>

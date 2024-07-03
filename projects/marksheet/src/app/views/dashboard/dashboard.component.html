@@ -1,0 +1,132 @@
+
+<c-card>
+  <c-card-header>
+    <h4><b>Admission Status Report</b></h4>
+  </c-card-header>
+  <c-card-body>
+    <div class="row">
+      <div class="col-md-6">
+        <label for="Batch_Name">Batch:</label>
+        <div id="Batch_Name" class="ng-autocomplete" style="width: 100%;">
+          <ng-autocomplete
+            [data]="Batchs"
+            [searchKeyword]="Batchkeyword"
+            (selected)='selectBatch($event)'
+            [itemTemplate]="batTemplate"
+            [notFoundTemplate]="notFoundTemplate"
+            placeholder="Select Batch">
+          </ng-autocomplete>
+
+          <ng-template #batTemplate let-bat>
+            <a [innerHTML]="bat.Batch_Name"></a>
+          </ng-template>
+
+          <ng-template #notFoundTemplate let-notFound>
+            <div [innerHTML]="notFound"></div>
+          </ng-template>
+        </div>
+        <!-- <select [(ngModel)]="SelectedBatch" formControlName="Batch_Name" class="form-control"
+                    (change)="onChangeBatchSelect()">
+                    <option *ngFor="let batch of Batchs" [ngValue]="batch">{{batch.Batch_Name}}</option>
+                </select>
+                <span
+                    *ngIf="editprofileForm.get('Batch_Name').invalid && editprofileForm.get('Batch_Name').touched"
+                    class="text-danger">Batch is required</span> -->
+      </div>
+      <div class="col-md-3" style="padding-top: 30px;">
+        <button cButton type="submit" class="btn btn-success" [disabled]="Showclicked"
+                (click)="ShowBatchReport();Showclicked=true">
+
+<!--          <i style="border-color: white;"-->
+<!--             class="spinner-border text-primary" role="status" *ngIf="showloader"></i>&nbsp;&nbsp;-->
+          <c-spinner  *ngIf="showloader" aria-hidden="false" size="sm"></c-spinner>
+          Show
+          Report
+        </button>
+      </div>
+      <div class="col-md-3" style="padding-top: 30px;">
+        <button cButton type="submit" [disabled]="Showallclicked" (click)="ShowReport();Showallclicked=true"
+                class="btn btn-info"><i style="border-color: white;" class="spinner-border text-primary"
+                                        role="status" *ngIf="loader"></i>
+          <c-spinner  *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+
+          &nbsp;&nbsp;Show
+          All Reports
+        </button>
+      </div>
+      <div class="col-md-3" style="padding-top: 30px;">
+        <button cButton type="submit" [disabled]="Showallclicked" (click)="Admissionstausnep();Showallclicked=true"
+                class="btn btn-info">
+<!--          <i style="border-color: white;" class="spinner-border text-primary"-->
+<!--                                        role="status" *ngIf="loader"></i>&nbsp;-->
+          <c-spinner  *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+          Download
+          All Reports
+        </button>
+      </div>
+    </div>
+  </c-card-body>
+
+  <c-card-body>
+    <div style="text-align: center;" *ngIf="textloader">
+      <div class="text-muted"><b>Please wait while we are Loading...</b></div>
+    </div>
+
+
+    <div *ngFor="let obj of Data,let i=index;">
+      <div class="row">
+        <p class="col-md-12">{{obj.Batch_name}} </p>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-striped table-hover table-responsive-lg">
+            <thead>
+            <tr>
+              <th>Subject Group Code</th>
+              <th style="width:32%">Subject Group Name</th>
+              <th>Minor</th>
+              <th>Registered</th>
+              <th>Profile Completed</th>
+              <th>Pending</th>
+              <th>Rejected</th>
+              <th>Documents Approved</th>
+              <th>Fees Attached</th>
+              <th>Fees Paid</th>
+              <th>Total Cancelled</th>
+              <th>Total Admission</th>
+              <!-- <th>Subjects</th> -->
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let sub of obj.Subjects;">
+              <td>{{sub.Subject_group_code}}</td>
+              <td>{{sub.Subject_group_name}}</td>
+              <td>{{sub.FormFeesPaid}}</td>
+              <td>{{sub.ProfileCompleted}}</td>
+              <td>{{sub.ProfileCompleted}}</td>
+              <td>{{sub.ProfileCompleted}}</td>
+              <td>{{sub.DocumentApproved}}</td>
+              <td>{{sub.FeesAttached}}</td>
+              <td>{{sub.FeesPaid}}</td>
+              <td>{{sub.Cancelled}}</td>
+              <td>{{sub.TotalAdmission}}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><b>Total OF All:</b></td>
+              <td colspan="1"><b>{{obj.TotalFormFeesPaid}}</b></td>
+              <td colspan="1"><b>{{obj.TotalProfileCompleted}}</b></td>
+              <td colspan="1"><b>{{obj.TotalDocumentApproved}}</b></td>
+              <td colspan="1"><b>{{obj.TotalFeesAttached}}</b></td>
+              <td colspan="1"><b>{{obj.TotalFeesPaid}}</b></td>
+              <td colspan="1"><b>{{obj.TotalCancelled}}</b></td>
+              <td colspan="1"><b>{{obj.TotalAdmission}}</b></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </c-card-body>
+</c-card>

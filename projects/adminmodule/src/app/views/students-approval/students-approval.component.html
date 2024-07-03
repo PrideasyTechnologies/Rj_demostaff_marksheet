@@ -1,0 +1,1374 @@
+<c-modal
+  id="infoModal"
+  [visible]="infoModalvisible"
+  (visibleChange)="handleLiveDemoChange($event)"
+  size="xl"
+  backdrop="static"
+>
+  <c-modal-header>
+    <h3 cModalTitle style="text-align: center">Education Details</h3>
+    <!--    <button cButton (click)="toggleLiveDemo()" cButtonClose></button>-->
+  </c-modal-header>
+
+  <c-modal-body>
+    <!-- <c-nav variant="tabs">
+      <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>Education Details</a>
+
+    </c-nav> -->
+    <!-- <c-tab-content #tabContent="cTabContent"> -->
+    <!--          <tab heading="Education Details">-->
+    <!-- <c-tab-pane class="p-3"> -->
+
+    <div class="container">
+      <ag-grid-angular
+        style="width: 100%; height: 300px"
+        class="ag-theme-alpine"
+        [rowData]="res_educationdetails"
+        [gridOptions]="gridOptions_edu"
+        [columnDefs]="column_edu"
+        (gridReady)="onGridReady_edu($event)"
+        [rowSelection]="rowSelection_edu"
+        (selectionChanged)="onSelectionChanged3($event)"
+      >
+      </ag-grid-angular>
+    </div>
+
+    <br/>
+
+    <form
+      cForm
+      [formGroup]="DocumentsectionForm"
+      (keydown.enter)="$event.preventDefault()"
+    >
+      <!-- Education Details -->
+
+      <c-row>
+        <c-col [md]="2">
+          <button
+            class="btn btn-primary"
+            (click)="ViewDocument('EDUCATION', 0)"
+          >
+            View Marksheet
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+            <!-- <option>Approved</option> -->
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              DocumentsectionForm.get('reasons')?.invalid &&
+              DocumentsectionForm.get('reasons')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="EducationApproval('REJECTED')"
+            style="width: 150px"
+            [disabled]="DocumentsectionForm.get('reasons')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="marksheetviewrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="EducationApproval('APPROVED')"
+          >
+            Approve
+            <c-spinner
+              *ngIf="marksheetviewapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+      <br/>
+
+      <!-- reservation Details -->
+
+      <c-row *ngIf="ShowReservationdetails">
+        <h4>Reservation Deatils</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-warning"
+            (click)="ViewDocument('DOCUMENT', 70)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="reservationviewloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="reservation_reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              DocumentsectionForm.get('reservation_reasons')?.invalid &&
+              DocumentsectionForm.get('reservation_reasons')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject('REJECTED', 70)"
+            style="width: 150px"
+            [disabled]="DocumentsectionForm.get('reservation_reasons')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="reservationrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject('APPROVED', 70)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="reservationapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <br/>
+      </c-row>
+
+      <!-- Disability -->
+      <c-row *ngIf="ShowDiasability">
+        <h4>Disability</h4>
+        <c-col [md]="2">
+          <button class="btn btn-info" (click)="ViewDocument('DOCUMENT', 80)">
+            View Document
+            <c-spinner
+              *ngIf="disabilityviewloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="disability_reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+            <!-- <option>Approved</option> -->
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              DocumentsectionForm.get('disability_reasons')?.invalid &&
+              DocumentsectionForm.get('disability_reasons')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject('REJECTED', 80)"
+            style="width: 150px"
+            [disabled]="DocumentsectionForm.get('disability_reasons')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="disabilityrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject('APPROVED', 80)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="disabilityapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <br/>
+      </c-row>
+
+      <!-- Other Details -->
+      <c-row *ngIf="ShowOtherDetails">
+        <h4>Other Reservation Details</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-secondary"
+            (click)="ViewDocument('DOCUMENT', 888)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="otherreservationviewloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="other_reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              DocumentsectionForm.get('other_reasons')?.invalid &&
+              DocumentsectionForm.get('other_reasons')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject('REJECTED', 888)"
+            style="width: 150px"
+            [disabled]="DocumentsectionForm.get('other_reasons')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="otherreservationrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject('APPROVED', 888)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="otherreservationapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+      <!-- DYDE PART 1 -->
+      <c-row *ngIf="ShowDYDEPART1">
+        <h4>DYDE PART 1</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-info"
+            (click)="ViewDocument('DOCUMENT', 90)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="DYDE1loader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="dydepart1_reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              DocumentsectionForm.get('dydepart1_reasons')?.invalid &&
+              DocumentsectionForm.get('dydepart1_reasons')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject('REJECTED', 90)"
+            style="width: 150px"
+            [disabled]="DocumentsectionForm.get('dydepart1_reasons')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="dydepart1rejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject('APPROVED', 90)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="dydepart1approveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+      <!-- DYDE PART 2 -->
+      <c-row *ngIf="ShowDYDEPART2">
+        <h4>DYDE PART 2</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-secondary"
+            (click)="ViewDocument('DOCUMENT', 100)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="DYDE2loader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="dydepart2_reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              DocumentsectionForm.get('dydepart2_reasons')?.invalid &&
+              DocumentsectionForm.get('dydepart2_reasons')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject('REJECTED', 100)"
+            style="width: 150px"
+            [disabled]="DocumentsectionForm.get('dydepart2_reasons')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="dydepart2rejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject('APPROVED', 100)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="dydepart2approveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+    </form>
+    <br/>
+
+    <div *ngIf="this.resp_viewdocument?.pdffile">
+      <div class="container" *ngIf="showpdfbox">
+        <div style="text-align: center">
+          <button cButton class="btn btn-success" (click)="incrementZoom(0.1)">
+            <b>Zoom-In</b></button
+          >&nbsp;&nbsp;
+
+          <button cButton class="btn btn-success" (click)="incrementZoom(-0.1)">
+            <b>Zoom-Out</b></button
+          >&nbsp;&nbsp;
+
+          <button
+            cButton
+            type="button"
+            class="btn btn-danger"
+            (click)="ClosePdf()"
+          >
+            Close Pdf
+          </button>
+        </div>
+        <br/>
+        <div class="pdf-container">
+          <pdf-viewer
+            [src]="pdfSrc"
+            [render-text]="true"
+            [(page)]="pageVariable"
+            [show-all]="true"
+            [stick-to-page]="true"
+            [original-size]="false"
+            [fit-to-page]="true"
+            [zoom]="zoom"
+            [autoresize]="true"
+            [show-borders]="true"
+            style="display: block"
+          ></pdf-viewer>
+        </div>
+
+        <br/>
+        <!-- <div style="float: right;">
+                <button cButton type="button" class="btn btn-danger" (click)="ClosePdf()">Close Pdf</button>
+            </div> -->
+      </div>
+    </div>
+    <div *ngIf="this.resp_viewdocument?.pdffile">
+      <img
+        cImg
+        [src]="MyImage"
+        alt="Document"
+        class="img-responsive img-fluid"
+      />
+    </div>
+
+    <!-- </c-tab-pane>
+
+    </c-tab-content> -->
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton (click)="toggleLiveDemo()" color="secondary">
+      Final Submit
+      <c-spinner
+        *ngIf="finalsubmitloader"
+        aria-hidden="false"
+        size="sm"
+      ></c-spinner>
+    </button>
+
+    <button cButton (click)="toggleLivecloseDemo()" color="secondary">
+      Close
+      <c-spinner *ngIf="closeloader" aria-hidden="false" size="sm"></c-spinner>
+    </button>
+  </c-modal-footer>
+</c-modal>
+
+
+
+<div class="col-lg-12">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h4><b>Approval</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a
+            [active]="true"
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="0"
+            cNavLink
+          >Document approval
+          </a>
+        </c-nav-item>
+
+        <c-nav-item>
+          <a
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="1"
+            cNavLink
+          >Student Aadhaar wise Approval
+          </a>
+        </c-nav-item>
+      </c-nav>
+
+      <c-tab-content
+      [activeTabPaneIdx]="activePane"
+      (activeTabPaneIdxChange)="handleChange($event)"
+        #tabContent="cTabContent"
+      >
+        <c-tab-pane class="p-3">
+          <div class="fade-in">
+            <c-card>
+
+              <c-card-body>
+                <form
+                  cForm
+                  [formGroup]="ApprovalForm"
+                  (keydown.enter)="$event.preventDefault()"
+                  (ngSubmit)="ShowApprove()"
+                >
+                  <c-row>
+                    <c-col [md]="4">
+                      <label for="Batch_Code">Batch:</label>
+                      <div id="Batch_Code" class="ng-autocomplete" style="width: 100%">
+                        <ng-autocomplete
+                          [data]="Batchs"
+                          [searchKeyword]="Batchkeyword"
+                          (selected)="selectBatch($event)"
+                          (inputChanged)="onChangeSearch($event)"
+                          (inputFocused)="onFocused($event)"
+                          [itemTemplate]="batTemplate"
+                          formControlName="Batchs"
+                          [notFoundTemplate]="notFoundTemplate"
+                          placeholder="Select Batch"
+                        >
+                        </ng-autocomplete>
+
+                        <ng-template #batTemplate let-bat>
+                          <a [innerHTML]="bat.Batch_Name"></a>
+                        </ng-template>
+
+                        <ng-template #notFoundTemplate let-notFound>
+                          <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                      </div>
+                    </c-col>
+                    <c-col [md]="4">
+                      <label for="Admission_Status">Status:</label>
+                      <select
+                        id="Admission_Status"
+                        formControlName="Admission_Status"
+                        class="form-control"
+                      >
+                        <option value="PENDING">PENDING</option>
+                        <option value="APPROVED">APPROVED</option>
+                        <option value="REJECTED">REJECTED</option>
+                        <option value="FEES UNTAGED">FEES UNTAGED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                      </select>
+                      <span
+                        *ngIf="
+                ApprovalForm.get('Admission_Status')?.invalid &&
+                ApprovalForm.get('Admission_Status')?.touched
+              "
+                        class="text-danger"
+                      >Status is required</span
+                      >
+                    </c-col>
+
+                    <c-col [md]="2" style="padding-top: 25px">
+                      <button
+                        cButton
+                        type="submit"
+                        [disabled]="ApprovalForm.invalid"
+                        size="md"
+                        class="btn btn-info"
+                      >
+                        &nbsp;
+                        <c-spinner
+                          *ngIf="showloader"
+                          aria-hidden="false"
+                          size="sm"
+                        ></c-spinner>
+
+                        Show &nbsp;
+                      </button>
+                    </c-col>
+
+                    <c-col [md]="2" style="padding-top: 25px">
+                      <button
+                        cButton
+                        type="submit"
+                        [disabled]="ApprovalForm.invalid"
+                        size="md"
+                        class="btn btn-danger"
+                        (click)="Reset()"
+                      >&nbsp;
+                        Reset &nbsp;
+                      </button>
+                    </c-col>
+                  </c-row>
+                </form>
+
+                <c-row>
+                  <c-col [md]="12" style="padding-top: 20px">
+                    <c-input-group class="mb-3">
+                      <span cInputGroupText id="basic-addon1">Search</span>
+                      <input
+                        aria-describedby="basic-addon1"
+                        aria-label="Username"
+                        cFormControl
+                        placeholder="Search here"
+                        [(ngModel)]="searchValue"
+                        (keyup)="quickSearch()"
+                      />
+                    </c-input-group>
+                    <!--                    </form>-->
+                  </c-col>
+                </c-row>
+                <br/>
+
+                <!-- [pagination]="true" [paginationPageSize]="10" -->
+                <ag-grid-angular
+                  style="width: 100%; height: 300px"
+                  class="ag-theme-alpine"
+                  [rowData]="res_admissionapprovalist"
+                  [gridOptions]="gridOptions"
+                  [columnDefs]="columnDefs"
+                  (gridReady)="onGridReady($event)"
+                  rowSelection="rowSelection"
+                  (selectionChanged)="onSelectionChanged($event)"
+                >
+                </ag-grid-angular>
+              </c-card-body>
+            </c-card>
+          </div>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3">
+
+          <div class="fade-in">
+            <c-card>
+
+              <c-card-body>
+                <form
+                  cForm
+                  [formGroup]="aadhaarApprovalForm"
+                  (keydown.enter)="$event.preventDefault()"
+                >
+                  <c-row>
+                    <c-col [sm]="3">
+                      <label for="Aadhaar" class="required">Aadhaar no.</label>
+                      <input
+                        id="Aadhaar"
+                        type="number"
+                        formControlName="Aadhaar"
+                        class="form-control capitalize"
+                        placeholder="Enter your Aadhaar"
+                      />
+                    </c-col>
+                      <c-col [md]="2" style="padding-top: 25px">
+                        <button
+                          cButton
+                          type="submit"
+                          [disabled]="aadhaarApprovalForm.invalid"
+                          size="md"
+                          class="btn btn-info"
+                          (click)="ShowApprove_aadhaar()"
+                        >
+                          &nbsp;
+                          <c-spinner
+                            *ngIf="showloader_aadhaar"
+                            aria-hidden="false"
+                            size="sm"
+                          ></c-spinner>
+
+                          Show &nbsp;
+                        </button>
+                      </c-col>
+
+                  </c-row>
+
+                  <br>
+                  <ag-grid-angular
+                    style="width: 100%; height: 300px"
+                    class="ag-theme-alpine"
+                    [rowData]="res_aadhaarapprovallist"
+                    [gridOptions]="gridOptions_aadhaar"
+                    [columnDefs]="columnDefs_aadhaar"
+                    (gridReady)="onGridReady_aadhaar($event)"
+                    rowSelection="rowSelection"
+                    (selectionChanged)="onSelectionChanged_aadhaar($event)"
+                  >
+                  </ag-grid-angular>
+                </form>
+              </c-card-body>
+            </c-card>
+          </div>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>
+
+<c-modal
+  id="infoModal_aadhaar"
+  [visible]="infoModal_aadhaar"
+  (visibleChange)="handleLiveDemoChange_aadhaar($event)"
+  size="xl"
+  backdrop="static"
+>
+  <c-modal-header>
+    <h3 cModalTitle style="text-align: center">Education Details</h3>
+    <!--    <button cButton (click)="toggleLiveDemo()" cButtonClose></button>-->
+  </c-modal-header>
+
+  <c-modal-body>
+
+
+    <div class="container">
+      <ag-grid-angular
+        style="width: 100%; height: 300px"
+        class="ag-theme-alpine"
+        [rowData]="res_educationdetails_aadhar"
+        [gridOptions]="gridOptions_edu_modalaadhaar"
+        [columnDefs]="column_edu_aadhaar"
+        (gridReady)="onGridReady_edu_aadhaar($event)"
+        [rowSelection]="rowSelection_edu_aadhaar"
+        (selectionChanged)="onSelectionChanged_modal_aadhaar($event)"
+      >
+      </ag-grid-angular>
+    </div>
+
+    <br/>
+
+    <form
+      cForm
+      [formGroup]="Documentsection_aadhaar_Form"
+      (keydown.enter)="$event.preventDefault()"
+    >
+      <!-- Education Details -->
+
+      <c-row>
+        <c-col [md]="2">
+          <button
+            class="btn btn-primary"
+            (click)="ViewDocument_aadhaar('EDUCATION', 0)"
+          >
+            View Marksheet
+            <c-spinner
+            *ngIf="viewmarksheet_aadharloader"
+            aria-hidden="false"
+            size="sm"
+          ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="reasons_aadhaar">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+            <!-- <option>Approved</option> -->
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              Documentsection_aadhaar_Form.get('reasons_aadhaar')?.invalid &&
+              Documentsection_aadhaar_Form.get('reasons_aadhaar')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="EducationApproval_aadhaar('REJECTED')"
+            style="width: 150px"
+            [disabled]="Documentsection_aadhaar_Form.get('reasons_aadhaar')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="marksheetviewrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="EducationApproval_aadhaar('APPROVED')"
+          >
+            Approve
+            <c-spinner
+              *ngIf="marksheetviewapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+      <br/>
+
+      <!-- reservation Details -->
+
+      <c-row *ngIf="ShowReservationdetails_aadhar">
+        <h4>Reservation Deatils</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-warning"
+            (click)="ViewDocument_aadhaar('DOCUMENT', 70)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="reservationviewloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="reservation_reasons_aadhaar">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              Documentsection_aadhaar_Form.get('reservation_reasons_aadhaar')?.invalid &&
+              Documentsection_aadhaar_Form.get('reservation_reasons_aadhaar')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject_aadhaar('REJECTED', 70)"
+            style="width: 150px"
+            [disabled]="Documentsection_aadhaar_Form.get('reservation_reasons_aadhaar')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="reservationrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject_aadhaar('APPROVED', 70)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="reservationapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <br/>
+      </c-row>
+
+      <!-- Disability -->
+      <c-row *ngIf="ShowDiasability_aadhar">
+        <h4>Disability</h4>
+        <c-col [md]="2">
+          <button class="btn btn-info" (click)="ViewDocument_aadhaar('DOCUMENT', 80)">
+            View Document
+            <c-spinner
+              *ngIf="disabilityviewloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="disability_reasons_aadhaar">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+            <!-- <option>Approved</option> -->
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              Documentsection_aadhaar_Form.get('disability_reasons_aadhaar')?.invalid &&
+              Documentsection_aadhaar_Form.get('disability_reasons_aadhaar')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject_aadhaar('REJECTED', 80)"
+            style="width: 150px"
+            [disabled]="Documentsection_aadhaar_Form.get('disability_reasons_aadhaar')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="disabilityrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject_aadhaar('APPROVED', 80)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="disabilityapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <br/>
+      </c-row>
+
+      <!-- Other Details -->
+      <c-row *ngIf="ShowOtherDetails_aadhar">
+        <h4>Other Reservation Details</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-secondary"
+            (click)="ViewDocument_aadhaar('DOCUMENT', 888)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="otherreservationviewloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="other_reasons_aadhaar">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              Documentsection_aadhaar_Form.get('other_reasons_aadhaar')?.invalid &&
+              Documentsection_aadhaar_Form.get('other_reasons_aadhaar')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject_aadhaar('REJECTED', 888)"
+            style="width: 150px"
+            [disabled]="Documentsection_aadhaar_Form.get('other_reasons_aadhaar')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="otherreservationrejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject_aadhaar('APPROVED', 888)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="otherreservationapproveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+      <!-- DYDE PART 1 -->
+      <c-row *ngIf="ShowDYDEPART1_aadhar">
+        <h4>DYDE PART 1</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-info"
+            (click)="ViewDocument_aadhaar('DOCUMENT', 90)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="DYDE1loader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="dydepart1_reasons_aadhaar">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              Documentsection_aadhaar_Form.get('dydepart1_reasons_aadhaar')?.invalid &&
+              Documentsection_aadhaar_Form.get('dydepart1_reasons_aadhaar')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject_aadhaar('REJECTED', 90)"
+            style="width: 150px"
+            [disabled]="Documentsection_aadhaar_Form.get('dydepart1_reasons_aadhaar')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="dydepart1rejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject_aadhaar('APPROVED', 90)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="dydepart1approveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+      <!-- DYDE PART 2 -->
+      <c-row *ngIf="ShowDYDEPART2_aadhar">
+        <h4>DYDE PART 2</h4>
+        <c-col [md]="2">
+          <button
+            class="btn btn-secondary"
+            (click)="ViewDocument_aadhaar('DOCUMENT', 100)"
+          >
+            View Document
+            <c-spinner
+              *ngIf="DYDE2loader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="6">
+          <select class="form-control" formControlName="dydepart2_reasons">
+            <option value="" disabled><b>--Please Select Reason--</b></option>
+
+            <option>Document not clear - upload again</option>
+            <option>Invalid document - Upload again</option>
+            <option>
+              Not eligible for the Course as per the eligibility criteria.
+            </option>
+            <option>
+              Name on Application and name on document are not not matching.
+            </option>
+            <option>Educational marks wrongly filled.</option>
+          </select>
+          <span
+            *ngIf="
+              Documentsection_aadhaar_Form.get('dydepart2_reasons_aadhaar')?.invalid &&
+              Documentsection_aadhaar_Form.get('dydepart2_reasons_aadhaar')?.touched
+            "
+            class="text-danger"
+          >Reason is required</span
+          >
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            type="submit"
+            (click)="Document_appr_reject_aadhaar('REJECTED', 100)"
+            style="width: 150px"
+            [disabled]="Documentsection_aadhaar_Form.get('dydepart2_reasons_aadhaar')?.invalid"
+            class="btn btn-danger"
+          >
+            Reject
+            <c-spinner
+              *ngIf="dydepart2rejectloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+
+        <c-col [md]="2">
+          <button
+            cButton
+            class="btn btn-success"
+            style="width: 150px"
+            (click)="Document_appr_reject_aadhaar('APPROVED', 100)"
+          >
+            Approve
+            <c-spinner
+              *ngIf="dydepart2approveloader"
+              aria-hidden="false"
+              size="sm"
+            ></c-spinner>
+          </button>
+        </c-col>
+      </c-row>
+
+    </form>
+    <br/>
+
+    <div *ngIf="this.resp_aadhaar_viewdocument?.pdffile">
+      <div class="container" *ngIf="showpdfbox_aadhar">
+        <div style="text-align: center">
+          <button cButton class="btn btn-success" (click)="incrementZoom(0.1)">
+            <b>Zoom-In</b></button
+          >&nbsp;&nbsp;
+
+          <button cButton class="btn btn-success" (click)="incrementZoom(-0.1)">
+            <b>Zoom-Out</b></button
+          >&nbsp;&nbsp;
+
+          <button
+            cButton
+            type="button"
+            class="btn btn-danger"
+            (click)="ClosePdf_aadhar()"
+          >
+            Close Pdf
+          </button>
+        </div>
+        <br/>
+        <div class="pdf-container">
+          <pdf-viewer
+            [src]="pdfSrc_aadhar"
+            [render-text]="true"
+            [(page)]="pageVariable"
+            [show-all]="true"
+            [stick-to-page]="true"
+            [original-size]="false"
+            [fit-to-page]="true"
+            [zoom]="zoom"
+            [autoresize]="true"
+            [show-borders]="true"
+            style="display: block"
+          ></pdf-viewer>
+        </div>
+
+        <br/>
+        <!-- <div style="float: right;">
+                <button cButton type="button" class="btn btn-danger" (click)="ClosePdf()">Close Pdf</button>
+            </div> -->
+      </div>
+    </div>
+
+    <div *ngIf="this.resp_aadhaar_viewdocument?.pdffile">
+      <img
+        cImg
+        [src]="MyImage_aadhar"
+        alt="Document"
+        class="img-responsive img-fluid"
+      />
+    </div>
+
+    <!-- </c-tab-pane>
+
+    </c-tab-content> -->
+  </c-modal-body>
+
+  <c-modal-footer>
+    <button cButton (click)="Submit_document_aadhaar()" color="secondary">
+      Final Submit
+      <c-spinner
+        *ngIf="finalsubmitloader_aadhar"
+        aria-hidden="false"
+        size="sm"
+      ></c-spinner>
+    </button>
+
+    <button cButton (click)="toggleLivecloseDemo_aadhaar()" color="secondary">
+      Close
+      <c-spinner *ngIf="closeloader" aria-hidden="false" size="sm"></c-spinner>
+    </button>
+  </c-modal-footer>
+</c-modal>

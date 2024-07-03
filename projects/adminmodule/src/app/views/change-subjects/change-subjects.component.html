@@ -1,0 +1,591 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Change Subjects</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a
+            [active]="true"
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="0"
+            cNavLink
+          >
+            Change normal subject
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            Change NEP subject
+          </a>
+        </c-nav-item>
+      </c-nav>
+      <c-tab-content
+        #tabContent="cTabContent"
+        (activeTabPaneIdxChange)="onTabChange($event)"
+      >
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="changeSubForm"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="7">
+                <label for="Batch_Code">Batch:</label>
+                <div
+                  id="Batch_Code"
+                  class="ng-autocomplete"
+                  style="width: 100%"
+                >
+                  <ng-autocomplete
+                    [data]="batch_response"
+                    [searchKeyword]="batchname_field"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="Aadhaar">Aadhaar Number:</label>
+                <input
+                  id="Aadhaar"
+                  type="number"
+                  formControlName="Aadhaar"
+                  placeholder="Enter Aadhaar Number"
+                  (change)="aadhaar_change()"
+                  (focusin)="foucsin()"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    changeSubForm.get('Aadhaar')?.invalid &&
+                    changeSubForm.get('Aadhaar')?.touched
+                  "
+                  class="text-danger"
+                  >Aadhaar no is required</span
+                >
+              </c-col>
+              <c-col [md]="2" style="padding-top: 25px">
+                <button
+                  cButton
+                  type="submit"
+                  (click)="Get_batchaadhharsubject()"
+                  [disabled]="changeSubForm.invalid"
+                  size="md"
+                  class="btn btn-info"
+                >
+                  &nbsp;
+                  <c-spinner
+                    *ngIf="showloader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br />
+          <form
+            cForm
+            [formGroup]="currentsubForm"
+            (keydown.enter)="$event.preventDefault()"
+            (ngSubmit)="Submit_normalsubject()"
+          >
+            <c-row>
+              <c-col [md]="2">
+                <label for="GroupCode">Current Subject Group</label>
+                <input
+                  id="GroupCode"
+                  style="background-color: white; font-weight: bold"
+                  readonly
+                  type="text"
+                  formControlName="GroupCode"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    currentsubForm.get('GroupCode')?.invalid &&
+                    currentsubForm.get('GroupCode')?.touched
+                  "
+                  class="text-danger"
+                  >Invalid Details Entered</span
+                >
+              </c-col>
+
+              <c-col [md]="5">
+                <label for="GroupCode">Subject Name</label>
+                <input
+                  style="background-color: white"
+                  readonly
+                  type="text"
+                  formControlName="CurrentGroupCode"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    currentsubForm.get('CurrentGroupCode')?.invalid &&
+                    currentsubForm.get('CurrentGroupCode')?.touched
+                  "
+                  class="text-danger"
+                  >Invalid Details Entered</span
+                >
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="change_sub">Change Subject</label>
+                <select
+                  id="change_sub"
+                  [(ngModel)]="selectupdatedsubject"
+                  formControlName="change_sub"
+                  class="form-control"
+                  (change)="(onSelect_major)"
+                >
+                  <option disabled>Select Subject</option>
+                  <option
+                    *ngFor="let sub of Subject_group_code"
+                    [ngValue]="sub"
+                  >
+                    {{ sub.Subject_group_code }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    currentsubForm.get('change_sub')?.invalid &&
+                    currentsubForm.get('change_sub')?.touched
+                  "
+                  class="text-danger"
+                  >change Subject is required</span
+                >
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 25px">
+                <button
+                  cButton
+                  type="submit"
+                  [disabled]="currentsubForm.invalid"
+                  size="md"
+                  class="btn btn-success"
+                >
+                  <c-spinner
+                    *ngIf="submitloader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+                  Submit
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="Nep_findstudentform"
+            (keydown.enter)="$event.preventDefault()"
+            (ngSubmit)="Get_batchaadhharsubject()"
+          >
+            <c-row>
+              <c-col [md]="6">
+                <label for="Batch_Code">Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%">
+                  <ng-autocomplete
+                    [data]="batch_response"
+                    [searchKeyword]="batchname_field"
+                    formControlName="ctr_nepbatch"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+
+                  <span
+                    *ngIf="fld_nepbatch?.invalid && fld_nepbatch?.touched"
+                    class="text-danger"
+                    >Batch is required</span
+                  >
+                </div>
+              </c-col>
+
+              <c-col [md]="4">
+                <label for="Aadhaar">Aadhaar Number:</label>
+                <input
+                  type="number"
+                  formControlName="ctr_aadhaar"
+                  placeholder="Enter Aadhaar Number"
+                  (change)="aadhaar_change()"
+                  (focusin)="foucsin()"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="fld_aadhaar?.invalid && fld_aadhaar?.touched"
+                  class="text-danger"
+                  >Aadhaar no is required</span
+                >
+              </c-col>
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  type="submit"
+                  [disabled]="Nep_findstudentform?.invalid"
+                  size="md"
+                  class="btn btn-info"
+                >
+                  &nbsp;Show
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br />
+          <form
+            cForm
+            [formGroup]="Nep_Changesubjectform"
+            (keydown.enter)="$event.preventDefault()"
+            (ngSubmit)="Submit_nep()"
+          >
+            <c-row>
+              <c-col [md]="2">
+                <label for="GroupCode">Current Subject Group</label>
+                <input
+                  style="background-color: white; font-weight: bold"
+                  readonly
+                  type="text"
+                  formControlName="ctr_nepgroupcode"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    nepchange_fn['ctr_nepgroupcode']?.invalid &&
+                    nepchange_fn['ctr_nepgroupcode']?.touched
+                  "
+                  class="text-danger"
+                  >Invalid Details Entered</span
+                >
+              </c-col>
+              <c-col [md]="5">
+                <label for="GroupCode">Subject Name</label>
+                <input
+                  style="background-color: white"
+                  readonly
+                  type="text"
+                  formControlName="ctr_nepsubjectname"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    nepchange_fn['ctr_nepsubjectname']?.invalid &&
+                    nepchange_fn['ctr_nepsubjectname']?.touched
+                  "
+                  class="text-danger"
+                  >Invalid Details Entered</span
+                >
+              </c-col>
+            </c-row>
+            <div class="form-group">
+              <c-row>
+                <c-col [md]="6">
+                  <label class="required">Major Subject Papers</label>
+                  <select
+                    formControlName="ctr_nepmajor"
+                    class="form-control"
+                    (change)="onSelect_major($event.target.selectedIndex)"
+                  >
+                    <option disabled>Select Major Subject</option>
+                    <option
+                      *ngFor="let sub of Subject_group_code"
+                      [ngValue]="sub"
+                    >
+                      {{ sub.Subject_group_name }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_major?.invalid && fld_major?.touched"
+                    class="text-danger"
+                    >major subject is required</span
+                  >
+                </c-col>
+                <c-col [md]="6">
+                  <label class="required">Minor subject</label>
+                  <div class="form-group">
+                    <select
+                      formControlName="ctr_nepminor"
+                      class="form-control modal-validation"
+                      (change)="onLevelSelect($event.target.selectedIndex, 2)"
+                    >
+                      <option value="" disabled selected>
+                        --- Select Minor---
+                      </option>
+                      <option *ngFor="let sub of minor_json" [ngValue]="sub">
+                        {{ sub.Otherlevel }}
+                      </option>
+                    </select>
+                    <span
+                      *ngIf="fld_minor?.invalid && fld_minor?.touched"
+                      class="text-danger"
+                      >minor subject is required</span
+                    >
+                  </div>
+                </c-col>
+              </c-row>
+            </div>
+            <div class="form-group">
+              <c-row>
+                <c-col [md]="6">
+                  <label class="required">Open Elective</label>
+                  <select
+                    formControlName="ctr_nepoe"
+                    (change)="onLevelSelect($event.target.selectedIndex, 3)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- Select Open Elective---
+                    </option>
+                    <option *ngFor="let sub of oe_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_oe?.invalid && fld_oe?.touched"
+                    class="text-danger"
+                    >OE Subject is required</span
+                  >
+                </c-col>
+                <c-col [md]="6">
+                  <label class="required"
+                    >Vocational and skill Enhancement courses(VSEC)</label
+                  >
+                  <div class="form-group">
+                    <select
+                      formControlName="ctr_nepvsc"
+                      (change)="onLevelSelect($event.target.selectedIndex, 4)"
+                      class="form-control modal-validation"
+                    >
+                      <option value="" disabled selected>
+                        --- Select Vocational and skill Enhancement
+                        courses(VSEC)---
+                      </option>
+                      <option *ngFor="let sub of vsc_json" [ngValue]="sub">
+                        {{ sub.Otherlevel }}
+                      </option>
+                    </select>
+                    <span
+                      *ngIf="fld_vsc?.invalid && fld_vsc?.touched"
+                      class="text-danger"
+                      >VSC subject is required</span
+                    >
+                  </div>
+                </c-col>
+              </c-row>
+            </div>
+            <div class="form-group">
+              <c-row>
+                <c-col [md]="6">
+                  <label class="required">Skill Enhancement Course </label>
+                  <select
+                    formControlName="ctr_nepsec"
+                    (change)="onLevelSelect($event.target.selectedIndex, 5)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- SEC-Student will chosse from the basket of course---
+                    </option>
+                    <option *ngFor="let sub of sec_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_sec?.invalid && fld_sec?.touched"
+                    class="text-danger"
+                    >Skill subject is required</span
+                  >
+                </c-col>
+                <c-col [md]="6">
+                  <label class="required"
+                    >Ability Enhancement Courses(AEC)</label
+                  >
+                  <select
+                    formControlName="ctr_nepaec"
+                    (change)="onLevelSelect($event.target.selectedIndex, 6)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- Select Ability Enhancement Courses(AEC)---
+                    </option>
+                    <option *ngFor="let sub of aec_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_aec?.invalid && fld_aec?.touched"
+                    class="text-danger"
+                    >AEC subject is required</span
+                  >
+                </c-col>
+              </c-row>
+            </div>
+            <div class="form-group">
+              <c-row>
+                <c-col [md]="6">
+                  <label class="required">Values Education Course(VEC)</label>
+                  <select
+                    formControlName="ctr_nepvec"
+                    (change)="onLevelSelect($event.target.selectedIndex, 7)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- Select Values Education Course(VEC)---
+                    </option>
+                    <option *ngFor="let sub of vec_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_vec?.invalid && fld_vec?.touched"
+                    class="text-danger"
+                    >VEC subject is required</span
+                  >
+                </c-col>
+                <c-col [md]="6">
+                  <label class="required">Indian Knowledge system(IKS)</label>
+                  <select
+                    formControlName="ctr_nepiks"
+                    (change)="onLevelSelect($event.target.selectedIndex, 8)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- Select Indian Knowledge system(IKS)---
+                    </option>
+                    <option *ngFor="let sub of iks_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_iks?.invalid && fld_iks?.touched"
+                    class="text-danger"
+                    >IKS subject is required</span
+                  >
+                </c-col>
+              </c-row>
+            </div>
+            <div class="form-group">
+              <c-row>
+                <c-col [md]="6">
+                  <label class="required">Co-Curricular Activities</label>
+                  <select
+                    formControlName="ctr_nepcc"
+                    (change)="onLevelSelect($event.target.selectedIndex, 9)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- Select Co-Curricular Activities---
+                    </option>
+                    <option *ngFor="let sub of cc_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_cc?.invalid && fld_cc?.touched"
+                    class="text-danger"
+                    >CC subject is required</span
+                  >
+                </c-col>
+
+                <c-col [md]="6">
+                  <label class="required"
+                    >Field Project/Community Engagement Program.(FP/CEP)</label
+                  >
+                  <select
+                    formControlName="ctr_fp"
+                    (change)="onLevelSelect($event.target.selectedIndex, 10)"
+                    class="form-control modal-validation"
+                  >
+                    <option value="" disabled selected>
+                      --- Select Co-Curricular Activities---
+                    </option>
+                    <option *ngFor="let sub of fp_json" [ngValue]="sub">
+                      {{ sub.Otherlevel }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="fld_cc?.invalid && fld_cc?.touched"
+                    class="text-danger"
+                    >FP/CEP is required</span
+                  >
+                </c-col>
+                
+              </c-row>
+
+              <c-row>
+                <h4 class="text-danger mt-2">Note : Profile edit option is only for FY & PG Part 1 Students</h4>
+                <c-col [md]="2" style="padding-top: 24px">
+                  <button
+                    cButton
+                    (click)=" Profile_Edit()"
+                    size="md"
+                    class="btn btn-info"
+                  >
+                  <c-spinner
+                      *ngIf="profileeditspinner"
+                      aria-hidden="false"
+                      size="sm"
+                    ></c-spinner>
+                    &nbsp;Profile edit
+                  </button>
+                </c-col>
+
+                <c-col [md]="2" style="padding-top: 24px">
+                  <button
+                    cButton
+                    type="submit"
+                    [disabled]="Nep_Changesubjectform?.invalid"
+                    class="btn btn-success"
+                  >
+                    <!--                  <i style="border-color: white;"-->
+                    <!--                                                   class="spinner-border text-primary" role="status"-->
+                    <!--                                                   *ngIf="nep_submit"></i>-->
+                    <c-spinner
+                      *ngIf="nep_submit"
+                      aria-hidden="false"
+                      size="sm"
+                    ></c-spinner>
+                    &nbsp;Submit
+                  </button>
+                </c-col>
+              </c-row>
+            </div>
+           
+          </form>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>

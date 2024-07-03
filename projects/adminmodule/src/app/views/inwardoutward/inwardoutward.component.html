@@ -1,0 +1,432 @@
+<div class="fade-in" xmlns="http://www.w3.org/1999/html">
+
+    <c-card>
+        <c-card-header style="background-color:#f0f3f5">
+            <h4><b>Inward/ Outward</b></h4>
+            <!--                <div>-->
+            <!--                    <button cButton type="button" (click)="Logout()" class="btn btn-warning"><i class="fa fa-sign-out"-->
+            <!--                                                                                        aria-hidden="true"></i></button>-->
+            <!--                </div>-->
+        </c-card-header>
+        <c-card-body>
+            <c-nav variant="tabs">
+                <c-nav-item>
+                    <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+                        Organization
+                    </a>
+                </c-nav-item>
+                <!--                    <c-nav-item>-->
+                <!--                        <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>-->
+                <!--                            Inward/ Outward-->
+                <!--                        </a>-->
+                <!--                    </c-nav-item>-->
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+                        Inward/ Outward
+                    </a>
+                </c-nav-item>
+
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+                        Reports
+                    </a>
+                </c-nav-item>
+
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>
+                        Images
+                    </a>
+                </c-nav-item>
+
+
+            </c-nav>
+            <c-tab-content #tabContent="cTabContent">
+                <c-tab-pane class="p-3">
+                    <form cForm [formGroup]="organizationForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="2">
+                                <label>Select Organization Type</label>
+                                <select [(ngModel)]="Selecteddocument" formControlName="typedocument"
+                                        placeholder="Select Organization type" class="form-control">
+                                    <option disabled selected>Select Organization Type</option>
+                                    <option>Customer</option>
+                                    <option>Vendor</option>
+                                    <option>University</option>
+                                    <option>Others</option>
+                                </select>
+                                <div
+                                        *ngIf="inwardOutwardForm.get('typedocument')?.invalid && inwardOutwardForm.get('typedocument')?.touched"
+                                        class="text-danger">
+                                    Document type is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>Organization Name</label>
+                                <input type="text" formControlName="name" class="form-control"
+                                       placeholder="Enter Name">
+                                <div *ngIf="organizationForm.get('name')?.invalid && organizationForm.get('name')?.touched"
+                                     class="text-danger">
+                                    name is required
+                                </div>
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label>Contact Person</label>
+                                <input type="text" formControlName="contactperson" class="form-control"
+                                       placeholder="Enter contact person">
+                                <div
+                                        *ngIf="organizationForm.get('contactperson')?.invalid && organizationForm.get('contactperson')?.touched"
+                                        class="text-danger">
+                                    contactperson is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <label>Mobile No</label>
+                                <input type="text" formControlName="mobile" class="form-control"
+                                       placeholder="Enter Mobile No">
+                                <div *ngIf="organizationForm.get('mobile')?.invalid && organizationForm.get('mobile')?.touched"
+                                     class="text-danger">
+                                    mobile no is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <label>Email ID</label>
+                                <input type="email" formControlName="email" class="form-control"
+                                       placeholder="Enter Email ID">
+                                <div *ngIf="organizationForm.get('email')?.invalid && organizationForm.get('email')?.touched"
+                                     class="text-danger">
+                                    email is required
+                                </div>
+                            </c-col>
+                        </c-row>
+                        <br>
+                        <c-row style="justify-content: center;">
+
+
+                            <c-col [md]="2">
+                                <div style="padding-top: 15px;">
+                                    <button cButton type="submit" class="btn btn-success"
+                                            (click)="onSubmitOrganization()">Submit
+                                    </button>
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <div style="padding-top: 15px;">
+                                    <button cButton type="reset" class="btn btn-danger">Reset</button>
+                                </div>
+                            </c-col>
+                        </c-row>
+                    </form>
+                    <c-card-body>
+
+                        <c-row>
+                            <c-col [md]="12">
+                                <ag-grid-angular style="width: 100%; height: 410px;" class="ag-theme-alpine"
+                                                 [rowData]="organization_Ajson"
+                                                 [gridOptions]="gridOptions"
+                                                 [columnDefs]="organizationColumnDefs"
+                                                 (gridReady)="onGridReady_org($event)"
+                                                 (rowSelected)="onrowselect_organizationon($event)"
+                                                 [pagination]="true"
+                                                 [rowSelection]='rowSelection'
+                                                 [paginationPageSize]="paginationPageSize"
+                                                 (selectionChanged)="onselectchange_organizationon($event)">
+                                </ag-grid-angular>
+                            </c-col>
+                        </c-row>
+                        <c-row>
+                            <c-col [md]="2">
+                                <div style="padding-top: 15px;">
+                                    <button cButton type="reset" class="btn btn-success" (click)="updateOrganization()">Update
+                                    </button>
+                                </div>
+                            </c-col>
+                        </c-row>
+                    </c-card-body>
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3">
+                    <form cForm [formGroup]="inwardOutwardForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="3">
+                                <label>Inward/Outward</label>
+                                <select [(ngModel)]="SelecteddocumentType" formControlName="type"
+                                        class="form-control"
+                                        (change)="onChangedocumentType($event.target.selectedIndex)">
+                                    <option disabled selected>Select Type</option>
+                                    <option *ngFor="let org of documentType " [ngValue]="org">{{org}}
+                                    </option>
+                                </select>
+                                <div *ngIf="inwardOutwardForm.get('type')?.invalid && inwardOutwardForm.get('type')?.touched"
+                                     class="text-danger">
+                                    Inward/Outward type is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>Select Document Type</label>
+                                <select [(ngModel)]="Selecteddocument" formControlName="typedocument"
+                                        class="form-control">
+                                    <option disabled selected>Select Document Type</option>
+                                    <option *ngFor="let docs of typeDocument" [ngValue]="docs">
+                                        {{docs}} </option>
+                                </select>
+                                <div
+                                        *ngIf="inwardOutwardForm.get('typedocument')?.invalid && inwardOutwardForm.get('typedocument')?.touched"
+                                        class="text-danger">
+                                    Document type is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>From{{ this.Sender_receiver }}</label>
+                                <select [(ngModel)]="Selected_orgname_json" formControlName="orgname"
+                                        class="form-control" (change)="onChangeIOOrgName()">
+                                    <option disabled selected>Select Organization Name</option>
+                                    <option *ngFor="let item of organization_Ajson"
+                                            [ngValue]="item"> {{ item.Orgname }}
+                                    </option>
+                                </select>
+                                <div *ngIf="inwardOutwardForm.get('orgname')?.invalid && inwardOutwardForm.get('orgname')?.touched"
+                                     class="text-danger">
+                                    Sender name is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>To{{ this.Receive }}</label>
+                                <select [(ngModel)]="Selected_empname_json" formControlName="empname"
+                                        class="form-control"
+                                        (change)="onChangeEmpName()">
+                                    <option disabled selected>Select Emp Name</option>
+                                    <option *ngFor="let empitem of employee_Ajson"
+                                            [ngValue]="empitem">{{ empitem.Full_name }}
+                                    </option>
+                                </select>
+                                <div *ngIf="inwardOutwardForm.get('empname')?.invalid && inwardOutwardForm.get('empname')?.touched"
+                                     class="text-danger">
+                                    Receiver name is required
+                                </div>
+                            </c-col>
+                        </c-row>
+                        <c-row>
+                            <c-col [md]="6">
+                                <label>Document subject</label>
+                                <input id="documentsubject" type="text" formControlName="documentsubject"
+                                       class="form-control"
+                                       placeholder="Enter Document Subject">
+                                <div
+                                        *ngIf="inwardOutwardForm.get('documentsubject')?.invalid && inwardOutwardForm.get('documentsubject')?.touched"
+                                        class="text-danger">
+                                    document subject is required
+                                </div>
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label>Document No (Courier no.)</label>
+                                <input id="documentno" type="text" formControlName="documentno" class="form-control"
+                                       placeholder="Enter Document No">
+                                <div
+                                        *ngIf="inwardOutwardForm.get('documentno')?.invalid && inwardOutwardForm.get('documentno')?.touched"
+                                        class="text-danger">
+                                    document no is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label>Document Date</label>
+                                <input type="date" formControlName="documentdate" class="form-control"
+                                       placeholder="Enter Document Date">
+                                <div
+                                        *ngIf="inwardOutwardForm.get('documentdate')?.invalid && inwardOutwardForm.get('documentdate')?.touched"
+                                        class="text-danger">
+                                    document date is required
+                                </div>
+                            </c-col>
+                          <c-col [md]="3"></c-col>
+                        </c-row>
+                        <c-row>
+                            <c-col [md]="6">
+                                <label>Remarks</label>
+                                <textarea type="text" formControlName="remarks" class="form-control"
+                                          placeholder="Enter Remarks" rows="3">
+                </textarea>
+                                <div *ngIf="inwardOutwardForm.get('remarks')?.invalid && inwardOutwardForm.get('remarks')?.touched"
+                                     class="text-danger">
+                                    remarks is required
+                                </div>
+                            </c-col>
+
+
+                            <c-col [md]="3">
+                                <h6>To upload multiple files press 'Ctrl'</h6>
+                                <input aria-label="file example"
+                                       cFormControl
+                                       id="validationText1"
+                                       multiple type="file"
+                                       (change)="Uploadfiles($event)"
+                                       (selectionchange)="Uploadfiles($event)"
+                                />
+                            </c-col>
+                        </c-row>
+                        <br>
+                        <br>
+                        <c-row>
+                          <c-col [md]="4"></c-col>
+                            <c-col [md]="2">
+                                <div style="padding-top: 25px;">
+                                    <button cButton type="submit" class="btn btn-success"
+                                            (click)="onUpdateInwardOutward()">Submit
+                                    </button>
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <div style="padding-top: 25px;">
+                                    <button cButton type="reset" class="btn btn-danger">Reset</button>
+                                </div>
+                            </c-col>
+                          <c-col [md]="2"></c-col>
+
+                        </c-row>
+                    </form>
+                    <br>
+                    <br>
+
+                    <h6 style="color: red">Edit is enabled for the selected document.</h6>
+                    <c-row>
+                        <c-col [md]="12">
+                            <ag-grid-angular style="width: 100%; height: 410px;" class="ag-theme-alpine"
+                                             [rowData]="inwardRows"
+                                             [gridOptions]="gridOptions_inwrd"
+                                             [columnDefs]="inwardColumns"
+                                             (gridReady)="onGridReady_inwrd($event)"
+                                             [rowSelection]='rowSelection_inwrd'
+                                             (rowSelected)="inwardonRowSelectedEvent($event)"
+                                             [pagination]="true"
+                                             [paginationPageSize]="paginationPageSize"
+                                             (selectionChanged)="inwardonSelectionChanged($event)">
+                            </ag-grid-angular>
+                        </c-col>
+                    </c-row>
+                    <br>
+                    <!--          <c-row>-->
+                    <!--            <c-col [md]="2">-->
+                    <!--              <div style="padding-top: 15px;">-->
+                    <!--                <button cButton type="reset" class="btn btn-success" (click)="updateInward()">Update</button>-->
+                    <!--              </div>-->
+                    <!--            </div>-->
+                    <!--          </div>-->
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3">
+                    <form cForm [formGroup]="reportsForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label>Select Document Type</label>
+                                <select [(ngModel)]="SelecteddocumentType" formControlName="type"
+                                        class="form-control">
+                                    <option disabled selected>Select Organization Type</option>
+                                    <option *ngFor="let org of documentType" [ngValue]="org">{{org}}
+                                    </option>
+                                </select>
+                                <div *ngIf="reportsForm.get('type')?.invalid && reportsForm.get('type')?.touched"
+                                     class="text-danger">
+                                    organization type is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <label>Select From Date</label>
+                                <input type="date" formControlName="fromdate" class="form-control">
+                                <div *ngIf="reportsForm.get('fromdate')?.invalid && reportsForm.get('fromdate')?.touched"
+                                     class="text-danger">
+                                    from date is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <label>Select To Date</label>
+                                <input type="date" formControlName="todate" class="form-control">
+                                <div *ngIf="reportsForm.get('todate')?.invalid && reportsForm.get('todate')?.touched"
+                                     class="text-danger">
+                                    from date is required
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <div style="padding-top: 24px;">
+                                    <button cButton type="submit" class="btn btn-success"
+                                            (click)="onSubmitReports()">Submit
+                                    </button>
+                                </div>
+                            </c-col>
+                            <c-col [md]="2">
+                                <div style="padding-top: 24px;">
+                                    <button cButton type="reset" class="btn btn-danger">Reset</button>
+                                </div>
+                            </c-col>
+                        </c-row>
+                    </form>
+                    <br>
+                    <c-row>
+                        <c-col [md]="12">
+                            <ag-grid-angular style="width: 100%; height: 410px;" class="ag-theme-alpine"
+                                             [rowData]="reportrowss"
+                                             [gridOptions]="gridOptions_report"
+                                             [columnDefs]="reportcolumnDefs"
+                                             [rowSelection]='rowSelection_report'
+                                             (gridReady)="onGridReady_report($event)"
+                                             (rowSelected)="reportonRowSelectedEvent($event)"
+                                             [pagination]="true"
+                                             [paginationPageSize]="paginationPageSize"
+                                             (selectionChanged)="reportonSelectionChanged($event)">
+                            </ag-grid-angular>
+                        </c-col>
+                    </c-row>
+                    <br>
+                    <c-row>
+                        <c-col [md]="2">
+                            <button cButton type="submit" (click)="ViewimageReports()" class="btn btn-success">
+                                View image
+                            </button>
+                        </c-col>
+                    </c-row>
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3">
+                    <c-card-body>
+                        <c-card>
+                            <c-row>
+                                <c-col [md]="3">
+                                    <h5 cCardTitle>Images report</h5>
+                                </c-col>
+                                <c-col [md]="2">
+                                    <button cButton type="submit" (click)="DownloadImage()" size="sm" style="align-items: end"
+                                            class="btn btn-success">
+                                        Download image
+                                    </button>
+                                </c-col>
+                            </c-row>
+                            <br>
+                                          <div  *ngFor="let singleimage of MyReportImage; let i = index" >
+                                            <img [src] = "singleimage" >
+                                          </div>
+<!--                            <div>-->
+<!--                                <c-carousel [interval]=" ">-->
+<!--                                    <c-carousel-inner >-->
+<!--                                        <c-carousel-item [active]="true" *ngFor="let slide of slides" >-->
+<!--                                            <img-->
+<!--                                                    [src]="slide[0]"-->
+<!--                                                    class="d-block w-100"-->
+<!--                                                    loading="lazy"-->
+<!--                                            />-->
+<!--                                        </c-carousel-item>-->
+<!--                                    </c-carousel-inner>-->
+<!--                                    <c-carousel-control [routerLink] caption="Previous" direction="prev"></c-carousel-control>-->
+<!--                                    <c-carousel-control [routerLink] caption="Next" direction="next"></c-carousel-control>-->
+<!--                                </c-carousel>-->
+<!--&lt;!&ndash;                                <ngx-gallery&ndash;&gt;-->
+<!--&lt;!&ndash;                                        [options]="galleryOptions"&ndash;&gt;-->
+<!--&lt;!&ndash;                                        [images]="galleryImages" class="ngx-gallery"></ngx-gallery>&ndash;&gt;-->
+<!--                            </div>-->
+                        </c-card>
+                    </c-card-body>
+                </c-tab-pane>
+
+            </c-tab-content>
+        </c-card-body>
+    </c-card>
+</div>

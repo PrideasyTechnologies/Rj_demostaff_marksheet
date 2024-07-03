@@ -1,0 +1,273 @@
+<div class="col-lg-12">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h4><b>Subject Quota</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a [active]="currentactive" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+            Subject Quota
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            NEP Subject Quota
+          </a>
+        </c-nav-item>
+
+      </c-nav>
+      <c-tab-content #tabContent="cTabContent">
+        <c-tab-pane class="p-3">
+          <c-card-body>
+
+            <c-row>
+              <c-col [md]="8">
+                <label for="Batch_Code">Select Batch:</label>
+                <div id="Batch_Code"
+                     class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete [data]="Batchs"
+                                   [searchKeyword]="Batchkeyword"
+                                   (selected)='selectBatch($event)'
+                                   [itemTemplate]="batTemplate"
+                                   [notFoundTemplate]="notFoundTemplate">
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 23px;">
+                <button cButton type="submit" (click)="ViewQuota()" class="btn btn-info">
+                  <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col [md]="12" style="padding-top: 20px;">
+                <form cForm class="d-flex" role="search">
+                  <!--          <div class="input-group">-->
+                  <!--            <div class="input-group-prepend">-->
+                  <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+                  <!--            </div>-->
+                  <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+                  <!--          </div>-->
+                  <c-input-group class="mb-3">
+                    <span cInputGroupText id="basic-addon1">Search</span>
+                    <input aria-describedby="basic-addon1"
+                           aria-label="Username"
+                           cFormControl
+                           placeholder="Search here"
+                           [(ngModel)]="searchValue"
+                           (keyup)="quickSearch()"
+                           name="Value"
+                    />
+                  </c-input-group>
+                </form>
+              </c-col>
+            </c-row>
+            <br/>
+
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine" [rowData]="rowss"
+                             [gridOptions]="normal_gridOptions"
+                             [columnDefs]="normal_columnDefs"
+                             [pagination]="true"
+                             [paginationPageSize]="paginationPageSize_installment"
+                             (gridReady)="onnormal_GridReady($event)"
+                             rowSelection="single"
+                             (selectionChanged)="onNormal_SelectionChanged($event)"
+            >
+            </ag-grid-angular>
+
+            <div style=" margin-top : 20px" class="row">
+              <div class="col-md-1.5" style="padding-left: 20px;padding-top: 5px;">
+                Page Size:
+              </div>
+              <c-col [md]="1">
+                <select class="form-control" (change)="onPageSizeChanged_normal()" id="normalpage-size">
+                  <option value="10" selected="">10</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="500">500</option>
+                  <option value="1000">1000</option>
+                </select>
+              </c-col>
+            </div>
+
+            <!--              <c-row>-->
+            <!--                <c-col [md]="2" style="padding-top: 23px;">-->
+            <!--                  <button cButton type="submit" (click)="View_data()" class="btn btn-success">-->
+            <!--                    View-->
+            <!--                  </button>-->
+            <!--                </c-col>-->
+            <!--              </c-row>-->
+
+
+            <br>
+            <div class="fade-in" [visible]="visible" cCollapse>
+              <c-card>
+                <c-card-header>
+                  <h4><b>Subject Change Quota</b></h4>
+                </c-card-header>
+                <c-card-body>
+                  <!--  <div [visible]="visible"  cCollapse>-->
+                  <form cForm [formGroup]="Normal_quotaSubForm" (keydown.enter)="$event.preventDefault()">
+                    <c-row>
+                      <!--      <c-row>-->
+                      <c-col [md]="4">
+                        <label for="quota_status"><b>Quota_status:</b></label>
+                        <select id="quota_status"
+                                formControlName="quota_status" class="form-control">
+                          <option value="" disabled>Select Quota Status</option>
+                          <option value="OPEN">OPEN</option>
+                          <option value="CLOSE">CLOSE</option>
+                        </select>
+                        <span
+                          *ngIf="Quotasubform_fn['quota_status']?.invalid && Quotasubform_fn['quota_status']?.touched"
+                          class="text-danger">Status is required</span>
+                      </c-col>
+                      <!--  </c-modal-body>-->
+                      <!--  <c-modal-footer>-->
+
+                      <c-col [md]="2" style="margin-top: 22px">
+
+                        <button cButton type="submit" (click)="onQuotaSubmit_normal()" class="btn btn-info">submit
+                        </button>
+                      </c-col>
+                    </c-row>
+                  </form>
+                </c-card-body>
+              </c-card>
+            </div>
+
+          </c-card-body>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3">
+          <c-card-body>
+
+            <c-row>
+              <div class="col-md-8">
+                <label for="Batch_Code">Select Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" (selected)='selectBatch($event)'
+                                   [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate">
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="col-md-2" style="padding-top: 24px;">
+                <button type="submit" (click)="view_nepquota()" class="btn btn-info">Show
+                </button>
+              </div>
+            </c-row>
+<!--            <c-row>-->
+<!--              <div class="col-md-12" style="padding-top: 20px;">-->
+<!--                <div class="input-group">-->
+<!--                  <div class="input-group-prepend">-->
+<!--                    <span class="input-group-text"><i class="cil-search"></i></span>-->
+<!--                  </div>-->
+<!--                  <input placeholder="Search Here" (keyup)="quicksearch_nep()" [(ngModel)]="searchValue">-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </c-row>-->
+
+            <c-col [md]="12" style="padding-top: 20px;">
+              <form cForm class="d-flex" role="search">
+
+                <c-input-group class="mb-3">
+                  <span cInputGroupText id="input-group-text">Search</span>
+                  <input aria-describedby="input-group-text"
+                         aria-label="Username"
+                         cFormControl
+                         placeholder="Search here"
+                         [(ngModel)]="searchValue"
+                         (keyup)="quicksearch_nep()"
+                         name="Value"
+                  />
+                </c-input-group>
+              </form>
+            </c-col>
+
+            <br/>
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine" [rowData]="rowss"
+                             [gridOptions]="nep_gridOptions"
+                             [columnDefs]="nep_columnDefs"
+                             [pagination]="true"
+                             [paginationPageSize]="paginationPageSize_installment"
+                             (gridReady)="onnep_GridReady($event)"
+                             rowSelection="single"
+                             (selectionChanged)="onNep_SelectionChanged($event)"
+            >
+            </ag-grid-angular>
+
+
+            <div style=" margin-top : 20px" class="row">
+              <div class="col-md-1.5" style="padding-left: 20px;padding-top: 5px;">
+                Page Size:
+              </div>
+              <div class="col-md-1">
+                <select class="form-control" (change)="onPageSizeChanged_nep()" id="neppage-size">
+                  <option value="10" selected="">10</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="500">500</option>
+                  <option value="1000">1000</option>
+                </select>
+              </div>
+            </div>
+
+
+
+          </c-card-body>
+
+          <div class="fade-in" [visible]="visible_nep" cCollapse>
+            <c-card>
+              <c-card-header>
+                <h4><b>Subject Change Quota</b></h4>
+              </c-card-header>
+              <c-card-body>
+                <form cForm [formGroup]="Nep_quotasubform" (keydown.enter)="$event.preventDefault()">
+                  <c-row>
+                    <c-col [md]="4">
+                      <label for="quota_status"><b>Quota_status:</b></label>
+                      <select formControlName="nep_quota_status" class="form-control">
+                        <option value="" disabled>Select Quota Status</option>
+                        <option value="OPEN">OPEN</option>
+                        <option value="CLOSE">CLOSE</option>
+                      </select>
+                      <span
+                        *ngIf="Nepsubform_fn['nep_quota_status']?.invalid && Nepsubform_fn['nep_quota_status']?.touched"
+                        class="text-danger">Status is required</span>
+                    </c-col>
+
+                    <c-col [md]="2" style="margin-top: 22px">
+
+                      <button cButton type="submit" (click)="onSubmit_Nep()" class="btn btn-info">submit</button>
+
+                    </c-col>
+
+                  </c-row>
+                </form>
+              </c-card-body>
+            </c-card>
+          </div>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>
+

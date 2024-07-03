@@ -1,0 +1,167 @@
+<div class="fade-in" *ngIf="QueryF">
+  <c-card>
+    <c-card-header>
+      <c-row>
+        <c-col [md]="12">
+          <h4><b>Query Ticket</b></h4>
+        </c-col>
+      </c-row>
+    </c-card-header>
+    <c-card-body>
+      <form cForm [formGroup]="QueryForm">
+        <c-row>
+          <c-col [md]="2">
+            <label>Status</label>
+            <select formControlName="status" class="form-control" (change)="onChangeStatusSelect()">
+              <option disabled>Select Status</option>
+              <option value="open"> Open</option>
+              <option value="close"> Close</option>
+            </select>
+            <span *ngIf="QueryForm.get('status')?.invalid && QueryForm.get('status')?.touched"
+                  class="text-danger">status is required</span>
+          </c-col>
+          <c-col [md]="10" style="padding-top: 30px;">
+            <button cButton class="btn btn-secondary" (click)="QueryData()"><i class='fas fa-sync-alt'></i></button>
+            &nbsp;
+            <button cButton class="btn btn-warning"><i class='fas fa-plus'></i></button> &nbsp;
+            <button cButton class="btn btn-info" (click)="OnActionClick()"><i class='fas fa-pen'></i></button>
+            &nbsp;
+            <button cButton class="btn btn-danger"><i class='fas fa-trash-alt'></i></button> &nbsp;
+          </c-col>
+
+          <!--          <c-col [md]="2">-->
+          <!--            <div>-->
+          <!--              <button cButton type="reset" class="btn btn-danger" (click)="AssignQuery">-->
+          <!--                Assign-->
+          <!--              </button>-->
+          <!--            </div>-->
+          <!--          </div>-->
+        </c-row>
+      </form>
+      <br/>
+      <!--      <c-row>-->
+      <!--        <c-col [md]="12"" style="padding-top: 20px;">-->
+      <!--          <form cForm class="d-flex" role="search">-->
+      <!--            &lt;!&ndash;          <div class="input-group">&ndash;&gt;-->
+      <!--            &lt;!&ndash;            <div class="input-group-prepend">&ndash;&gt;-->
+      <!--            &lt;!&ndash;              <span class="input-group-text"><i class="cil-search"></i></span>&ndash;&gt;-->
+      <!--            &lt;!&ndash;            </div>&ndash;&gt;-->
+      <!--            &lt;!&ndash;            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">&ndash;&gt;-->
+      <!--            &lt;!&ndash;          </div>&ndash;&gt;-->
+      <!--            <c-input-group class="mb-3">-->
+      <!--              <span cInputGroupText id="basic-addon1">Search</span>-->
+      <!--              <input aria-describedby="basic-addon1"-->
+      <!--                     aria-label="Username"-->
+      <!--                     cFormControl-->
+      <!--                     placeholder="Search here"-->
+      <!--                     [(ngModel)]="searchValue"-->
+      <!--                     (keyup)="quickSearch()"-->
+      <!--              />-->
+      <!--            </c-input-group>-->
+      <!--          </form>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <br/>
+
+      <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                       [rowData]="rowss"
+                       [gridOptions]="gridOptions"
+                       [columnDefs]="columnDefs"
+                       [pagination]="true"
+                       [paginationPageSize]="10"
+                       (gridReady)="onGridReady($event)"
+                       [rowSelection]='rowSelection'
+                       (rowSelected)="onRowSelectedEvent($event)"
+                       (selectionChanged)="onSelectionChanged($event)">
+      </ag-grid-angular>
+      <br>
+      <!--            <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"-->
+      <!--                             [rowData]="rowss_new"-->
+      <!--                             [gridOptions]="gridOptions_new"-->
+      <!--                             [columnDefs]="columnDefs_new"-->
+      <!--                             [pagination]="true"-->
+      <!--                             [paginationPageSize]="10"-->
+      <!--                             (gridReady)="onGridReady_new($event)"-->
+      <!--                             [rowSelection]='rowSelection'-->
+      <!--                             (rowSelected)="onRowSelectedEvent_new($event)"-->
+      <!--                             (selectionChanged)="onSelectionChanged_new($event)">-->
+      <!--            </ag-grid-angular>-->
+<!--      <c-row>-->
+<!--        <c-col [md]="2">-->
+<!--          <div class="raiseaticketbutton">-->
+<!--            <button cButton type="submit" class="btn btn-success" (click)="ReplyQuery()">-->
+<!--              Raise a ticket-->
+<!--            </button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <c-col [md]="2">-->
+<!--          <div class="assignbutton">-->
+<!--            <button cButton type="submit" class="btn btn-success" (click)="Assign()">-->
+<!--              Assign-->
+<!--            </button>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <br>-->
+<!--      <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"-->
+<!--                       [rowData]="rowssquery"-->
+<!--                       [gridOptions]="gridOptions_query"-->
+<!--                       [columnDefs]="columnDefs_query"-->
+<!--                       [pagination]="true"-->
+<!--                       [paginationPageSize]="10"-->
+<!--                       (gridReady)="onGridReady_query($event)"-->
+<!--                       [rowSelection]='rowSelection'-->
+<!--                       (rowSelected)="onRowSelectedEvent_query($event)"-->
+<!--                       (selectionChanged)="onSelectionChanged_query($event)">-->
+<!--      </ag-grid-angular>-->
+    </c-card-body>
+
+  </c-card>
+</div>
+
+<!--<div class="fade-in" *ngIf="Reply">-->
+<!--  <c-card>-->
+<!--    <c-card-header style="background-color:#f0f3f5">-->
+<!--      <h3><b>Reply Selected Query</b></h3>-->
+<!--    </c-card-header>-->
+<!--    <c-card-body>-->
+<!--      <form [formGroup]="FormReply" (keydown.enter)="$event.preventDefault()">-->
+<!--        <div class="mb-3">-->
+<!--          <label cLabel for="exampleFormControlTextarea1">Query</label>-->
+<!--          <textarea cFormControl id="exampleFormControlTextarea1" rows="3"></textarea>-->
+<!--          <c-col [md]="2">-->
+<!--            <br>-->
+<!--            <div class="assignbutton">-->
+<!--              <button cButton type="submit" class="btn btn-success" (click)="RaiseQuery()">-->
+<!--                Enter-->
+<!--              </button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </form>-->
+<!--    </c-card-body>-->
+<!--  </c-card>-->
+<!--</div>-->
+<!--<div class="fade-in" *ngIf="AssignQuer">-->
+<!--  <c-card>-->
+<!--    <c-card-header style="background-color:#f0f3f5">-->
+<!--      <h3><b>Assign Query</b></h3>-->
+<!--    </c-card-header>-->
+<!--    <c-card-body>-->
+<!--      <form [formGroup]="AssignQuery" (keydown.enter)="$event.preventDefault()">-->
+<!--        <div class="mb-3">-->
+<!--          <label cLabel for="exampleFormControlTextarea1">Assign Query</label>-->
+<!--          <textarea cFormControl id="exampleFormControlTextareassign" rows="3"></textarea>-->
+<!--          <c-col [md]="2">-->
+<!--            <br>-->
+<!--            <div class="AssignQuery">-->
+<!--              <button cButton type="submit" class="btn btn-success" (click)="ToAssignQuery()">-->
+<!--                Enter-->
+<!--              </button>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </form>-->
+<!--    </c-card-body>-->
+<!--  </c-card>-->
+<!--</div>-->

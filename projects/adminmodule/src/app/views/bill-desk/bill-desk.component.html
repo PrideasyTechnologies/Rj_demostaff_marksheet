@@ -1,0 +1,68 @@
+<!-- <div>
+    <h3>Bill Desk</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+    <c-card>
+        <c-card-header>
+            <h4><b>Bill Desk</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <form cForm [formGroup]="BilldeskForm" (keydown.enter)="$event.preventDefault()"
+                  (ngSubmit)="ShowBill(this.date)">
+                <c-row>
+                    <c-col [md]="4">
+                        <label for="fromdate">Select Date:</label>
+                        <input id="fromdate"
+                                type="date" formControlName="fromdate" class="form-control">
+                        <span *ngIf="BilldeskForm.get('fromdate')?.invalid &&
+                         BilldeskForm.get('fromdate')?.touched"
+                            class="text-danger">Date is required</span>
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 25px;">
+                        <button cButton type="submit" [disabled]="BilldeskForm?.invalid" size="md" class="btn btn-info">Show
+                        </button>
+                    </c-col>
+                </c-row>
+            </form>
+
+
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px;">
+              <form cForm class="d-flex" role="search">
+                <!--          <div class="input-group">-->
+                <!--            <div class="input-group-prepend">-->
+                <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+                <!--            </div>-->
+                <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+                <!--          </div>-->
+                <c-input-group class="mb-3">
+                  <span cInputGroupText id="basic-addonsearch">Search</span>
+                  <input aria-describedby="basic-addonsearch"
+                         aria-label="Username"
+                         cFormControl
+                         placeholder="Search here"
+                         [(ngModel)]="searchValue"
+                         (keyup)="quickSearch()"
+                         name="Value"
+                  />
+                </c-input-group>
+              </form>
+            </c-col>
+          </c-row>
+
+        <br/>
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                             [rowData]="rowss"
+                             [gridOptions]="gridOptions"
+                             [columnDefs]="columnDefs"
+                             [pagination]="true"
+                             [paginationPageSize]="10"
+                             (gridReady)="onGridReady($event)"
+                             (rowSelected)="onRowSelectedEvent($event)"
+                             (selectionChanged)="onSelectionChanged($event)">
+            </ag-grid-angular>
+        </c-card-body>
+    </c-card>
+</div>

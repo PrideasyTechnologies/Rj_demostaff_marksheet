@@ -1,0 +1,117 @@
+<!-- <div>
+    <h3>Edit Profile</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Edit Profile</b></h4>
+    </c-card-header>
+
+    <c-card-body>
+      <form
+        cForm
+        [formGroup]="updatedetailsForm"
+        (keydown.enter)="$event.preventDefault()"
+      >
+        <c-row>
+          <c-col [md]="3">
+            <label for="aadhaar">Enter Student Aadhaar:</label>
+            <input
+              id="aadhaar"
+              type="number"
+              formControlName="aadhaar"
+              class="form-control"
+              placeholder="Enter aadhaar no"
+              minlength="12"
+              maxlength="12"
+            />
+            <span
+              *ngIf="
+                updatedetailsForm.get('aadhaar')?.invalid &&
+                updatedetailsForm.get('aadhaar')?.touched
+              "
+              class="text-danger"
+              >aadhaar is required</span
+            >
+            <!-- <span  *ngIf="aadhaar.errors?.minlength">Aadhaar must be 12 numbers</span> -->
+          </c-col>
+          <c-col [md]="3">
+            <label for="mobile">Enter Mobile No:</label>
+            <input
+              id="mobile"
+              type="number"
+              formControlName="mobile"
+              class="form-control"
+              placeholder="Enter mobile no"
+            />
+            <span
+              *ngIf="
+                updatedetailsForm.get('mobile')?.invalid &&
+                updatedetailsForm.get('mobile')?.touched
+              "
+              class="text-danger"
+              >mobile is required</span
+            >
+            <!-- <span  *ngIf="aadhaar.errors?.minlength">Aadhaar must be 12 numbers</span> -->
+          </c-col>
+
+          <c-col [md]="3">
+            <label for="email">Enter Email Id:</label>
+            <input
+              type="email"
+              formControlName="email"
+              class="form-control"
+              placeholder="Enter email"
+            />
+            <span
+              *ngIf="
+                updatedetailsForm.get('email')?.invalid &&
+                updatedetailsForm.get('email')?.touched
+              "
+              class="text-danger"
+              >email is required</span
+            >
+            <!-- <span  *ngIf="aadhaar.errors?.minlength">Aadhaar must be 12 numbers</span> -->
+          </c-col>
+
+          <c-col [md]="2" style="padding-top: 24px">
+            <button
+              cButton
+              type="submit"
+              [disabled]="updatedetailsForm.invalid"
+              (click)="UpdateDetails()"
+              size="md"
+              class="btn btn-info"
+            >
+              <c-spinner
+                *ngIf="loader"
+                aria-hidden="false"
+                size="sm"
+              ></c-spinner>
+              Update
+            </button>
+          </c-col>
+          <c-col [md]="1" style="padding-top: 24px">
+            <button
+              cButton
+              type="submit"
+              class="btn btn-danger"
+              (click)="resetAll()"
+            >
+              Reset
+            </button>
+          </c-col>
+          <!-- <c-col [md]="2" style="padding-top: 30px;">
+                        <button cButton [disabled]="updatedetailsForm.invalid" (click)="DownloadAadhaar()" size="lg"
+                            class="btn btn-success"><i style="border-color: white;" class="spinner-border text-primary"
+                                role="status" *ngIf="Downloadloader"></i>&nbsp;Download Photo
+                        </button>
+                    </div> -->
+        </c-row>
+      </form>
+      <br />
+    </c-card-body>
+  </c-card>
+</div>

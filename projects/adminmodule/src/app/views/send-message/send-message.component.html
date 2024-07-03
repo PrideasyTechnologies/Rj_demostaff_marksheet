@@ -1,0 +1,69 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Message</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <form cForm [formGroup]="SendMessageForm" (keydown.enter)="$event.preventDefault()">
+        <c-row>
+          <c-col [md]="4">
+            <label for="websites">Websites:</label>
+            <select id="websites" [(ngModel)]="SelectedWebsites" formControlName="websites" class="form-control"
+                    (change)="onChangeWebsitesSelect()">
+              <option *ngFor="let web of Websites" [ngValue]="web">{{web.Sitename}}</option>
+            </select>
+            <span *ngIf="SendMessageForm.get('websites')?.invalid && SendMessageForm.get('websites')?.touched"
+                  class="text-danger">websites is required</span>
+          </c-col>
+
+          <c-col [md]="4">
+            <label for="opendate">Open Date:</label>
+            <input id="opendate" type="date" formControlName="opendate" formControlName="opendate" class="form-control">
+            <span *ngIf="SendMessageForm.get('opendate')?.invalid && SendMessageForm.get('opendate')?.touched"
+                  class="text-danger">open date is required</span>
+          </c-col>
+
+          <c-col [md]="4">
+            <label for="studenttype">Student Type</label>
+            <select id="studenttype" formControlName="studenttype" class="form-control">
+              <option disable>Select Student Type</option>
+              <option>Outside Student</option>
+              <option>ATKT Student</option>
+            </select>
+            <span
+              *ngIf="SendMessageForm.get('studenttype')?.invalid && SendMessageForm.get('studenttype')?.touched"
+              class="text-danger">student type is required</span>
+          </c-col>
+        </c-row>
+
+        <c-row>
+          <c-col [md]="8">
+            <label for="message">Message:</label>
+            <textarea id="message" type="text" formControlName="message" size="3" placeholder="Enter Your Message"
+                      class="form-control">
+                            </textarea>
+            <span *ngIf="SendMessageForm.get('message')?.invalid && SendMessageForm.get('message')?.touched"
+                  class="text-danger">message is required</span>
+          </c-col>
+
+          <c-col [md]="2" style="padding-top: 24px;">
+            <button cButton type="button" class="btn btn-success" [disabled]="SendMessageForm.invalid"
+                    (click)="SubmitMessage()">
+              <!--                            <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+              <!--                                *ngIf="loader"></i>&nbsp;&nbsp; -->
+              <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+
+              Save
+            </button>
+          </c-col>
+          <c-col [md]="2" style="padding-top: 24px;">
+            <button cButton type="reset" (click)="onCancel()"
+                    class="btn btn-danger">Cancel
+            </button>
+          </c-col>
+        </c-row>
+
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

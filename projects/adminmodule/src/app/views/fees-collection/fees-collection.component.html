@@ -1,0 +1,1549 @@
+<div class="fade-in" xmlns="http://www.w3.org/1999/html">
+    <c-card>
+        <c-card-header>
+            <h4><b>Offline Receipt/ Scholarship</b></h4>
+        </c-card-header>
+        <c-card-body>
+
+            <c-nav variant="tabs">
+                <c-nav-item>
+                    <a [active]="currentactive" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+                        Offline Receipt
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+                        Scholarship Receipt
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+                        Transfer term
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>
+                        Normal admission fees
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="4" cNavLink>
+                        NEP Admission fees
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="5" cNavLink>
+                        Fees Collection
+                    </a>
+                </c-nav-item>
+                <c-nav-item>
+                    <a [cTabContent]="tabContent" [tabPaneIdx]="6" cNavLink>
+                        Refund
+                    </a>
+                </c-nav-item>
+            </c-nav>
+
+            <c-tab-content #tabContent="cTabContent">
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px">
+                    <form cForm
+                          [formGroup]="feeCollectionForm"
+                          (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="Batch_Code">Batch:</label>
+                                <div id="Batch_Code" class="ng-autocomplete" style="width: 100%;">
+                                    <ng-autocomplete [data]="Batchs_json" [searchKeyword]="Batchkeyword"
+                                                     (selected)='selectBatch($event)'
+                                                     (inputChanged)='onChangeSearch($event)'
+                                                     (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                                     [notFoundTemplate]="notFoundTemplate">
+                                    </ng-autocomplete>
+
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                </div>
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label for="Aadhaar">Aadhaar Number:</label>
+                                <input id="Aadhaar"
+                                       type="number" formControlName="Aadhaar"
+                                       placeholder="Enter your Aadhaar Number" class="form-control">
+                                <span
+                                        *ngIf="feeCollectionForm.get('Aadhaar')?.invalid && feeCollectionForm.get('Aadhaar')?.touched"
+                                        class="text-danger">Aadhaar no is required</span>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 24px;">
+                                <button cButton type="submit" [disabled]="feeCollectionForm.invalid" size="md"
+                                        class="btn btn-info" (click)="SubjectApi()">Show
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </form>
+                    <form cForm [formGroup]="feesubForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="Subjects">Select Subjects</label>
+                                <input id="Subjects"
+                                       style="background-color: white;" readonly type="text"
+                                       formControlName="Subjects" class="form-control">
+                                <span
+                                        *ngIf="feesubForm.get('Subjects')?.invalid && feesubForm.get('Subjects')?.touched"
+                                        class="text-danger">invalid detail entered</span>
+                            </c-col>
+
+                            <c-col [md]="2">
+                                <label for="payment">Select Payment</label>
+                                <select id="payment"
+                                        [(ngModel)]="IfChequeSelected" (change)="PaymentMethod()"
+                                        formControlName="payment" class="form-control">
+                                    <option value="CASH" selected disabled>--- Please Select ---</option>
+                                    <option value="CASH">Cash</option>
+                                    <option value="CHEQUE">Cheque</option>
+                                    <option value="DD">DD</option>
+                                    <option value="NEFT">NEFT</option>
+
+                                </select>
+                                <span *ngIf="feesubForm.get('payment')?.invalid&& feesubForm.get('payment')?.touched"
+                                      class="text-danger">payment is required</span>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label class="required">Select Installment</label>
+                                <select formControlName="installment" [(ngModel)]="FeeStructure"
+                                        (change)="showFeesAmount(FeeStructure)" class="form-control modal-validation">
+                                    <option value="" selected disabled>--- Please Select ---</option>
+                                    <option *ngFor="let data of Installments_json" [ngValue]="data">
+                                        {{data.Header.Installment}}</option>
+                                </select>
+                                <span
+                                        *ngIf="feesubForm.get('installment')?.invalid &&
+                                  feesubForm.get('installment')?.touched"
+                                        class="text-danger">installment is required</span>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label for="Amount">Installment Amount:</label>
+                                <!--                  <textarea readonly id="Amount"-->
+                                <!--                            class="form-control">Rs.&nbsp;&nbsp;{{this.Amount}}</textarea>-->
+                                <input id="Amount" style="background-color: aliceblue;"
+                                       readonly class="form-control" [value]="this.Amount">
+                            </c-col>
+                        </c-row>
+
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="FullName">Student Full Name:</label>
+                                <input id="FullName" style="background-color: aliceblue;"
+                                       readonly class="form-control" [value]="this.FullName">
+
+                            </c-col>
+                            <c-col [md]="4">
+                                <label for="Mobile">Student Mobile No:</label>
+                                <input id="Mobile" style="background-color: aliceblue;"
+                                       readonly class="form-control" [value]=this.Mobile>
+                            </c-col>
+
+                            <c-col [md]="4">
+                                <label for="Emailid">Student Email Id:</label>
+                                <!--                  <textarea id="Emailid" type="text" readonly-->
+                                <!--                            class="form-control">{{this.Emailid}}</textarea>-->
+                                <input id="Emailid" style="background-color: aliceblue;"
+                                       readonly class="form-control"
+                                       [value]=this.Emailid>
+
+                            </c-col>
+                            <!--                <c-col [md]="3">-->
+                            <!--                  <label for="Amount">Installment Amount:</label>-->
+                            <!--                  <textarea readonly id="Amount"-->
+                            <!--                            class="form-control">Rs.&nbsp;&nbsp;{{this.Amount}}</textarea>-->
+                            <!--                </div>-->
+                        </c-row>
+
+                        <c-row *ngIf="IfChequeSelected != 'CASH'">
+                            <c-col [md]="5">
+                                <label for="bankname">Bank Name</label>
+                                <select id="bankname"
+                                        formControlName="bankname" [(ngModel)]="SelectedBank"
+                                        (change)="SelectBank()" class="form-control">
+                                    <option value="" selected disabled>--- Please Select ---</option>
+                                    <option *ngFor="let bank of banks_json" [ngValue]="bank">{{bank.bank}}</option>
+                                </select>
+                            </c-col>
+                            <c-col [md]="4">
+                                <label for="chequeno">Cheque / DD No</label>
+                                <input id="chequeno"
+                                       style="background-color: white;" type="text" formControlName="chequeno"
+                                       class="form-control">
+                            </c-col>
+                            <c-col [md]="3">
+                                <label for="chequedate">Cheque / DD Date</label>
+                                <input id="chequedate"
+                                       style="background-color: white;" type="date" formControlName="chequedate"
+                                       class="form-control">
+                            </c-col>
+                        </c-row>
+
+                        <c-row>
+                            <c-col [md]="12">
+                                <label class="required">Narration:</label>
+                                <textarea formControlName="narration" rows="3" class="form-control"></textarea>
+                                <span
+                                        *ngIf="feesubForm.get('narration')?.invalid && feesubForm.get('narration')?.touched"
+                                        class="text-danger">Narration is required</span>
+                            </c-col>
+                        </c-row>
+
+                        <c-row>
+                            <c-col [md]="5"></c-col>
+                            <c-col [md]="2" style="padding-top: 30px;">
+                                <button cButton type="submit" [disabled]="feesubForm.invalid" (click)="onSubmitFees()"
+                                        class="btn btn-success">
+                                    <!--                    <i style="border-color: white;"-->
+                                    <!--                                                     class="spinner-border text-primary" role="status"-->
+                                    <!--                                                     *ngIf="SubmitFeesloader"></i>&nbsp;&nbsp;-->
+                                    <c-spinner *ngIf="SubmitFeesloader" aria-hidden="false" size="sm"></c-spinner>
+
+                                    Submit
+                                </button>
+                            </c-col>
+                            <c-col [md]="5"></c-col>
+                        </c-row>
+                    </form>
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px">
+                    <h1> Scholar ship</h1>
+
+                    <form cForm
+                          [formGroup]="scholarshipSearchForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="Batch_Codefees">Batch:</label>
+                                <div id="Batch_Codefees"
+                                     class="ng-autocomplete" style="width: 100%;">
+                                    <ng-autocomplete [data]="Batchs_json" [searchKeyword]="Batchkeyword"
+                                                     (selected)='selectBatch($event)'
+                                                     (inputChanged)='onChangeSearch($event)'
+                                                     (inputFocused)='onFocused($event)'
+                                                     [itemTemplate]="batTemplate"
+                                                     [notFoundTemplate]="notFoundTemplate">
+                                    </ng-autocomplete>
+
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                </div>
+                            </c-col>
+
+                            <c-col [md]="4">
+                                <label for="Aadhaarfees">Aadhaar Number:</label>
+                                <input id="Aadhaarfees" type="number" formControlName="Aadhaarfees"
+                                       placeholder="Enter your Aadhaar Number" class="form-control">
+                                <span
+                                        *ngIf="scholarshipSearchForm.get('Aadhaarfees')?.invalid && scholarshipSearchForm.get('Aadhaarfees')?.touched"
+                                        class="text-danger">Aadhaar no is required</span>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 24px;">
+                                <button cButton type="submit"
+
+                                        size="md"
+                                        class="btn btn-info" (click)="showScholarship()">Show
+                                </button>
+                            </c-col>
+                            <!--              <c-col [md]="2" >-->
+                            <!--                <label for="type">Type</label>-->
+                            <!--                <select id="type"-->
+                            <!--                        formControlName="type" class="form-control">-->
+                            <!--                  <option  selected disabled>-&#45;&#45; Please Select -&#45;&#45;</option>-->
+                            <!--                </select>-->
+                            <!--              </div>-->
+                        </c-row>
+                    </form>
+                    <br/>
+                    <c-row>
+
+                        <c-col [md]="12">
+                            <table cTable class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th> Billdesk Transaction No</th>
+                                    <th>Payment Mode</th>
+                                    <th>Date</th>
+                                    <th>Receipt Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let item of Paidfees">
+                                <tr>
+                                    <td>{{item.BilldeskTranID}}</td>
+                                    <td>{{item.Payment_Mode}}</td>
+                                    <td>{{item.Billdeskdate}}</td>
+                                    <td>{{item.Receiptamount}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                        </c-col>
+                    </c-row>
+
+                    <form cForm [formGroup]="scholarshipForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="3">
+                                <label for="studentname">Student Full Name:</label>
+                                <input id="studentname" formControlName="studentname" readonly
+                                       class="form-control">
+                                <span
+                                        *ngIf="scholarshipForm.get('studentname')?.invalid && scholarshipForm.get('studentname')?.touched"
+                                        class="text-danger">student name is required</span>
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label for="mobileno">Student Mobile No:</label>
+                                <input id="mobileno" formControlName="mobileno" readonly
+                                       class="form-control">
+                                <span
+                                        *ngIf="scholarshipForm.get('mobileno')?.invalid && scholarshipForm.get('mobileno')?.touched"
+                                        class="text-danger">mobile no is required</span>
+                            </c-col>
+
+                            <c-col [md]="3">
+
+                                <label>
+                                    Student Email Id:
+                                </label>
+                                <input type="text" readonly formControlName="email" class="form-control">
+                                <span
+                                        *ngIf="scholarshipForm.get('email')?.invalid && scholarshipForm.get('email')?.touched"
+                                        class="text-danger">email is required</span>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label for="receiptdate">Receipt Date:</label>
+                                <input id="receiptdate"
+                                       formControlName="receiptdate" type="date" class="form-control">
+                                <span
+                                        *ngIf="scholarshipForm.get('receiptdate')?.invalid && scholarshipForm.get('receiptdate')?.touched"
+                                        class="text-danger">date is required</span>
+                            </c-col>
+
+                            <!-- <c-col [md]="3">
+                                <label for="installmentamount">Installment Amount</label>
+                                <textarea type="text" formControlName="installmentamount"
+                                    formControlName="installmentamount" class="form-control">
+                                    </textarea>
+                                <span
+                                    *ngIf="scholarshipForm.get('installmentamount').invalid && scholarshipForm.get('installmentamount').touched"
+                                    class="text-danger">installment amount is required</span>
+                            </div> -->
+
+                        </c-row>
+                        <!--              <form>-->
+                        <c-row>
+                            <c-col [md]="3">
+                                <label for="selectedFeesHead">Term Name:</label>
+                                <select id="selectedFeesHead"
+                                        class="form-control"
+                                        [(ngModel)]="selectedFeeshead"
+                                        formControlName="selectedFeesHead">
+                                    <!--                        (change)="onChangeFeesHead($event.target.selectedIndex)"-->
+
+                                    <option *ngFor="let fees of feesHead_json" [ngValue]="fees">{{fees.Term_name}}
+                                    </option>
+                                </select>
+                            </c-col>
+                            <c-col [md]="3" style="padding-top: 24px; width: 20%;">
+                                <button cButton type="button" (click)="onShowFeesStructure()"
+                                        class="btn btn-info">&nbsp;&nbsp;Show Fees structure
+                                </button>
+                            </c-col>
+                        </c-row>
+                        <br/>
+
+                        <form cForm [formGroup]="adjustmentscholarshipForm" (keydown.enter)="$event.preventDefault()">
+
+                            <c-row>
+                                <c-col [md]="12">
+                                    <table cTable class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Fees Head</th>
+                                            <th>Installment</th>
+                                            <th>Term Name</th>
+                                            <th>Amount</th>
+                                            <th>Adjustment Amount</th>
+                                            <th>Update</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let item of Feesstructure_json; index as myid">
+                                            <td>{{item.Fees_name}}</td>
+                                            <td>{{item.Installment}}</td>
+                                            <td>{{item.Term_name}}</td>
+                                            <td>{{item.Amount}}</td>
+                                            <td width="12%"><input type="number"
+                                                                   formControlName="Inputamount"
+                                                                   [contentEditable]="true"
+
+                                                                   [(ngModel)]="item.Adjustmentamount"
+                                                                   class="form-control"></td>
+                                            <!--                    [(ngModel)]="item.adjustmentAmount"-->
+                                            <!-- <td class="text-center"><input type="checkbox" [class.selectedRow]="rowIsSelected(item.Fees_name)"
+                                                        (click)="onRowClick(item.Fees_name)" style="cursor: pointer;"></td> -->
+                                            <td width="10%">
+                                                <button cButton class="btn btn-success"
+
+                                                        (click)="onRowClick(item.Fees_name,myid)"
+                                                        style="cursor: pointer;">Update
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-right"><b>Total</b></th>
+
+                                            <!--                      <td></td>-->
+                                            <td>{{actualTotal}}</td>
+                                            <td>{{adjustmentTotal!}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </c-col>
+                            </c-row>
+                        </form>
+
+
+                        <!--              </form>-->
+
+                        <c-row>
+                            <br/>
+
+                            <c-col [md]="12">
+                                <label for="narrationscholarship">Narration</label>
+                                <textarea id="narrationscholarship" formControlName="narrationscholarship" type="text"
+                                          [(ngModel)]="narration" class="form-control"></textarea>
+                                <span
+                                        *ngIf="scholarshipForm.get('narrationscholarship')?.invalid && scholarshipForm.get('narrationscholarship')?.touched"
+                                        class="text-danger">narration is required</span>
+                            </c-col>
+                            <br/>
+                        </c-row>
+                        <c-row style="justify-content: center">
+                            <!--                <c-col [md]="5"></div>-->
+                            <c-col [md]="2" style="padding-top: 30px;">
+                                <button cButton type="submit" (click)="onSubmitScholarship()" class="btn btn-success">
+                                    <!--                    <i-->
+                                    <!--                          style="border-color: white;" class="spinner-border text-primary"-->
+                                    <!--                          role="status" *ngIf="submitScholarshiploader"></i>-->
+                                    <c-spinner *ngIf="submitScholarshiploader" aria-hidden="false"
+                                               size="sm"></c-spinner>
+
+                                    Submit
+                                </button>
+                            </c-col>
+                            <!--                <c-col [md]="5"></div>-->
+                        </c-row>
+                    </form>
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px"
+                            heading="Transfer term">
+                    <form cForm
+                          [formGroup]="ShowaadhaarForm"
+                          (keydown.enter)="$event.preventDefault()"
+                          (ngSubmit)="OnsubmitAadhaar(ShowaadhaarForm)">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="ctr_aadhaar">Aadhaar Number:</label>
+                                <input type="number" id="ctr_aadhaar" formControlName="ctr_aadhaar"
+                                       placeholder="Enter your Aadhaar Number" class="form-control">
+                                <span
+                                        *ngIf="ShowaadhaarForm.get('ctr_aadhaar')?.invalid && ShowaadhaarForm.get('ctr_aadhaar')?.touched"
+                                        class="text-danger">Aadhaar no is required</span>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 25px;">
+                                <button cButton type="submit" [disabled]="!ShowaadhaarForm.valid" size="md"
+                                        class="btn btn-info">Show
+                                </button>
+                            </c-col>
+                        </c-row>
+                    </form>
+
+                    <hr>
+                    <form cForm
+                          [formGroup]="StudentTermsForm"
+                          (keydown.enter)="$event.preventDefault()"
+                    >
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="ctr_fromterm">Current attached terms:</label>
+                                <!--                  <select id="ctr_fromterm"-->
+                                <!--                          class="custom-select mb-3"-->
+                                <!--                          (change)="OnChangeFromterm($event)"-->
+                                <!--                          formControlName="ctr_fromterm"-->
+                                <!--                  >-->
+                                <!--                    <option value="">Transfer terms</option>-->
+                                <!--                    <option *ngFor="let fromterm of Fromterms" [ngValue]="fromterm">-->
+                                <!--                      {{ fromterm }}-->
+                                <!--                    </option>-->
+                                <!--                  </select>-->
+                                <select id="ctr_fromterm"
+                                        [(ngModel)]="OldTerm"
+                                        formControlName="ctr_fromterm" class="form-control">
+                                    <option value="CASH" selected disabled>--- Transfer terms ---</option>
+                                    <option *ngFor="let fromterm of Fromterms"
+                                            [ngValue]="fromterm">{{ fromterm.Term_Name }}</option>
+                                </select>
+                                <div class="invalid-feedback" *ngIf="isTermUpdated && Get_fromterm?.invalid">
+                                    <sup>*</sup>Please provide from term
+                                </div>
+                            </c-col>
+
+                            <c-col [md]="4">
+                                <label for="ctr_toterm">Transfer to new term:</label>
+                                <!--                  <select id="ctr_toterm"-->
+                                <!--                          class="custom-select mb-3"-->
+                                <!--                          (change)="OnChangeToterm($event)"-->
+                                <!--                          formControlName="ctr_toterm"-->
+                                <!--                  >-->
+                                <!--                    <option value="">Choose to term</option>-->
+                                <!--                    <option>Choose...</option>-->
+                                <!--                    <option>aaaa</option>-->
+                                <!--                    <option>cccc</option>-->
+                                <!--                    <option *ngFor="let toterm of Toterms" [ngValue]="toterm">-->
+                                <!--                      {{ toterm }}-->
+                                <!--                    </option>-->
+                                <!--                  </select>-->
+                                <select id="ctr_toterm"
+                                        [(ngModel)]="NewTerm"
+
+                                        formControlName="ctr_toterm" class="form-control">
+                                    <option value="">--- Choose to term ---</option>
+                                    <option *ngFor="let toterm of Toterms" [ngValue]="toterm">
+                                        {{ toterm.Term_Name }}
+                                    </option>
+                                </select>
+
+                                <div class="invalid-feedback" *ngIf="isTermUpdated && Get_toterm?.invalid">
+                                    <sup>*</sup>Please provide city name
+                                </div>
+                            </c-col>
+                            <c-col [md]="4">
+                                <label for="notes">Notes</label>
+                                <textarea id="notes" formControlName="notes" type="text"
+                                          class="form-control"></textarea>
+                                <span
+                                        *ngIf="StudentTermsForm.get('notes')?.invalid && StudentTermsForm.get('notes')?.touched"
+                                        class="text-danger">Notes is required</span>
+                            </c-col>
+                            <c-row style="justify-content: center">
+                                <c-col [md]="2" style="padding-top: 23px;">
+                                    <button cButton type="submit" size="md"
+                                            class="btn btn-info"
+                                            (click)="Onsubmit_Terms()"
+                                    >Update Term
+                                    </button>
+                                </c-col>
+                            </c-row>
+
+                        </c-row>
+
+                    </form>
+
+
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px">
+                    <form cForm
+                          [formGroup]="normaladmissionform"
+                          (keydown.enter)="$event.preventDefault()"
+                          (ngSubmit)="onsubmit_normaladmission(normaladmissionform)">
+                        <div class="form-group">
+                            <c-row>
+                                <c-col [md]="6">
+                                    <div class="form-group">
+                                        <label for="ctr_batchname">Select Batch name</label>
+                                        <select id="ctr_batchname"
+                                                formControlName="ctr_batchname" class="form-control"
+                                                (change)="onselect_batch($event.target.selectedIndex)">
+                                            <option disabled>Select Subject</option>
+                                            <option *ngFor="let batch of Batchs_json" [ngValue]="batch">
+                                                {{batch.Batch_Name}}</option>
+                                        </select>
+                                        <span
+                                                *ngIf="normal_batch?.invalid && normal_batch?.touched"
+                                                class="text-danger">change Subject is required</span>
+                                    </div>
+                                </c-col>
+                                <c-col [md]="6">
+                                    <label class="ctr_subjectname">Subject Group</label>
+                                    <div class="form-group">
+                                        <select
+                                                formControlName="ctr_subjectname" class="form-control"
+                                                (change)="onselect_subject($event.target.selectedIndex)">
+                                            <option disabled>Select Subject</option>
+                                            <option *ngFor="let sub of subject_json ; index as i" [ngValue]="sub">
+                                                {{sub.Subject_group_code}}</option>
+                                        </select>
+                                        <span
+                                                *ngIf="normal_subject?.invalid && normal_subject?.touched"
+                                                class="text-danger">Subject is required</span>
+                                    </div>
+                                </c-col>
+                            </c-row>
+                            <br>
+                            <c-row>
+                                <c-col [md]="6">
+                                    <label for="ctr_studentaadhaar">Aadhaar Number:</label>
+                                    <input
+                                            id="ctr_studentaadhaar"
+                                            type="number"
+                                            formControlName="ctr_studentaadhaar"
+                                            placeholder="Enter Student Aadhaar Number"
+                                            (change)="normal_admission_aadhaar()"
+                                            class="form-control">
+                                    <span
+                                            *ngIf="normal_aadhaar?.invalid && normal_aadhaar?.touched"
+                                            class="text-danger">Aadhaar no is required</span>
+                                </c-col>
+                                <c-col [md]="3">
+                                    <label for="Aadhaar">Selected Subject</label>
+                                    <!--<label>{{selected_subject.Subject_group_name}}</label>-->
+                                </c-col>
+                                <c-col [md]="3">
+                                    <label for="Aadhaar">Form Amount</label>
+                                    <!-- <label>YYYYY</label>-->
+                                </c-col>
+                            </c-row>
+                        </div>
+                        <br>
+                        <c-row>
+                            <c-col [md]="6">
+                                <label class="ctr_type">Type</label>
+                                <select
+                                        class="form-control"
+                                        formControlName="ctr_type"
+                                        (change)="onselect_feesmode($event.target.selectedIndex)">
+                                    <option default>DEMO</option>
+                                    <option>LIVE</option>
+                                </select>
+                                <span
+                                        *ngIf="normal_paymentmode?.invalid && normal_paymentmode?.touched"
+                                        class="text-danger">Select type </span>
+                            </c-col>
+                        </c-row>
+                        <c-row>
+                            <c-col [md]="5"></c-col>
+                            <c-col [md]="2" style="padding-top: 30px;">
+                                <button cButton type="submit" [disabled]="normaladmissionform?.invalid"
+                                        class="btn btn-success">Pay
+                                </button>
+                            </c-col>
+                            <c-col [md]="5"></c-col>
+                        </c-row>
+
+                    </form>
+                </c-tab-pane>
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px">
+                    <div>
+                        <h4>
+                            Registration
+                        </h4>
+                        <hr>
+                    </div>
+
+                    
+
+                        <form [formGroup]="NepAdditionalsubjectForm" (ngSubmit)="asPayment()">
+
+
+                            <c-row>
+                                <c-col [md]="4">
+                                    <label class="required"><b>Batch</b></label>
+                                    <select class="form-control"
+                                            cSelect
+                                            id="batch"
+                                            [(ngModel)]="BatchObject"
+                                            (change)="modalSelectBatchSubjects()"
+                                            formControlName="batch">
+                                        <option value="" disabled selected>
+                                            --- Please Select ---
+                                        </option>
+                                        <option *ngFor="let data of modalBatch; let i = index" [ngValue]="data">
+                                            {{ data.Batch_name }}
+                                        </option>
+                                    </select>
+                                </c-col>
+                                <c-col [md]="4">
+                                    <label for="ctr_nepaadhaar">Aadhaar Number:</label>
+                                    <input id="ctr_nepaadhaar"
+                                           type="number"
+                                           formControlName="ctr_nepaadhaar"
+                                           placeholder="Enter Aadhaar Number"
+                                           class="form-control"
+                                    />
+                                </c-col>
+                            </c-row>
+                            <!--                  <c-col [md]="2" style="padding-top: 24px">-->
+                            <!--                    <button-->
+                            <!--                      cButton-->
+                            <!--                      type="submit"-->
+                            <!--                      size="md"-->
+                            <!--                      class="btn btn-info"-->
+                            <!--                      (click)="Get_batchaadhharsubject()"-->
+                            <!--                    >-->
+                            <!--                      &nbsp;Show-->
+                            <!--                    </button>-->
+                            <!--                  </c-col>-->
+
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Major Subject Papers</b></label>
+
+                                            <select formControlName="frm_majorsubjects" [(ngModel)]="selected_major"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (modalSubmit || frmsubject['frm_majorsubjects'].touched) &&
+                                            frmsubject['frm_majorsubjects'].errors,
+                                          'is-valid': frmsubject['frm_majorsubjects'].touched && !frmsubject['frm_majorsubjects'].errors
+                                        }" (change)="onMajorSelected(selected_major)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Please Select ---</option>
+                                                <option *ngFor="let data of majorsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Subject_group_code }}
+                                                </option>
+                                            </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2" style="margin-top: 24px">
+                                    <!--                      <button type="button" class="btn-info" (click)="onusermessage(1)">Click here</button>-->
+                                    <button cButton color="info" shape="rounded-0" class="btn-info"
+                                            (click)="onusermessage(1)">Click here
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <p>
+                                    <b>Selected Major Subject Paper consists : {{ major_subjectgroup }}</b>
+                                    <br/>
+                                </p>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Minor subject </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_minorsubjects"
+                                                    [(ngModel)]="selected_minor" [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_minorsubjects'].touched) &&
+                                            frmsubject['frm_minorsubjects'].errors,
+                                          'is-valid': frmsubject['frm_minorsubjects'].touched && !frmsubject['frm_minorsubjects'].errors
+                                        }"
+                                                    (focusin)="minor_subject(2)"
+                                                    (change)="onLevelSelect(3)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Select Minor---</option>
+                                                <option *ngFor="let data of minorsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(2)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(2)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Open Elective </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_oesubjects" [(ngModel)]="selected_oe"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_oesubjects'].touched) &&
+                                            frmsubject['frm_oesubjects'].errors,
+                                          'is-valid': frmsubject['frm_oesubjects'].touched && !frmsubject['frm_oesubjects'].errors
+                                        }" (change)="onLevelSelect(4)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Open Elective---</option>
+                                                <option *ngFor="let data of oesubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(3)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(3)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><b>Vocational and skill Enhancement courses(VSEC) </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_vscsubjects" [(ngModel)]="selected_vsc"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_vscsubjects'].touched) &&
+                                            frmsubject['frm_vscsubjects'].errors,
+                                          'is-valid': frmsubject['frm_vscsubjects'].touched && !frmsubject['frm_vscsubjects'].errors
+                                        }" (change)="onLevelSelect(5)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Select VSC---</option>
+                                                <option *ngFor="let data of vscsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(4)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(4)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Skill Enhancement Course </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_secsubjects" [(ngModel)]="selected_sec"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_secsubjects'].touched) &&
+                                            frmsubject['frm_secsubjects'].errors,
+                                          'is-valid': frmsubject['frm_secsubjects'].touched && !frmsubject['frm_secsubjects'].errors
+                                        }" (change)="onLevelSelect(6)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- SEC-Student will chosse
+                                                    from the basket of
+                                                    coursesr---
+                                                </option>
+                                                <option *ngFor="let data of secsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(5)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(5)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Ability Enhancement Courses(AEC) </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_aecsubjects" [(ngModel)]="selected_aec"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_aecsubjects'].touched) &&
+                                            frmsubject['frm_aecsubjects'].errors,
+                                          'is-valid': frmsubject['frm_aecsubjects'].touched && !frmsubject['frm_aecsubjects'].errors
+                                        }" (change)="onLevelSelect(7)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Select Ability
+                                                    Enhancement Courses(AEC)---
+                                                </option>
+                                                <option *ngFor="let data of aecsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(6)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(6)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Values Education Course(VEC) </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_vecsubjects" [(ngModel)]="selected_vec"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_vecsubjects'].touched) &&
+                                            frmsubject['frm_vecsubjects'].errors,
+                                          'is-valid': frmsubject['frm_vecsubjects'].touched && !frmsubject['frm_vecsubjects'].errors
+                                        }" (change)="onLevelSelect(8)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Select Minor---</option>
+                                                <option *ngFor="let data of vecsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(7)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(7)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="required"><b>Indian Knowledge system(IKS) </b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_ikssubjects" [(ngModel)]="selected_iks"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_ikssubjects'].touched) &&
+                                            frmsubject['frm_ikssubjects'].errors,
+                                          'is-valid': frmsubject['frm_ikssubjects'].touched && !frmsubject['frm_ikssubjects'].errors
+                                        }" (change)="onLevelSelect(9)"
+                                                    class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Select IKS---</option>
+                                                <option *ngFor="let data of ikssubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(8)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(8)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><b>Co-Curricular Activities(CC)</b></label>
+                                        <select formControlName="frm_ccsubjects" [(ngModel)]="selected_cc"
+                                                [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_ccsubjects'].touched) &&
+                                            frmsubject['frm_ccsubjects'].errors,
+                                          'is-valid': frmsubject['frm_ccsubjects'].touched && !frmsubject['frm_ccsubjects'].errors
+                                        }" class="form-control modal-validation"
+                                                (change)="onLevelSelect(10)"
+                                        >
+                                            <option value="" disabled selected>--- Select CC Subject---
+                                            </option>
+                                            <option *ngFor="let data of ccsubjects; let i = index"
+                                                    [ngValue]="data">
+                                                {{ data.Otherlevel}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(8)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(8)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-start">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label><b>Field Project/Community Engagement
+                                            Program.(FP/CEP)</b></label>
+                                        <div class="form-group">
+                                            <select formControlName="frm_fpsubjects" [(ngModel)]="selected_fp"
+                                                    [ngClass]="{
+                                          'is-invalid':
+                                            (frmsubject['frm_fpsubjects'].touched) &&
+                                            frmsubject['frm_fpsubjects'].errors,
+                                          'is-valid': frmsubject['frm_fpsubjects'].touched
+                                          && !frmsubject['frm_fpsubjects'].errors
+                                        }" class="form-control modal-validation">
+                                                <option value="" disabled selected>--- Select FP---</option>
+                                                <option *ngFor="let data of fpsubjects; let i = index"
+                                                        [ngValue]="data">
+                                                    {{ data.Otherlevel}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <label></label>
+                                    <div class="form-group">
+                                        <!--                      <button type="button" class="btn-info" (click)="onusermessage(8)">Click here</button>-->
+                                        <button cButton color="info" shape="rounded-0" class="btn-info"
+                                                (click)="onusermessage(8)">Click here
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br>
+
+                            <div>
+                                <h3>Form Amount : ₹ {{ this.BatchObject?.Formamount }}</h3>
+                            </div>
+                            <div>
+
+
+                                <div style="padding-left: 18px;">
+                                    <h4>You have selected following subjects :</h4>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-responsive">
+                                        <tbody>
+                                        <tr *ngIf="selected_major?.Subject_group_name">
+                                            <th>Major subject</th>
+                                            <td>{{selected_major?.Subject_group_name}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_minor?.Otherlevel">
+                                            <th>Minor subject</th>
+                                            <td>{{selected_minor?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_oe?.Otherlevel">
+                                            <th>Open Elective</th>
+                                            <td>{{selected_oe?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_vsc?.Otherlevel">
+                                            <th>VSEC</th>
+                                            <td>{{selected_vsc?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_sec?.Otherlevel">
+                                            <th>SEC</th>
+                                            <td>{{selected_sec?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_aec?.Otherlevel">
+                                            <th>AEC</th>
+                                            <td>{{selected_aec?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_vec?.Otherlevel">
+                                            <th>VEC</th>
+                                            <td>{{selected_vec?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_iks?.Otherlevel">
+                                            <th>IKS</th>
+                                            <td>{{selected_iks?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_cc?.Otherlevel">
+                                            <th>CC</th>
+                                            <td>{{selected_cc?.Otherlevel}}</td>
+                                        </tr>
+                                        <tr *ngIf="selected_fp?.Otherlevel">
+                                            <th>FP</th>
+                                            <td>{{selected_fp?.Otherlevel}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-10">
+                                </div>
+                                <div class="col-md-2" style="justify-content: flex-end">
+                                    <div class="modal-footer">
+                                        <button type="submit" [disabled]="NepAdditionalsubjectForm.invalid" size="md"
+                                                class="btn btn-outline-dark">
+                                            Pay
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    
+
+
+                </c-tab-pane>
+
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px">
+                    <form cForm
+                          [formGroup]="feespaymentform"
+                          (keydown.enter)="$event.preventDefault()"
+                          (ngSubmit)="IU_Receipt(feespaymentform)">
+                        <div class="form-group">
+                            <c-row>
+                                <c-col [md]="6">
+                                    <label for="aadhaar">Aadhaar Number:</label>
+                                    <input id="ctr_paymentaadhaar"
+                                           type="number"
+                                           formControlName="ctr_paymentaadhaar"
+                                           placeholder="Enter Student Aadhaar Number"
+                                           (change)="onchange_paymentaadhaar()"
+                                           class="form-control">
+                                    <span
+                                            *ngIf="ctr_paymentaadhaar_fld?.invalid && ctr_paymentaadhaar_fld?.touched"
+                                            class="text-danger">Aadhaar no is required</span>
+                                </c-col>
+                                <c-col [md]="6">
+                                    <div class="form-group">
+                                        <label for="ctr_paymentbatch">Select Batch name</label>
+                                        <select id="ctr_paymentbatch"
+                                                formControlName="ctr_paymentbatch" class="form-control"
+                                                (change)="onselect_paymentbatch($event.target.selectedIndex)">
+                                            <option disabled>Select Subject</option>
+                                            <option *ngFor="let batch of approvedcourse_json" [ngValue]="batch">
+                                                {{batch.Batch_name}}</option>
+                                        </select>
+                                        <span
+                                                *ngIf="ctr_paymentbatch_fld?.invalid && ctr_paymentbatch_fld?.touched"
+                                                class="text-danger">change Subject is required</span>
+                                    </div>
+                                </c-col>
+                            </c-row>
+                            <c-row>
+                                <c-col [md]="3">
+                                    <label class="required">Subject Group</label>
+                                    <div class="form-group">
+                                        <!--                    <select-->
+                                        <!--                      formControlName="ctr_paymentsubject" class="form-control"-->
+                                        <!--                      (change)="onselect_subject($event.target.selectedIndex)">-->
+                                        <!--                      <option disabled>Select Subject</option>-->
+                                        <!--                      <option [ngValue]="selected_subjectid">{{selected_subjectgroupcode}}</option>-->
+
+                                        <!--                    </select>-->
+
+                                        <input
+                                                type="text"
+                                                readonly
+                                                formControlName="ctr_paymentsubject"
+                                                placeholder="Student subject"
+                                                class="form-control">
+                                        <!--                                        <span-->
+                                        <!--                                          *ngIf="ctr_paymentsubject_fld.invalid && ctr_paymentsubject_fld.touched"-->
+                                        <!--                                          class="text-danger">Subject is required</span>-->
+                                    </div>
+                                </c-col>
+                                <c-col [md]="3">
+                                    <label class="ctr_paymentmode">Type </label>
+                                    <select
+                                            class="form-control"
+                                            formControlName="ctr_paymentmode"
+                                            (change)="onselect_feesmode($event.target)">
+                                        <option default>DEMO</option>
+                                        <option>LIVE</option>
+                                    </select>
+                                    <span
+                                            *ngIf="ctr_paymentmode_fld?.invalid && ctr_paymentmode_fld?.touched"
+                                            class="text-danger">Select Type</span>
+                                </c-col>
+                                <c-col [md]="6">
+                                    <label class="ctr_paymentinstallment">Installment</label>
+
+                                    <select
+                                            formControlName="ctr_paymentinstallment"
+                                            class="form-control"
+                                            (change)="onselect_installment($event.target.selectedIndex)">
+                                        <option disabled>Select Installment</option>
+                                        <option *ngFor="let ins of Installments_json ; index as i" [ngValue]="ins">
+                                            {{ins.Header.Installment}}</option>
+                                    </select>
+                                    <span
+                                            *ngIf="ctr_paymentinstallment_fld?.invalid && ctr_paymentinstallment_fld?.touched"
+                                            class="text-danger">Installment is required</span>
+                                </c-col>
+                            </c-row>
+                            <br>
+                            <c-row>
+                                <c-col [md]="6">
+                                    <h5>Student name - {{Studentname}}</h5>
+                                </c-col>
+                                <c-col [md]="6">
+                                    <h5>Amount - {{Feesamount_header}} </h5>
+                                </c-col>
+                            </c-row>
+                        </div>
+
+                        <c-row>
+                            <c-col [md]="5"></c-col>
+                            <c-col [md]="2" style="padding-top: 30px;">
+                                <button cButton type="submit" [disabled]="feespaymentform?.invalid"
+                                        class="btn btn-success">Pay
+                                </button>
+                            </c-col>
+                            <c-col [md]="5"></c-col>
+                        </c-row>
+
+                    </form>
+                </c-tab-pane>
+
+
+                <!--        Refund form-->
+
+                <c-tab-pane class="p-3" style=" margin-top : 20px">
+                    <form cForm
+                          [formGroup]="RefundCollectionForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="4">
+                                <label for="Batch_Coderefund">Batch:</label>
+                                <div id="Batch_Coderefund"
+                                     class="ng-autocomplete" style="width: 100%;">
+                                    <ng-autocomplete [data]="Batchs_json" [searchKeyword]="Batchkeyword"
+                                                     (selected)='selectBatch($event)'
+                                                     (inputChanged)='onChangeSearch($event)'
+                                                     (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                                     [notFoundTemplate]="notFoundTemplate">
+                                    </ng-autocomplete>
+
+                                    <ng-template #batTemplate let-bat>
+                                        <a [innerHTML]="bat.Batch_Name"></a>
+                                    </ng-template>
+
+                                    <ng-template #notFoundTemplate let-notFound>
+                                        <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                </div>
+                            </c-col>
+
+                            <c-col [md]="4">
+                                <label for="Aadhaarrefund">Aadhaar Number:</label>
+                                <input id="Aadhaarrefund" type="number" formControlName="Aadhaarrefund"
+                                       placeholder="Enter your Aadhaar Number" class="form-control">
+                                <span
+                                        *ngIf="RefundCollectionForm.get('Aadhaarrefund')?.invalid && RefundCollectionForm.get('Aadhaarrefund')?.touched"
+                                        class="text-danger">Aadhaar no is required</span>
+                            </c-col>
+                            <c-col [md]="2" style="padding-top: 24px;">
+                                <button cButton type="submit" [disabled]="RefundCollectionForm.invalid" size="md"
+                                        class="btn btn-info" (click)="showRefund()">Show
+                                </button>
+                            </c-col>
+                            <!--              <c-col [md]="2" >-->
+                            <!--                <label for="type">Type</label>-->
+                            <!--                <select id="type"-->
+                            <!--                        formControlName="type" class="form-control">-->
+                            <!--                  <option  selected disabled>--- Please Select ---</option>-->
+                            <!--                </select>-->
+                            <!--              </div>-->
+                        </c-row>
+                    </form>
+                    <br/>
+                    <c-row>
+
+
+                        <c-col [md]="12">
+                            <table cTable class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th> Billdesk Transaction No</th>
+                                    <th>Payment Mode</th>
+                                    <th>Date</th>
+                                    <th>Receipt Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let itemrefund of Paidfeesrefund">
+                                <tr>
+                                    <td>{{itemrefund.BilldeskTranID}}</td>
+                                    <td>{{itemrefund.Payment_Mode}}</td>
+                                    <td>{{itemrefund.Billdeskdate}}</td>
+                                    <td>{{itemrefund.Receiptamount}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </c-col>
+                    </c-row>
+
+                    <form cForm [formGroup]="refundscholarshipForm" (keydown.enter)="$event.preventDefault()">
+                        <c-row>
+                            <c-col [md]="3">
+                                <label for="studentnamerefund">Student Full Name:</label>
+                                <input id="studentnamerefund" formControlName="studentnamerefund" readonly
+                                       class="form-control">
+                                <span
+                                        *ngIf="refundscholarshipForm.get('studentnamerefund')?.invalid && refundscholarshipForm.get('studentnamerefund')?.touched"
+                                        class="text-danger">student name is required</span>
+                            </c-col>
+
+                            <c-col [md]="3">
+                                <label for="mobilenorefund">Student Mobile No:</label>
+                                <input id="mobilenorefund" formControlName="mobilenorefund" readonly
+                                       class="form-control">
+                                <span
+                                        *ngIf="refundscholarshipForm.get('mobilenorefund')?.invalid && refundscholarshipForm.get('mobilenorefund')?.touched"
+                                        class="text-danger">mobile no is required</span>
+                            </c-col>
+
+                            <c-col [md]="3">
+
+                                <label>
+                                    Student Email Id:
+                                </label>
+                                <input type="text" readonly formControlName="emailrefund" class="form-control">
+                                <span
+                                        *ngIf="refundscholarshipForm.get('emailrefund')?.invalid && refundscholarshipForm.get('emailrefund')?.touched"
+                                        class="text-danger">email is required</span>
+                            </c-col>
+                            <c-col [md]="3">
+                                <label for="receiptdaterefund">Receipt Date:</label>
+                                <input id="receiptdaterefund"
+                                       formControlName="receiptdaterefund" type="date" class="form-control">
+                                <span
+                                        *ngIf="refundscholarshipForm.get('receiptdaterefund')?.invalid && refundscholarshipForm.get('receiptdaterefund')?.touched"
+                                        class="text-danger">date is required</span>
+                            </c-col>
+
+                            <!-- <c-col [md]="3">
+                                <label for="installmentamount">Installment Amount</label>
+                                <textarea type="text" formControlName="installmentamount"
+                                    formControlName="installmentamount" class="form-control">
+                                    </textarea>
+                                <span
+                                    *ngIf="scholarshipForm.get('installmentamount').invalid && scholarshipForm.get('installmentamount').touched"
+                                    class="text-danger">installment amount is required</span>
+                            </div> -->
+
+                        </c-row>
+                        <!--              <form>-->
+                        <c-row>
+                            <c-col [md]="3">
+                                <label for="selectedrefundFeesHead">Term Name:</label>
+                                <select id="selectedrefundFeesHead"
+                                        class="form-control"
+                                        formControlName="selected_refundterm"
+                                        [(ngModel)]="selectedrefundterm"
+                                >
+                                    <option *ngFor="let feesrefund of feesHead_json_refund"
+                                            [ngValue]="feesrefund">{{feesrefund.Term_name}}
+                                    </option>
+                                </select>
+                            </c-col>
+                            <c-col [md]="3" style="padding-top: 24px; width: 20%;">
+                                <button cButton type="button" (click)="onShowRefundFeesStructure()"
+                                        class="btn btn-info">&nbsp;&nbsp;Show Fees structure
+                                </button>
+                            </c-col>
+                        </c-row>
+                        <br/>
+                        <!--                    <c-row>-->
+                        <!--                      <c-col [md]="12">-->
+                        <!--                        <table cTable class="table table-bordered">-->
+                        <!--                          <thead>-->
+                        <!--                          <tr>-->
+                        <!--                            <th>Fees Head</th>-->
+                        <!--                            <th>Installment</th>-->
+                        <!--                            <th>Term Name</th>-->
+                        <!--                            <th>Amount</th>-->
+                        <!--                            <th>Adjustment Amount</th>-->
+                        <!--                            <th>Update</th>-->
+                        <!--                          </tr>-->
+                        <!--                          </thead>-->
+                        <!--                          <tbody>-->
+                        <!--                          <tr *ngFor="let itemrefund of refundFeesstructure_json">-->
+                        <!--                            <td>{{itemrefund.Fees_name}}</td>-->
+                        <!--                            <td>{{itemrefund.Installment}}</td>-->
+                        <!--                            <td>{{itemrefund.Term_name}}</td>-->
+                        <!--                            <td>{{itemrefund.Amount}}</td>-->
+                        <!--                            <td width="12%" >-->
+
+
+                        <!--&lt;!&ndash;                              <form cForm [formGroup]="adjustmentamountForm" (keydown.enter)="$event.preventDefault()">&ndash;&gt;-->
+                        <!--                               &lt;!&ndash; [(ngModel)]="itemrefund.Adjustmentamount" &ndash;&gt;-->
+
+                        <!--                              <input type="number"-->
+                        <!--                                    -->
+                        <!--                                     (input)="itemrefund.Adjustmentamount.value = parseInt($event.target.value)"-->
+                        <!--                                     (keyup)="findSumrefund(refundFeesstructure_json)"-->
+                        <!--                              >-->
+
+
+                        <!--&lt;!&ndash;                                                   (keyup)="findSumrefund(refundFeesstructure_json)"&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;                              </form>&ndash;&gt;-->
+                        <!--                            </td>-->
+
+                        <!--                            &lt;!&ndash;-->
+
+                        <!--                            [(ngModel)]="itemrefund.Adjustmentamount.value"-->
+                        <!--                             (input)="itemrefund.Adjustmentamount = parseInt($event.target.value)"-->
+                        <!--                             [(ngModel)]="itemrefund.refundadjustmentAmount"-->
+                        <!--                             <td class="text-center"><input type="checkbox" [class.selectedRow]="rowIsSelected(item.Fees_name)"-->
+                        <!--                                        (click)="onRowClick(item.Fees_name)" style="cursor: pointer;"></td> &ndash;&gt;-->
+                        <!--                            <td width="10%">-->
+                        <!--                              <button cButton class="btn btn-success"-->
+                        <!--                                      [class.selectedRow]="refundrowIsSelected(itemrefund.Fees_name)"-->
+                        <!--                                      (click)="onRowClickrefund(itemrefund.Fees_name)"-->
+                        <!--                                      style="cursor: pointer;">Update-->
+                        <!--                              </button>-->
+                        <!--                            </td>-->
+                        <!--                          </tr>-->
+                        <!--                          <tr>-->
+                        <!--                            <th colspan="3" class="text-right"><b>Total</b></th>-->
+                        <!--                            <td>{{refundactualTotal}}</td>-->
+                        <!--                            <td *ngIf="sumupdaterefund">{{refundadjustmentTotal.toString()}}</td>-->
+                        <!--                          </tr>-->
+                        <!--                          </tbody>-->
+                        <!--                        </table>-->
+
+                        <!--                      </div>-->
+                        <!--                    </div>-->
+                        <!--              </form>-->
+                        <form cForm [formGroup]="adjustmentamountForm" (keydown.enter)="$event.preventDefault()">
+                            <c-row>
+                                <c-col [md]="12">
+                                    <table cTable class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Fees Head</th>
+                                            <th>Installment</th>
+                                            <th>Term Name</th>
+                                            <th>Amount</th>
+                                            <th>Adjustment Amount</th>
+                                            <th>Update</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr *ngFor="let itemrefund of refundFeesstructure_json; index as myid">
+                                            <td>{{itemrefund.Fees_name}}</td>
+                                            <td>{{itemrefund.Installment}}</td>
+                                            <td>{{itemrefund.Term_name}}</td>
+                                            <td>{{itemrefund.Amount}}</td>
+                                            <td width="12%">
+
+
+                                                <!--  (input)="itemrefund.Adjustmentamount = $event.target.value"
+                                                      <form cForm [formGroup]="adjustmentamountForm" (keydown.enter)="$event.preventDefault()">-->
+                                                <!-- [(ngModel)]="itemrefund.Adjustmentamount" -->
+
+                                                <input type="number"
+
+                                                       [contentEditable]="true"
+                                                       [value]="itemrefund.Adjustmentamount"
+
+                                                       (input)="itemrefund.Adjustmentamount = $event.target.value"
+                                                       (keyup)="findSumrefund(refundFeesstructure_json)"
+                                                >
+                                                <!--                                                   (keyup)="findSumrefund(refundFeesstructure_json)"-->
+
+                                                <!--                              </form>-->
+                                            </td>
+
+                                            <!--
+
+                                            [(ngModel)]="itemrefund.Adjustmentamount.value"
+                                             (input)="itemrefund.Adjustmentamount = parseInt($event.target.value)"
+                                             [(ngModel)]="itemrefund.refundadjustmentAmount"
+                                             <td class="text-center"><input type="checkbox" [class.selectedRow]="rowIsSelected(item.Fees_name)"
+                                                        (click)="onRowClick(item.Fees_name)" style="cursor: pointer;"></td> -->
+                                            <td width="10%">
+                                                <button cButton class="btn btn-success"
+                                                        [class.selectedRow]="refundrowIsSelected(itemrefund.Fees_name,myid)"
+                                                        (click)="onRowClickrefund(itemrefund.Fees_name,myid )"
+                                                        style="cursor: pointer;">Update
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="3" class="text-right"><b>Total</b></th>
+                                            <td>{{refundactualTotal}}</td>
+                                            <td>{{refundadjustmentTotal}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                </c-col>
+                            </c-row>
+                        </form>
+
+                        <c-row>
+                            <br/>
+
+                            <c-col [md]="12">
+                                <label for="narrationrefund">Narration</label>
+                                <textarea id="narrationrefund" formControlName="narrationrefund" type="text"
+                                          [(ngModel)]="narrationrefund" class="form-control"></textarea>
+                                <span
+                                        *ngIf="refundscholarshipForm.get('narrationrefund')?.invalid && refundscholarshipForm.get('narrationrefund')?.touched"
+                                        class="text-danger">narration is required</span>
+                            </c-col>
+                            <br/>
+                        </c-row>
+                        <c-row style="justify-content: center">
+                            <!--              <c-col [md]="5"></div>-->
+                            <c-col [md]="2" style="padding-top: 30px;">
+                                <button cButton type="submit" (click)="onSubmitRefund()" class="btn btn-success">
+                                    <!--                    <i-->
+                                    <!--                          style="border-color: white;" class="spinner-border text-primary"-->
+                                    <!--                          role="status" *ngIf="submitScholarshiploader"></i>-->
+                                    <c-spinner *ngIf="refundScholarshiploader" aria-hidden="false"
+                                               size="sm"></c-spinner>
+
+                                    Submit
+                                </button>
+                            </c-col>
+                            <!--              <c-col [md]="5"></div>-->
+                        </c-row>
+                    </form>
+                </c-tab-pane>
+            </c-tab-content>
+        </c-card-body>
+    </c-card>
+</div>

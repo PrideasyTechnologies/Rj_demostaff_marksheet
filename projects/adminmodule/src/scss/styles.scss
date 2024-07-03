@@ -1,0 +1,130 @@
+/* You can add global styles to this file, and also import other style files */
+// If you want to override variables do it here
+@import "variables";
+
+$enable-ltr: true;
+$enable-rtl: true;
+
+// Import styles with default layout.
+@import "@coreui/coreui-pro/scss/coreui";
+@import "@coreui/coreui-pro/scss/themes/dark";
+
+@import "layout";
+
+// Some temp fixes
+@import "fixes";
+
+// If you want to add something do it here
+@import "custom";
+
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+
+.ag-theme-alpine .ag-header {
+  background-color: #ffff;
+  color: black;
+}
+
+.ag-theme-alpine .ag-header-row {
+  color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, black));
+  // height: 32px;
+  font-size: 15px;
+}
+
+.ag-theme-alpine .ag-row-selected {
+  border-color: #dadada !important;
+  background-color: #dadada;
+}
+
+.ag-theme-alpine .ag-ltr .ag-cell-focus {
+  border: 1px solid #ffff !important;
+}
+
+.ag-theme-alpine {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.ag-theme-alpine .ag-header-icon {
+  color: var(--ag-secondary-foreground-color, rgb(255, 253, 253));
+}
+
+.ag-theme-balham .ag-header {
+  // background-color: #524ab8;
+  background-color: rgba(51, 153, 255, 100);
+  color: rgb(243, 240, 240);
+}
+
+div.ag-floating-filter-input {
+  color: black;
+}
+
+.ag-theme-balham .ag-header-row {
+  color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, rgb(243, 240, 240)));
+  // height: 32px;
+}
+
+.ag-theme-balham .ag-row-selected {
+  border-color: #dadada !important;
+  background-color: #dadada;
+}
+
+.ag-theme-balham .ag-ltr .ag-cell-focus {
+  border: 1px solid #113f67 !important;
+}
+
+// .ag-theme-balham {
+//     font-family: 'Roboto', sans-serif !important;
+// }
+
+.ag-theme-balham .ag-header-icon {
+  color: var(--ag-secondary-foreground-color, rgb(255, 253, 253));
+}
+
+//asidebar background color
+c-sidebar-nav {
+  background-color: rgb(255, 255, 255);
+}
+.c-sidebar-brand-full {
+  background-color: rgb(29, 108, 187);
+}
+.sidebar-nav .nav-link.active{
+  background-color: rgba(51, 153, 255, 100);
+}
+.c-sidebar .c-sidebar-brand {
+  color: #fff;
+  background: rgb(29, 108, 187);
+}
+.header.header-sticky:not([class*=border])
+{
+  max-height: 4px;
+}
+.sidebar{
+  background-color: rgba(51, 153, 255, 100);
+}
+.sidebar-nav .nav-link{
+  color: black;
+}
+.sidebar-nav .nav-link:hover{
+  background-color: rgba(51, 153, 255, 100);
+}
+
+html:not([dir=rtl]) .sidebar-nav .nav-icon:first-child {
+  color: black;
+}
+.ng-autocomplete ::ng-deep .autocomplete-container ::ng-deep .input-container ::ng-deep input {
+  font-size: 0.875rem;
+  display: block;
+  height: 2.5rem;
+  padding: 0.375rem 1rem;
+  font-weight: 500;
+  line-height: 1.52857143;
+  color: #495057;
+  border: 1px solid #b1b7c1;
+  border-radius: 0.25rem;
+}
+.header-nav .nav-link{
+  margin-bottom: 15px;
+}
+
+

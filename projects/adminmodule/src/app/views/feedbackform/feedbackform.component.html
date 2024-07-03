@@ -1,0 +1,206 @@
+<c-row>
+  <div class="col-lg-12">
+    <c-card>
+      <c-card-header style="background-color:#f0f3f5">
+        <h4><b>Feedback Form</b></h4>
+      </c-card-header>
+      <c-card-body>
+        <c-nav variant="tabs">
+          <c-nav-item>
+            <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+              Feedback Event Name
+            </a>
+          </c-nav-item>
+          <c-nav-item>
+            <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+              Feedback Questions
+            </a>
+          </c-nav-item>
+        </c-nav>
+        <c-tab-content #tabContent="cTabContent">
+          <c-tab-pane class="p-3">
+            <div class="fade-in" *ngIf="ShowAdd">
+              <form cForm [formGroup]="createFeedbackForm" (keydown.enter)="$event.preventDefault()">
+                <c-row>
+                  <c-col [md]="3">
+                    <label class="required">Event</label>
+                    <input id="eventname" cFormControl formControlName="eventname" required type="text"/>
+                  </c-col>
+                  <c-col [md]="2" style="padding-top: 22px">
+                    <button cButton
+                      type="submit"
+                      class="btn btn-success"
+                      (click)="OnSubmit()">
+                      <c-spinner *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+                      Submit
+                    </button>
+                  </c-col>
+                  <c-col [md]="2" style="padding-top: 22px">
+                    <button cButton type="reset" (click)="resetAll()" class="btn btn-danger">
+                      Cancel
+                    </button>
+                  </c-col>
+                </c-row>
+              </form>
+            </div>
+            <div *ngIf="ShowMain">
+              <c-row style="justify-content: right">
+                <!--                <c-col [md]="3">-->
+                <!--                  <label >Event name</label>-->
+                <!--                  <div-->
+                <!--                       class="ng-autocomplete" style="width: 100%;">-->
+                <!--                    <ng-autocomplete>-->
+                <!--                    </ng-autocomplete>-->
+                <!--                  </div>-->
+                <!--                </div>-->
+
+                <!--                <c-col [md]="2" style="margin-top: 23px">-->
+                <!--                  <button cButton class="btn btn-success" >Show-->
+                <!--                  </button>-->
+                <!--                </div>-->
+                <!--                <c-col [md]="5">-->
+
+                <!--                </div>-->
+                <c-col [md]="2" style="margin-top: 23px">
+                  <button cButton class="btn btn-success" (click)="OnAdd()"><b>&#43;</b> &nbsp;Add
+                  </button>
+                </c-col>
+              </c-row>
+              <br>
+              <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                               [rowData]="eventlist"
+                               [gridOptions]="gridOptionsfeedback"
+                               [columnDefs]="columnDefsfeedback"
+                               [pagination]="true"
+                               [paginationPageSize]="10"
+                               (gridReady)="onGridReadyfeedback($event)"
+                               [rowSelection]='rowSelectionfeedback'
+                               (rowSelected)="onRowSelectedEventfeedback($event)"
+                               (selectionChanged)="onSelectionChangedfeedback($event)">
+              </ag-grid-angular>
+            </div>
+          </c-tab-pane>
+          <c-tab-pane class="p-3">
+            <div class="fade-in" *ngIf="ShowAddnew">
+              <form cForm [formGroup]="feedbackform" (keydown.enter)="$event.preventDefault()">
+                <c-row>
+                  <c-col [md]="3">
+                    <label class="required">Question Name</label>
+                    <input cFormControl formControlName="ename" required type="text"/>
+                  </c-col>
+                  <c-col [md]="2">
+                    <label class="required">Type</label>
+                    <select [(ngModel)]="SelectedquestionType"
+                            formControlName="selecttype" class="form-control" id="type"
+                            (change)="onChangeTypeSelect()">
+                      <option disabled>Select Type</option>
+                      <option *ngFor="let qtype of questiontype" [ngValue]="qtype">
+                        {{qtype}}
+                      </option>
+                    </select>
+                  </c-col>
+                  <c-col [md]="2">
+                    <label class="required">Option Value</label>
+                    <input formControlName="selectmemo" cFormControl required type="text"/>
+                  </c-col>
+                  <c-col [md]="2">
+                    <label class="required">Label</label>
+                    <input formControlName="selectlabel" cFormControl required type="text"/>
+                  </c-col>
+                  <c-col [md]="3">
+                    <label class="required">Error Message</label>
+                    <input formControlName="selecterror" cFormControl required type="text"/>
+                  </c-col>
+                </c-row>
+                <br>
+
+                <c-row style="justify-content: center">
+                  <c-col [md]="2">
+                    <c-form-check>
+                      <input cFormCheckInput id="checkOne" type="checkbox" (change)="changeCheckbox($event.target.checked)"/>
+                      <label cFormCheckLabel for="checkOne">checkbox</label>
+                    </c-form-check>
+                  </c-col>
+                  <c-col [md]="2">
+                    <button cButton
+                      type="submit"
+                      class="btn btn-success"
+                      (click)="OnSubmitevent()"
+                    >
+                      <c-spinner *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+                      Submit
+                    </button>
+                  </c-col>
+
+                  <c-col [md]="2">
+                    <button cButton type="reset" (click)="resetAll()" class="btn btn-danger">
+                      Cancel
+                    </button>
+                  </c-col>
+                </c-row>
+              </form>
+            </div>
+
+            <div *ngIf="ShowMainnew">
+              <c-row style="justify-content: right">
+                <c-col [md]="3">
+                  <label for="Feedbackid">Event name</label>
+                  <div id="Feedbackid"
+                       class="ng-autocomplete" style="width: 100%;">
+                    <ng-autocomplete [data]="eventlist"
+                                     [searchKeyword]="eventkeyword" (selected)='selectevent($event)'
+                                     (selectionchange)="selectevent($event)"
+                                     (inputChanged)='onChangeSearch($event)' (inputFocused)='onFocused($event)'
+                                     [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate">
+                    </ng-autocomplete>
+
+                    <ng-template #batTemplate let-bat>
+                      <a [innerHTML]="bat.Feedbackname"></a>
+                    </ng-template>
+
+                    <ng-template #notFoundTemplate let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+
+                  </div>
+                </c-col>
+
+                <c-col [md]="2" style="margin-top: 23px">
+                  <button cButton class="btn btn-success" (click)="Showquestionlist()">Show
+                  </button>
+                </c-col>
+                <c-col [md]="5">
+
+                </c-col>
+                <c-col [md]="2">
+                  <button cButton class="btn btn-success" (click)="OnAddNew()"><b>&#43;</b> &nbsp;Add
+                  </button>
+                </c-col>
+              </c-row>
+              <br>
+              <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                               [rowData]="questionlist"
+                               [gridOptions]="gridOptions"
+                               [columnDefs]="columnDefs"
+                               [pagination]="true"
+                               [paginationPageSize]="10"
+                               (gridReady)="onGridReady($event)"
+                               [rowSelection]='rowSelection'
+                               (rowSelected)="onRowSelectedEvent($event)"
+                               (selectionChanged)="onSelectionChanged($event)">
+              </ag-grid-angular>
+              <br>
+              <c-row>
+                <c-col [md]="2">
+                  <button cButton type="reset" class="btn btn-success" (click)="updateQuestion()">
+                    Update
+                  </button>
+                </c-col>
+              </c-row>
+            </div>
+          </c-tab-pane>
+        </c-tab-content>
+      </c-card-body>
+    </c-card>
+  </div>
+</c-row>

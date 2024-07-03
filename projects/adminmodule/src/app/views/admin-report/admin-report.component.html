@@ -1,0 +1,98 @@
+<div class="fade-in">
+    <c-card>
+        <c-card-header>
+            <h4><b>Reports</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <c-row>
+                <c-col [md]="6">
+                    <label for="Batch_Code">Select Batch:</label>
+                    <div id="Batch_Code" class="ng-autocomplete" style="width: 100%;">
+                        <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword"
+                                         (selected)='selectBatch($event)' (inputChanged)='onChangeSearch($event)'
+                                         (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                         [notFoundTemplate]="notFoundTemplate" placeholder="Select Batch">
+                        </ng-autocomplete>
+
+                        <ng-template #batTemplate let-bat>
+                            <a [innerHTML]="bat.Batch_Name"></a>
+                        </ng-template>
+
+                        <ng-template #notFoundTemplate let-notFound>
+                            <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                    </div>
+                </c-col>
+                <c-col [md]="3" style="padding-top: 23px;">
+                    <button cButton type="button" [disabled]="Rollcallclicked"
+                            (click)="OnRollcalltypeForm(); Rollcallclicked = true" class="btn btn-info">
+                        <!--                <i-->
+                        <!--                style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                        <!--                *ngIf="Rollcallloader"></i>&nbsp;&nbsp; -->
+                        <c-spinner *ngIf="Rollcallloader" aria-hidden="false" size="sm"></c-spinner>
+
+                        Roll Call Download
+                    </button>
+                </c-col>
+                <c-col [md]="3" style="padding-top: 23px;">
+                    <button cButton type="button" [disabled]="Surveydataclicked"
+                            (click)="Surveydata(); Surveydataclicked = true" class="btn btn-info">
+                        <!--                <i-->
+                        <!--                style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                        <!--                *ngIf="Rollcallloader"></i>-->
+                        <c-spinner *ngIf="Surveydataloader" aria-hidden="false" size="sm"></c-spinner>
+
+                        Survey data
+                    </button>
+                </c-col>
+            </c-row>
+            <br>
+            <c-row>
+                <c-col [md]="3">
+                    <button cButton type="button" class="btn btn-info" [disabled]="IDcardclicked"
+                            (click)="IdCardDownload(); IDcardclicked = true">
+                        <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                        <!--                     *ngIf="IDcardloader"></i>&nbsp;-->
+                        <c-spinner *ngIf="IDcardloader" aria-hidden="false" size="sm"></c-spinner>
+
+                        ID Card Download
+                    </button>
+                </c-col>
+                <c-col [md]="3">
+                    <button cButton type="button" class="btn btn-info" [disabled]="Statsclicked"
+                            (click)="StatisticsDownload(); Statsclicked = true">
+                        <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                        <!--                     *ngIf="Statsloader"></i>&nbsp;-->
+                        <c-spinner *ngIf="Statsloader" aria-hidden="false" size="sm"></c-spinner>
+
+                        Statistics Download
+                    </button>
+                </c-col>
+
+                <c-col [md]="3">
+                    <button cButton type="button" class="btn btn-info" [disabled]="Freeshipclicked"
+                            (click)="FreeshipDownload(ALLDATA); Freeshipclicked = true">
+                        <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                        <!--                     *ngIf="Freeshiploader"></i>-->
+                        <c-spinner *ngIf="Freeshiploader" aria-hidden="false" size="sm"></c-spinner>
+
+                        &nbsp; Freeship all student
+                    </button>
+                </c-col>
+
+                <c-col [md]="3">
+                    <button cButton type="button" class="btn btn-info" [disabled]="Freeshipclicked"
+                            (click)="FreeshipDownload(APPROVED); Freeshipclicked = true">
+                        <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                        <!--                     *ngIf="Freeshiploader"></i>&nbsp;&nbsp;-->
+                        <c-spinner *ngIf="Freeshipapproveloader" aria-hidden="false" size="sm"></c-spinner>
+
+                        Freeship Approved student
+                    </button>
+                </c-col>
+            </c-row>
+            <br>
+        </c-card-body>
+    </c-card>
+</div>
+

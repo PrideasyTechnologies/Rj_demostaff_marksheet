@@ -1,0 +1,43 @@
+
+export interface IReq_Reciept {
+  Receipt_id: number;
+  Finyear: number;
+  College_code: number;
+  Aadhaar: number;
+  Prefix_code: number;
+  Receiptno: number;
+  Transactionguid: string;
+  Accountno: string;
+  Billdeskid: number;
+  Billdesktranid: string;
+  Billdeskdate: string;
+  Payment_mode: string;
+  Receiptamount: number;
+  Bank: string;
+  Chequeno: string;
+  Chequedate: string;
+  Narration: string;
+  Transcationmode: string;
+  Errcode: string;
+  Errorname: string;
+  Batchexamid: string;
+  Billdeskstatus: string;
+  Billdeskerror: string;
+  Createddate: string;
+  Createdby: number;
+  Formtype: string;
+  Firstname: string;
+  Lastname: string;
+  Fathername: string;
+  Mothername: string;
+  Gender: string;
+  Rollno: string;
+  Prnno: string;
+  Prefix_month: string;
+  Batch_code: number;
+  Semester: number;
+  Mobileno: string;
+  Fullname: string;
+  Batch_name: string;
+  Subjects?: any;
+}

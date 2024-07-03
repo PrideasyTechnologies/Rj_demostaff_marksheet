@@ -1,0 +1,171 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4>Batch Transfer  </h4>
+    </c-card-header>
+    <c-card-body>
+          <form cForm [formGroup]="BatchTransferForm">
+            <c-row>
+              <c-col [md]="4">
+                <label for="aadhaar">Student Aadhaar:</label>
+                <input id="aadhaar"
+                       type="text" formControlName="bat_aadhaar"
+                       placeholder="Enter Aadhaar"
+                       [ngClass]="{ 'is-invalid': batchfrm_fn['bat_aadhaar']?.errors }"
+                       class="form-control">
+                <div *ngIf="batchfrm_fn['bat_aadhaar']?.errors" class="invalid-feedback">
+                  <div *ngIf="batchfrm_fn['bat_aadhaar']?.errors.required">Aadhaar is required</div>
+                  <div *ngIf="batchfrm_fn['bat_aadhaar']?.errors.minlength">Aadhaar is not must be 12 digit</div>
+                </div>
+              </c-col>
+
+              <c-col [md]="4">
+                <label for="frombatch">From Batch:</label>
+                <div id="frombatch"
+                     class="ng-autocomplete" style="width: 100%;"
+                     [ngClass]="{ 'is-invalid': (Bat_submitted || batchfrm_fn['bat_frombatch']?.touched) && batchfrm_fn['bat_frombatch']?.errors,
+                        'is-valid': batchfrm_fn['bat_frombatch']?.touched && !batchfrm_fn['bat_frombatch']?.errors }">
+                  <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" formControlName="bat_frombatch"
+                                   placeholder="Select Batch" (selected)='selectBatch($event)'
+                                   (inputChanged)='onChangeSearch($event)' (inputFocused)='onFocused($event)'
+                                   [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate">
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+                <div *ngIf="Bat_submitted && batchfrm_fn['bat_frombatch']?.errors" class="invalid-feedback">
+                  <div *ngIf="batchfrm_fn['bat_frombatch'].errors.required">From Batch is required</div>
+                  <div *ngIf="batchfrm_fn['bat_frombatch']?.errors.MustNotMatch">From Batch and To Batch Should be
+                    different
+                  </div>
+                </div>
+              </c-col>
+
+              <c-col [md]="4">
+                <label for="tobatch">To Batch:</label>
+                <div id="tobatch"
+                     class="ng-autocomplete" style="width: 100%;"
+                     [ngClass]="{ 'is-invalid': (Bat_submitted || batchfrm_fn['bat_tobatch']?.touched) && batchfrm_fn['bat_tobatch']?.errors,
+                        'is-valid': batchfrm_fn['bat_tobatch']?.touched && !batchfrm_fn['bat_tobatch']?.errors }">
+                  <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" formControlName="bat_tobatch"
+                                   placeholder="Select Batch" (selected)='selectBatch($event)'
+                                   (inputChanged)='onChangeSearch($event)' (inputFocused)='onFocused($event)'
+                                   [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate">
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+                <div *ngIf="Bat_submitted && batchfrm_fn['bat_tobatch']?.errors" class="invalid-feedback">
+                  <div *ngIf="batchfrm_fn['bat_tobatch']?.errors.required">To Batch is required</div>
+                  <div *ngIf="batchfrm_fn['bat_tobatch']?.errors.MustNotMatch">From Batch and To Batch Should be
+                    different
+                  </div>
+                </div>
+              </c-col>
+            </c-row>
+
+            <c-row>
+              <c-col [md]="4"></c-col>
+              <c-col [md]="2" style="padding-top: 30px;">
+                <button cButton type="button" class="btn btn-success" [disabled]="BatchTransferForm?.invalid"
+                        (click)="OnTransfer_bat($event)">
+<!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+<!--                     *ngIf="loader"></i>-->
+                  <c-spinner  *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Transfer
+                </button>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 30px;">
+                <button cButton type="button" [disabled]="BatchTransferForm?.invalid" (click)="onCancel_bat()"
+                        class="btn btn-danger">
+                  Cancel
+                </button>
+              </c-col>
+              <c-col [md]="4"></c-col>
+            </c-row>
+            <hr>
+            <c-row>
+              <c-col [md]="12">
+                <h6 style="color: red;">Note:</h6>
+                <h6>1) Once Batch is transfered successfully, please transfer subjects too!</h6>
+                <h6>2) Once payment is received batch transfer is not allowed!</h6>
+              </c-col>
+            </c-row>
+          </form>
+
+<!--      <c-tab-content #tabContent="cTabContent">-->
+<!--        <c-tab-pane class="p-3">-->
+<!--          <form [formGroup]="Gapform">-->
+<!--            <c-row>-->
+<!--              <c-col [md]="4">-->
+<!--                <label for="gap_aadhaar">Student Aadhaar:</label>-->
+<!--                <input id="gap_aadhaar"-->
+<!--                  type="text" formControlName="gap_aadhaar" placeholder="Enter Aadhaar"-->
+<!--                       [ngClass]="{ 'is-invalid': gapfrm_fn['gap_aadhaar']?.errors }"-->
+<!--                       class="form-control">-->
+<!--                <div *ngIf="gapfrm_fn['gap_aadhaar']?.errors" class="invalid-feedback">-->
+<!--                  <div *ngIf="gapfrm_fn['gap_aadhaar']?.errors.required">Aadhaar is required</div>-->
+<!--                  <div *ngIf="gapfrm_fn['gap_aadhaar'].errors.minlength">Aadhaar is not must be 12 digit</div>-->
+<!--                </div>-->
+<!--              </div>-->
+
+<!--              <c-col [md]="4">-->
+<!--                <label for="gap_studenttype">Student type</label>-->
+<!--                <select id="gap_studenttype"-->
+<!--                  class="form-control" formControlName="gap_studenttype">-->
+<!--                  <option disabled selected="true">Select student type</option>-->
+<!--                  <option value="ATKT">GAP STUDENT</option>-->
+<!--                </select>-->
+
+<!--                <span *ngIf="gapfrm_fn['gap_studenttype']?.invalid && gapfrm_fn['gap_studenttype']?.touched"-->
+<!--                      class="text-danger">Student type is required</span>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <c-row>-->
+<!--              <c-col [md]="4"></div>-->
+<!--              <c-col [md]="2" style="padding-top: 30px;">-->
+<!--                <button cButton type="button" class="btn btn-success" [disabled]="Gapform?.invalid"-->
+<!--                        (click)="OnSubmitGap($event)">-->
+<!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+<!--                     *ngIf="loader"></i>&nbsp;&nbsp; Transfer-->
+<!--                </button>-->
+<!--              </div>-->
+<!--              <c-col [md]="2" style="padding-top: 30px;">-->
+<!--                <button cButton type="button" [disabled]="Gapform?.invalid" (click)="onCancel_gap()"-->
+<!--                        class="btn btn-danger">Cancel-->
+<!--                </button>-->
+<!--              </div>-->
+<!--              <c-col [md]="4"></div>-->
+<!--            </div>-->
+
+<!--          </form>-->
+
+<!--          <hr>-->
+<!--          <c-row>-->
+<!--            <c-col [md]="12">-->
+<!--              <h6 style="color: red;">Note:</h6>-->
+<!--              <br>-->
+<!--              <h6> 1) This module is use for gap students!</h6>-->
+<!--            </div>-->
+<!--          </div>-->
+
+<!--        </c-tab-pane>-->
+<!--      </c-tab-content>-->
+
+    </c-card-body>
+  </c-card>
+</div>

@@ -1,0 +1,991 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header style="background-color: #f0f3f5">
+      <h4><b>Reports</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+            Roll Call List
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            Marksheet Process
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+            Print Marksheet
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>
+            Sem Wise Marks Entry
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="4" cNavLink>
+            Result Print
+          </a>
+        </c-nav-item>
+
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="5" cNavLink>
+            Junior Result Sheet
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="6" cNavLink>
+            Exam wise students count
+          </a>
+        </c-nav-item>
+
+      </c-nav>
+      <br/>
+      <c-tab-content #tabContent="cTabContent">
+        <c-tab-pane class="p-3">
+          <c-row>
+            <c-col [md]="6">
+              <label>Select Batch:</label>
+              <div class="ng-autocomplete" style="width: 100%">
+                <ng-autocomplete
+                  [data]="Batchs"
+                  [searchKeyword]="Batchkeyword"
+                  (selected)="selectBatch_rollcall($event)"
+                  (inputChanged)="onChangeSearch($event)"
+                  (inputFocused)="onFocused($event)"
+                  [itemTemplate]="batTemplate"
+                  [notFoundTemplate]="notFoundTemplate"
+                  placeholder="Select Batch"
+                >
+                </ng-autocomplete>
+                <ng-template #batTemplate let-bat>
+                  <a [innerHTML]="bat.Batch_Name"></a>
+                </ng-template>
+                <ng-template #notFoundTemplate let-notFound>
+                  <div [innerHTML]="notFound"></div>
+                </ng-template>
+              </div>
+            </c-col>
+            <c-col [md]="3" style="padding-top: 20px">
+              <button cButton
+                      type="button"
+                      size="xl"
+                      class="btn btn-info"
+                      [disabled]="OnRollcallclicked"
+                      (click)="OnRollcalltypeForm(); OnRollcallclicked = true"
+              >
+                <!--                <i-->
+                <!--                  style="border-color: white"-->
+                <!--                  class="spinner-border text-primary"-->
+                <!--                  role="status"-->
+                <!--                  *ngIf="OnRollcallloader"-->
+                <!--                ></i-->
+                <!--                >&nbsp;&nbsp;-->
+                <c-spinner *ngIf="OnRollcallloader" aria-hidden="false" size="sm"></c-spinner>
+                Roll Call Download
+              </button>
+            </c-col>
+          </c-row>
+          <br/>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3">
+          <form cForm [formGroup]="Processmarksheet">
+            <c-row>
+              <c-col [md]="5">
+                <label>Select Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%">
+                  <ng-autocomplete
+                    [data]="Batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="4">
+                <label>Semester:</label>
+                <select
+                  placeholder="Select Semester"
+                  [(ngModel)]="SelectedSemester"
+                  formControlName="Semester_Name"
+                  class="form-control"
+                  (change)="onChangeSemesterSelect()"
+                >
+                  <option selected>--Select Semester--</option>
+                  <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                    {{ sem.Userexamname }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    Processmarksheet.get('Semester_Name')?.invalid &&
+                    Processmarksheet.get('Semester_Name')?.touched
+                  "
+                  class="text-danger"
+                >Semester is required</span
+                >
+              </c-col>
+              <c-col [md]="2">
+                <label>Aadhaar:</label>
+                <input
+                  type="text"
+                  placeholder="Enter Aadhaar"
+                  formControlName="aadhaar"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    Processmarksheet.get('aadhaar')?.invalid &&
+                    Processmarksheet.get('aadhaar')?.touched
+                  "
+                  class="text-danger"
+                >aadhaar is required</span
+                >
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col [md]="2" style="padding-top: 30px">
+                <c-dropdown variant="btn-group">
+                  <button cButton cDropdownToggle
+                          type="button"
+                          class="btn btn-info"
+                  >
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Normal Process
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <c-spinner *ngIf="normalprocessloader" aria-hidden="false" size="sm"></c-spinner>
+                    <ul cDropdownMenu>
+                      <li>
+                        <button [routerLink]="[]" cDropdownItem (click)="OnProcess('SLAB')">Slab</button>
+                      </li>
+                      <hr>
+                      <li>
+                        <button [routerLink]="[]" cDropdownItem (click)="OnProcess('PERCENTAGE')">Percentage</button>
+                      </li>
+                      <hr>
+                      <li>
+                        <button [routerLink]="[]" cDropdownItem (click)="Onsevenscale()">Seven Scale</button>
+                      </li>
+                    </ul>
+                  </button>
+                </c-dropdown>
+
+                <!--                <button cButton type="button"  class="btn btn-info" cDropdownToggle>-->
+                <!--                  Normal process-->
+                <!--                </button>-->
+
+              </c-col>
+              <c-col [md]="3" style="padding-top: 30px">
+                <!--                <button cButton-->
+                <!--                        type="button"-->
+                <!--                        class="btn btn-info"-->
+                <!--                        (click)="Onsevenscale()"-->
+                <!--                >-->
+                <!--                  &lt;!&ndash;                  <i&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    style="border-color: white"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    class="spinner-border text-primary"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    role="status"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                    *ngIf="processloader"&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                  ></i&ndash;&gt;-->
+                <!--                  &lt;!&ndash;                  >&nbsp;&ndash;&gt;-->
+                <!--                  <c-spinner *ngIf="processloader" aria-hidden="false" size="sm"></c-spinner>-->
+                <!--                  Seven scale mark process-->
+                <!--                </button>-->
+              </c-col>
+
+              <!--              <c-col [md]="2" style="padding-top: 30px">-->
+              <!--                <button cButton-->
+              <!--                        type="button"-->
+              <!--                        class="btn btn-primary"-->
+              <!--                        (click)="OverallCGPA()"-->
+              <!--                >-->
+              <!--                  &lt;!&ndash;                  <i&ndash;&gt;-->
+              <!--                  &lt;!&ndash;                    style="border-color: white"&ndash;&gt;-->
+              <!--                  &lt;!&ndash;                    class="spinner-border text-primary"&ndash;&gt;-->
+              <!--                  &lt;!&ndash;                    role="status"&ndash;&gt;-->
+              <!--                  &lt;!&ndash;                    *ngIf="overallcgpaloader"&ndash;&gt;-->
+              <!--                  &lt;!&ndash;                  ></i&ndash;&gt;-->
+              <!--                  &lt;!&ndash;                  >&nbsp;&nbsp;&ndash;&gt;-->
+              <!--                  <c-spinner *ngIf="overallcgpaloader" aria-hidden="false" size="sm"></c-spinner>-->
+              <!--                  Update Overall CGPA-->
+              <!--                </button>-->
+              <!--              </c-col>-->
+              <c-col [md]="2" style="padding-top: 30px">
+                <button cButton
+                        type="reset"
+                        class="btn btn-danger"
+                        (click)="resetAll()"
+                >
+                  Reset
+                </button>
+              </c-col>
+            </c-row>
+            <br/>
+            <c-row>
+              <c-col [md]="12">
+                <h5>Convocation</h5>
+              </c-col>
+              <c-col [md]="5">
+                <h6>Upload Image</h6>
+                <input aria-label="file example"
+                       cFormControl
+                       id="validationText1"
+                       (change)="xlsxUpload($event)"
+                       (selectionchange)="xlsxUpload($event)"
+                       type="file"
+                />
+                <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px">
+                <c-row margin-bottom="8px">
+                  <button cButton type="submit" size="md"
+                          class="btn btn-success"
+                          (click)="uploadfile()">
+                    <!--                    <i-->
+                    <!--                      style="border-color: white"-->
+                    <!--                      class="spinner-border text-primary"-->
+                    <!--                      role="status"-->
+                    <!--                      *ngIf="uploadloader"-->
+                    <!--                    ></i-->
+                    <!--                    >&nbsp;-->
+                    <c-spinner *ngIf="uploadloader" aria-hidden="false" size="sm"></c-spinner>
+                    Upload Convocation
+                  </button>
+                </c-row>
+                <!--                <button-->
+                <!--                  type="button"-->
+                <!--                  class="btn btn-success"-->
+                <!--                  (click)="uploadfile()"-->
+                <!--                >-->
+                <!--                  <i-->
+                <!--                    style="border-color: white"-->
+                <!--                    class="spinner-border text-primary"-->
+                <!--                    role="status"-->
+                <!--                    *ngIf="uploadloader"-->
+                <!--                  ></i-->
+                <!--                  >&nbsp;&nbsp;Upload Convocation-->
+                <!--                </button>-->
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px">
+                <button cButton
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="downloadConvocation()"
+                >
+                  <!--                  <i-->
+                  <!--                    style="border-color: white"-->
+                  <!--                    class="spinner-border text-primary"-->
+                  <!--                    role="status"-->
+                  <!--                    *ngIf="conloader"-->
+                  <!--                  ></i-->
+                  <!--                  >&nbsp;&nbsp;-->
+                  <c-spinner *ngIf="conloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Download Convocation
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3">
+          <form cForm cRow [formGroup]="PrintMarksheet">
+            <c-row>
+              <c-col [md]="4">
+                <label>Select Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%">
+                  <ng-autocomplete
+                    [data]="Batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+              <c-col [md]="3">
+                <label>User Exam:</label>
+                <select
+                  placeholder="Select Semester"
+                  [(ngModel)]="SelectedSemester"
+                  formControlName="Semester_Name"
+                  class="form-control"
+                  (change)="Change_exam()"
+                >
+                  <option selected>--Select Semester--</option>
+                  <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                    {{ sem.Userexamname }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    PrintMarksheet.get('Semester_Name')?.invalid &&
+                    PrintMarksheet.get('Semester_Name')?.touched
+                  "
+                  class="text-danger"
+                >Semester is required</span
+                >
+              </c-col>
+              <c-col [md]="3">
+                <label>Template:</label>
+                <select
+                  placeholder="Select template"
+                  [(ngModel)]="Selectedtemplate"
+                  formControlName="template"
+                  class="form-control"
+                >
+                  <option selected>--Select template--</option>
+                  <option *ngFor="let temp of Templates" [ngValue]="temp">
+                    {{ temp.Name }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    PrintMarksheet.get('template')?.invalid &&
+                    PrintMarksheet.get('template')?.touched
+                  "
+                  class="text-danger"
+                >template is required</span
+                >
+              </c-col>
+              <c-col [md]="2">
+                <label>Aadhaar:</label>
+                <input
+                  type="text"
+                  placeholder="Enter Aadhaar"
+                  formControlName="aadhaar"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    PrintMarksheet.get('aadhaar')?.invalid &&
+                    PrintMarksheet.get('aadhaar')?.touched
+                  "
+                  class="text-danger"
+                >aadhaar is required</span
+                >
+              </c-col>
+
+            </c-row>
+            <c-row>
+              <c-col [md]="2" style="margin-top: 7px">
+                <label>RLE Date:</label>
+                <input
+                  type="date"
+                  placeholder="Enter RLE"
+                  formControlName="rledate"
+                  class="form-control"
+                />
+                <span
+                  *ngIf="
+                    PrintMarksheet.get('rledate')?.invalid &&
+                    PrintMarksheet.get('rledate')?.touched
+                  "
+                  class="text-danger"
+                >RLE is required</span
+                >
+              </c-col>
+              <c-col [md]="2"></c-col>
+
+              <c-col [md]="2" style="padding-top: 30px">
+                <c-dropdown variant="btn-group">
+                  <button cButton cDropdownToggle [disabled]="printmarksheetdiabl">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    Print marksheet
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <c-spinner *ngIf="marksheetDownloadloader" aria-hidden="false" size="sm"></c-spinner>
+                  </button>
+                  <ul cDropdownMenu>
+                    <!-- <li>
+                      <button [routerLink]="[]" cDropdownItem
+
+                              (click)="On_Printmarksheet('AADHAAR')">
+                        Aadhaar
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="On_Printmarksheet('ABC')">
+                        ABC
+                      </button>
+
+                    </li> -->
+                    <hr>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+
+                              (click)="On_Printmarksheet_aadharv2('AADHAAR')">Aadhaar Exam
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="On_Printmarksheet_aadharv2('ABC')">ABC Exam
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="Credit_132_points()">132 Credit Points Aadhar
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="Credit_132_points_Abc()">132 Credit Points ABC
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="Credit_132_points_Rle()">132 Credit Points RLE
+                      </button>
+
+                    </li>
+                    <!-- <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="Credit_system()">Credit System
+                      </button>
+
+                    </li> -->
+                    <hr>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="On_Printmarksheet_aadharv2('AADHAAR')">RLE Aadhaar Exam
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="On_Printmarksheet_aadharv2('ABC')">RLE ABC Exam
+                      </button>
+
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="printCerticate_rle()">
+                        RLE Certificate Print
+                      </button>
+                    </li>
+                    <hr>
+                    <li>
+
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="convocationMarksheet()"
+                      >
+                        Convocation Marksheet
+                      </button>
+                    </li>
+                    <hr>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="ValueAddedClick()">
+                        &nbsp;Value Added
+                      </button>
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+                              (click)="printCerticate()"
+                      >
+                        Certificate Print
+                      </button>
+                    </li>
+                  </ul>
+                </c-dropdown>
+              </c-col>
+              
+              <c-col [md]="2" style="padding-top: 30px">
+              </c-col>
+              <c-col [md]="2" style="padding-top: 30px">
+                <button cButton
+                        type="reset"
+                        class="btn btn-danger"
+                        (click)="resetAll()"
+                >
+                  Reset
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3">
+          <c-row>
+            <c-col [md]="4">
+              <label>Select Batch:</label>
+              <div class="ng-autocomplete" style="width: 100%">
+                <ng-autocomplete
+                  [data]="Batchs"
+                  [searchKeyword]="Batchkeyword"
+                  (selected)="selectBatch($event)"
+                  (inputChanged)="onChangeSearch($event)"
+                  (inputFocused)="onFocused($event)"
+                  [itemTemplate]="batTemplate"
+                  [notFoundTemplate]="notFoundTemplate"
+                  placeholder="Select Batch"
+                >
+                </ng-autocomplete>
+                <ng-template #batTemplate let-bat>
+                  <a [innerHTML]="bat.Batch_Name"></a>
+                </ng-template>
+
+                <ng-template #notFoundTemplate let-notFound>
+                  <div [innerHTML]="notFound"></div>
+                </ng-template>
+              </div>
+            </c-col>
+            <c-col [md]="3">
+              <label>User Exam:</label>
+              <select cSelect
+                placeholder="Select Semester"
+                [(ngModel)]="SelectedBatSemester"
+                class="form-control"
+                (change)="onChangeBatSemesterSelect()"
+              >
+                <option selected>--Select Semester--</option>
+                <option
+                  *ngFor="let batsem of namesubject"
+                  [ngValue]="batsem"
+                >
+                  {{ batsem.Userexamname }}
+                </option>
+              </select>
+            </c-col>
+
+
+            <c-col [md]="3" style="padding-top: 22px;">
+              <c-dropdown variant="btn-group">
+                <button style="width: 100%" class="w-full" cButton cDropdownToggle [disabled]="semwisemarksentrydiabl">
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  Download
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <c-spinner *ngIf="semwisemarksentryloader" aria-hidden="false" size="sm"></c-spinner>
+                </button>
+                <ul cDropdownMenu>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="SemwiseMarksheetDownload()"
+                    >
+                      <!--                      <c-spinner *ngIf="Marksheetloader" aria-hidden="false" size="sm"></c-spinner>-->
+                      <!--                      <c-spinner *ngIf="Marksheetloader" aria-hidden="false" size="sm"></c-spinner>-->
+                      Sem Wise Marks
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="DataEntryStatus()"
+                    >
+                      Data Entry Download
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="SemWiseFailed()"
+                    >
+
+                      Sem Wise Failed Students
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+
+                            (click)="semWisePointsDownload()"
+                    >
+
+                      Sem Wise Points Download
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="examWisePointsDownload()"
+                    >
+                      <c-spinner *ngIf="exampointloader" aria-hidden="false" size="sm"></c-spinner>
+                      Exam Wise Points Download
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="ExamCgpacreditpoint()"
+                    >
+                      <c-spinner *ngIf="examcgpaloader" aria-hidden="false" size="sm"></c-spinner>
+                      Exam CGPA and Credit point
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="hallTicketdownload()"
+                    >
+                      Hall Ticket Download
+                    </button>
+                  </li>
+                  <li>
+                    <button [routerLink]="[]" cDropdownItem
+                            (click)="OnSemwiseSub()"
+                    >
+                      Sem Wise Subjects
+                    </button>
+
+                  </li>
+                </ul>
+              </c-dropdown>
+            </c-col>
+            <c-col [md]="2" style="padding-top: 22px">
+              <button cButton type="reset" class="btn btn-danger" (click)="resetAll()">
+                Reset
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <form cForm
+                [formGroup]="ResultPrintForm"
+                (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="5">
+                <label>Select Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%">
+                  <ng-autocomplete
+                    [data]="Batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+              <c-col [md]="2">
+                <label>User Exam:</label>
+                <select
+                  placeholder="Select Semester"
+                  [(ngModel)]="SelectedSemester"
+                  formControlName="Semester_Name"
+                  class="form-control"
+                  (change)="onChangeSemesterSelect()"
+                >
+                  <option selected>--Select Semester--</option>
+                  <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                    {{ sem.Userexamname }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    ResultPrintForm.get('Semester_Name')?.invalid &&
+                    ResultPrintForm.get('Semester_Name')?.touched
+                  "
+                  class="text-danger"
+                >Semester is required</span
+                >
+              </c-col>
+              <c-col [md]="2">
+                <label>Report Type:</label>
+                <select
+                  placeholder="Select Report Type"
+                  [(ngModel)]="SelectedReportType"
+                  formControlName="report_type"
+                  class="form-control"
+                  (change)="onChangeReportTypeSelect()"
+                >
+                  <option selected>--Select Report Type--</option>
+                  <option *ngFor="let report of ReportTypes" [ngValue]="report">
+                    {{ report.Name }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    ResultPrintForm.get('report_type')?.invalid &&
+                    ResultPrintForm.get('report_type')?.touched
+                  "
+                  class="text-danger"
+                >Report Type is required</span
+                >
+              </c-col>
+              <c-col [md]="3" style="padding-top: 23px">
+                <button cButton
+                        type="button"
+                        size="xl"
+                        class="btn btn-info"
+                        [disabled]="ResultPrintForm.invalid"
+                        (click)="ResultDownload()"
+                >
+                  <!--                  <i-->
+                  <!--                    style="border-color: white"-->
+                  <!--                    class="spinner-border text-primary"-->
+                  <!--                    role="status"-->
+                  <!--                    *ngIf="Resultprintloader"-->
+                  <!--                  ></i-->
+                  <!--                  >&nbsp;&nbsp;-->
+                  <c-spinner *ngIf="Resultprintloader" aria-hidden="false" size="sm"></c-spinner>
+                  Result Download
+                </button>
+              </c-col>
+            </c-row>
+            <br/>
+          </form>
+        </c-tab-pane>
+        <!--        <c-tab-pane class="p-3">-->
+        <!--          <form cForm-->
+        <!--                [formGroup]="SemSubjectForm"-->
+        <!--                (keydown.enter)="$event.preventDefault()"-->
+        <!--                (ngSubmit)="OnSemwiseSub(); SemSubjectclicked = true"-->
+        <!--          >-->
+        <!--            <c-row>-->
+        <!--              <c-col [md]="5">-->
+        <!--                <label>Batch:</label>-->
+        <!--                <div class="ng-autocomplete" style="width: 100%">-->
+        <!--                  <ng-autocomplete-->
+        <!--                    [data]="Batchs"-->
+        <!--                    [searchKeyword]="Batchkeyword"-->
+        <!--                    (selected)="selectBatch($event)"-->
+        <!--                    (inputChanged)="onChangeSearch($event)"-->
+        <!--                    (inputFocused)="onFocused($event)"-->
+        <!--                    [itemTemplate]="batTemplate"-->
+        <!--                    [notFoundTemplate]="notFoundTemplate"-->
+        <!--                    placeholder="Select Batch"-->
+        <!--                  >-->
+        <!--                  </ng-autocomplete>-->
+
+        <!--                  <ng-template #batTemplate let-bat>-->
+        <!--                    <a [innerHTML]="bat.Batch_Name"></a>-->
+        <!--                  </ng-template>-->
+
+        <!--                  <ng-template #notFoundTemplate let-notFound>-->
+        <!--                    <div [innerHTML]="notFound"></div>-->
+        <!--                  </ng-template>-->
+        <!--                </div>-->
+        <!--              </c-col>-->
+        <!--              <c-col [md]="3">-->
+        <!--                <label>Semester:</label>-->
+        <!--                <select-->
+        <!--                  [(ngModel)]="SelectedSemester"-->
+        <!--                  formControlName="Semester_Name"-->
+        <!--                  class="form-control"-->
+        <!--                  (change)="onChangeSemesterSelect()"-->
+        <!--                >-->
+        <!--                  <option selected>&#45;&#45;Select Semester&#45;&#45;</option>-->
+        <!--                  <option *ngFor="let sem of namesubject" [ngValue]="sem">-->
+        <!--                    {{ sem.Userexamname }}-->
+        <!--                  </option>-->
+        <!--                </select>-->
+        <!--                <span-->
+        <!--                  *ngIf="-->
+        <!--                    SemSubjectForm.get('Semester_Name')?.invalid &&-->
+        <!--                    SemSubjectForm.get('Semester_Name')?.touched-->
+        <!--                  "-->
+        <!--                  class="text-danger"-->
+        <!--                >Semester is required</span-->
+        <!--                >-->
+        <!--              </c-col>-->
+        <!--              <c-col [md]="2" style="padding-top: 22px">-->
+        <!--                <button cButton-->
+        <!--                        type="submit"-->
+        <!--                        [disabled]="SemSubjectclicked"-->
+        <!--                        class="btn btn-info"-->
+        <!--                >-->
+        <!--                  &lt;!&ndash;                  <i&ndash;&gt;-->
+        <!--                  &lt;!&ndash;                    style="border-color: white"&ndash;&gt;-->
+        <!--                  &lt;!&ndash;                    class="spinner-border text-primary"&ndash;&gt;-->
+        <!--                  &lt;!&ndash;                    role="status"&ndash;&gt;-->
+        <!--                  &lt;!&ndash;                    *ngIf="downloadsemloader"&ndash;&gt;-->
+        <!--                  &lt;!&ndash;                  ></i&ndash;&gt;-->
+        <!--                  &lt;!&ndash;                  >&nbsp;&nbsp;&ndash;&gt;-->
+        <!--                  <c-spinner *ngIf="downloadsemloader" aria-hidden="false" size="sm"></c-spinner>-->
+        <!--                  Download-->
+        <!--                </button>-->
+        <!--              </c-col>-->
+        <!--              <c-col [md]="2" style="padding-top: 22px">-->
+        <!--                <button cButton-->
+        <!--                        type="reset"-->
+        <!--                        (click)="resetAll()"-->
+        <!--                        class="btn btn-danger"-->
+        <!--                >-->
+        <!--                  Reset-->
+        <!--                </button>-->
+        <!--              </c-col>-->
+        <!--            </c-row>-->
+        <!--          </form>-->
+        <!--        </c-tab-pane>-->
+        <c-tab-pane class="p-3">
+          <form cForm [formGroup]="JuniorMarksheetForm">
+            <c-row>
+              <c-col [md]="4">
+                <label>Select Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%">
+                  <ng-autocomplete
+                    [data]="Batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="selectBatch($event)"
+                    (inputChanged)="onChangeSearch($event)"
+                    (inputFocused)="onFocused($event)"
+                    [itemTemplate]="batTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch"
+                  >
+                  </ng-autocomplete>
+
+                  <ng-template #batTemplate let-bat>
+                    <a [innerHTML]="bat.Batch_Name"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+              <c-col [md]="2">
+                <label>User Exam:</label>
+                <select
+                  placeholder="Select Semester"
+                  [(ngModel)]="SelectedSemester"
+                  formControlName="Semester_Name"
+                  class="form-control"
+                  (change)="onChangeSemesterSelect()"
+                >
+                  <option selected>--Select Semester--</option>
+                  <option *ngFor="let sem of namesubject" [ngValue]="sem">
+                    {{ sem.Userexamname }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    JuniorMarksheetForm.get('Semester_Name')?.invalid &&
+                    JuniorMarksheetForm.get('Semester_Name')?.touched
+                  "
+                  class="text-danger"
+                >Semester is required</span
+                >
+              </c-col>
+              <c-col [md]="2">
+                <label>Report Type:</label>
+                <select
+                  placeholder="Select Report Type"
+                  [(ngModel)]="SelectedReportType"
+                  formControlName="report_type"
+                  class="form-control"
+                  (change)="onChangeReportTypeSelect()"
+                >
+                  <option selected>--Select Report Type--</option>
+                  <option *ngFor="let report of ReportTypes"
+                          [ngValue]="report">
+                    {{ report.Name }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="
+                    JuniorMarksheetForm.get('report_type')?.invalid &&
+                    JuniorMarksheetForm.get('report_type')?.touched
+                  "
+                  class="text-danger"
+                >Report Type is required</span
+                >
+              </c-col>
+              <c-col [md]="2" style="padding-top: 22px">
+                <button cButton
+                        type="submit"
+                        class="btn btn-info"
+                        [disabled]="JuniorMarksheetForm.invalid"
+                        (click)="JuniorClick()"
+                >
+                  <!--                  <i-->
+                  <!--                    style="border-color: white"-->
+                  <!--                    class="spinner-border text-primary"-->
+                  <!--                    role="status"-->
+                  <!--                    *ngIf="juniorloader"-->
+                  <!--                  ></i-->
+                  <!--                  >&nbsp;-->
+                  <c-spinner *ngIf="juniorloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Download
+                </button>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 22px">
+                <button cButton
+                        type="reset"
+                        class="btn btn-danger"
+                        (click)="resetAll()"
+                >
+                  Reset
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <form cForm [formGroup]="StudentsCountForm">
+            <c-row>
+
+              <c-col [md]="2">
+                <label for="edit_batchtype" class="required">Batch Type</label>
+                <select
+                  id="edit_batchtype"
+                  formControlName="edit_batchtype"
+                  class="form-control"
+                  [(ngModel)]=edit_batchtype
+                  (change)="onChangeBatchtypeEdit_Select()"
+                >
+                  <option *ngFor="let typebatch of batchtype"
+                          [ngValue]="typebatch.name">{{typebatch.name}}</option>
+
+                </select>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 25px">
+                <button cButton
+                        type="button"
+                        class="btn btn-info"
+                        (click)="DownloadStudentcount()"
+                >
+                  <c-spinner *ngIf="semwisecountloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Download
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>

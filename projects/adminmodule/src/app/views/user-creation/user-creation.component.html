@@ -1,0 +1,389 @@
+<div class="animated-fadein">
+  <c-card>
+    <c-card-header>
+      <h4><b>User Creation</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a
+            [active]="currentactive"
+            [cTabContent]="tabContent"
+            [tabPaneIdx]="0"
+            cNavLink
+          >
+            User Creation
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            Create Role
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+            Menu Configuration
+          </a>
+        </c-nav-item>
+      </c-nav>
+
+      <c-tab-content #tabContent="cTabContent">
+        <!-- Tab 1 -->
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="usercreationForm"
+            (keydown.enter)="$event.preventDefault()"
+            (ngSubmit)="onAddRow()"
+          >
+            <c-row>
+              <c-col [md]="3">
+                <label for="aadhaar">Aadhaar:</label>
+                <input
+                  id="aadhaar"
+                  type="number"
+                  formControlName="aadhaar"
+                  [(ngModel)]="aadhaar"
+                  name="aadhaar"
+                  class="form-control"
+                  placeholder="Enter aadhaar no"
+                  minlength="12"
+                  maxlength="12"
+                />
+                <span
+                  *ngIf="
+                    usercreationForm.get('aadhaar')?.invalid &&
+                    usercreationForm.get('aadhaar')?.touched
+                  "
+                  class="text-danger"
+                  >aadhaar is required</span
+                >
+              </c-col>
+              <c-col [md]="3">
+                <label for="password">Password:</label>
+                <input
+                  id="password"
+                  type="password"
+                  formControlName="password"
+                  [(ngModel)]="password"
+                  name="password"
+                  class="form-control"
+                  placeholder="Enter Password"
+                />
+                <span
+                  *ngIf="
+                    usercreationForm.get('password')?.invalid &&
+                    usercreationForm.get('password')?.touched
+                  "
+                  class="text-danger"
+                  >password is required</span
+                >
+              </c-col>
+              <c-col [md]="2">
+                <label for="Name">Name:</label>
+                <input
+                  id="Name"
+                  type="text"
+                  formControlName="Name"
+                  [(ngModel)]="Name"
+                  name="Name"
+                  class="form-control"
+                  placeholder="Enter Name"
+                />
+                <span
+                  *ngIf="
+                    usercreationForm.get('Name')?.invalid &&
+                    usercreationForm.get('Name')?.touched
+                  "
+                  class="text-danger"
+                  >Name is required</span
+                >
+              </c-col>
+              <c-col [md]="2">
+                <label for="UserRole">User Role:</label>
+                <select
+                  id="UserRole"
+                  class="form-control"
+                  formControlName="UserRole"
+                >
+                  <option value="ADMIN">ADMIN</option>
+                  <option value="FEES">FEES</option>
+                  <option value="ADMISSION">ADMISSION</option>
+                  <option value="MARKSHEET">MARKSHEET</option>
+                </select>
+                <span
+                  *ngIf="
+                    usercreationForm.get('UserRole')?.invalid &&
+                    usercreationForm.get('UserRole')?.touched
+                  "
+                  class="text-danger"
+                  >User Role is required</span
+                >
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  class="btn btn-success"
+                  [disabled]="usercreationForm.invalid"
+                  (click)="onAddRow()"
+                >
+                  Add Row
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+
+          <!-- <div style="text-align: center;" *ngIf="loader">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <div style="text-align: center;" *ngIf="loader">
+                <div class="text-muted"><b style="color: blue;">
+                    loading data.... Please wait.</b></div>
+            </div> -->
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px">
+              <c-input-group class="mb-3">
+                <span cInputGroupText id="basic-addon1">Search</span>
+                <input
+                  aria-describedby="basic-addon1"
+                  aria-label="Username"
+                  cFormControl
+                  placeholder="Search here"
+                  [(ngModel)]="searchValue"
+                  (keyup)="quickSearch()"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+              </c-input-group>
+            </c-col>
+          </c-row>
+          <br />
+
+          <ag-grid-angular
+            style="width: 100%; height: 350px"
+            class="ag-theme-alpine"
+            [rowData]="rowss"
+            [gridOptions]="gridOptions"
+            [columnDefs]="columnDefs"
+            (gridReady)="onGridReady_Tab1($event)"
+            [rowSelection]="rowSelection"
+            (rowSelected)="onRowSelectedEvent($event)"
+            (selectionChanged)="onSelectionChanged_tab1($event)"
+          >
+          </ag-grid-angular>
+
+          <br />
+
+          <form
+            cForm
+            [formGroup]="Frm_RoleAttach"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="3">
+                <label for="userrole">Role:</label>
+                <select
+                  id="userrole"
+                  [(ngModel)]="SelectedUserRole"
+                  formControlName="userrole"
+                  class="form-control"
+                  cSelect
+                >
+                  <option disabled>Select Type</option>
+                  <option *ngFor="let data of Roles" [ngValue]="data">
+                    {{ data.Rolenames }}
+                  </option>
+                </select>
+              </c-col>
+
+              <c-col style="padding-top: 25px" [md]="2" class="text-center">
+                <button
+                  cButton
+                  class="btn btn-success text-white"
+                  (click)="onAttach()"
+                >
+                  Attach
+                </button>
+              </c-col>
+            </c-row>
+            <br />
+          </form>
+        </c-tab-pane>
+
+        <!-- Tab 2 -->
+
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="Frm_role"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="3">
+                <label for="rolenames">Create Role:</label>
+                <input
+                  id="rolenames"
+                  type="text"
+                  formControlName="rolenames"
+                  [(ngModel)]="rolenames"
+                  name="rolenames"
+                  class="form-control"
+                  placeholder="Create User"
+                />
+                <span
+                  *ngIf="
+                    Frm_role.get('rolenames')?.invalid &&
+                    Frm_role.get('rolenames')?.touched
+                  "
+                  class="text-danger"
+                  >Create User role</span
+                >
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  class="btn btn-success"
+                  (click)="onCreateRole()"
+                >
+                  Create
+                </button>
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button cButton class="btn btn-danger" (click)="onDeleteRole()">
+                  Cancel
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+
+          <div style="text-align: center" *ngIf="loader">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+          <div style="text-align: center" *ngIf="loader">
+            <div class="text-muted">
+              <b style="color: blue">loading data.... Please wait.</b>
+            </div>
+          </div>
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px">
+              <form cForm class="d-flex" role="search">
+                <c-input-group class="mb-3">
+                  <span cInputGroupText id="basic-addon1">Search</span>
+                  <input
+                    aria-describedby="basic-addon1"
+                    aria-label="Username"
+                    cFormControl
+                    placeholder="Search here"
+                    [(ngModel)]="searchValue"
+                    (keyup)="quickSearch()"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </c-input-group>
+              </form>
+            </c-col>
+          </c-row>
+          <br />
+
+          <ag-grid-angular
+            style="width: 100%; height: 350px"
+            class="ag-theme-alpine"
+            [rowData]="Roles"
+            [gridOptions]="gridOptions"
+            [columnDefs]="columnDefsUser"
+            (gridReady)="onGridReady_Tab2($event)"
+            [rowSelection]="rowSelection"
+            (rowSelected)="onRowSelectedEvent($event)"
+            (selectionChanged)="onSelectionChanged($event)"
+          >
+          </ag-grid-angular>
+        </c-tab-pane>
+
+        <!-- Tab 3 -->
+
+        <c-tab-pane class="p-3">
+          <form
+            cForm
+            [formGroup]="Frm_menu"
+            (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="3">
+                <label for="roleuser">Role:</label>
+                <select
+                  id="roleuser"
+                  [(ngModel)]="SelectedRole"
+                  formControlName="roleuser"
+                  class="form-control"
+                  cSelect
+                >
+                  <option disabled>Select Type</option>
+                  <option *ngFor="let data of Roles" [ngValue]="data">
+                    {{ data.Rolenames }}
+                  </option>
+                </select>
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  class="btn btn-info text-white"
+                  (click)="Show()"
+                >
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+            <br />
+          </form>
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px">
+              <c-input-group class="mb-3">
+                <span cInputGroupText id="basic-addon">Search</span>
+                <input
+                  aria-describedby="basic-addon"
+                  aria-label="Menus"
+                  cFormControl
+                  placeholder="Search here"
+                  [(ngModel)]="searchValue_menu"
+                  (keyup)="quickSearch_menu($event)"
+                />
+              </c-input-group>
+              <!--                    </form>-->
+            </c-col>
+          </c-row>
+
+          <ag-grid-angular
+            style="width: 100%; height: 350px"
+            class="ag-theme-alpine"
+            [rowData]="Menus"
+            (gridReady)="onGridReady_menuconfig($event)"
+            [columnDefs]="columnDefsMenus"
+            [rowSelection]="rowSelection_menuconfig"
+            rowMultiSelectWithClick="true"
+            (rowSelected)="onRowSelectedEvent_menuconfig($event)"
+            (selectionChanged)="onSelectionChanged_menuconfig($event)"
+          >
+          </ag-grid-angular>
+
+          <c-row style="padding-top: 24px; justify-content: center">
+            <c-col [md]="2" class="text-center">
+              <button
+                cButton
+                class="btn btn-success text-white"
+                (click)="onSubmit()"
+              >
+                Submit
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>

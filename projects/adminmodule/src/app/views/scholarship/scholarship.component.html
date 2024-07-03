@@ -1,0 +1,146 @@
+<!-- <div>
+    <h3>Edit Profile</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+    <c-card>
+        <c-card-header>
+            <h4><b>Scholarship</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <form cForm [formGroup]="ScholarshipForm" (keydown.enter)="$event.preventDefault()">
+                <c-row>
+                    <c-col [md]="6">
+                        <label for="aadhaar">Enter Student Aadhaar:</label>
+                        <input id="aadhaar" type="number" formControlName="aadhaar" class="form-control"
+                            placeholder="Enter aadhaar no" minlength="12" maxlength="12">
+                        <span *ngIf="ScholarshipForm.get('aadhaar')?.invalid && ScholarshipForm.get('aadhaar')?.touched"
+                            class="text-danger">aadhaar is required</span>
+                        <!-- <span  *ngIf="aadhaar.errors?.minlength">Aadhaar must be 12 numbers</span> -->
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 23px;">
+                        <button cButton type="submit" [disabled]="ScholarshipForm.invalid" (click)="ShowProfile()" size="md"
+                            class="btn btn-info">Show
+                        </button>
+                    </c-col>
+                    <!-- <c-col [md]="2" style="padding-top: 30px;">
+                        <button cButton [disabled]="ScholarshipForm.invalid" (click)="DownloadAadhaar()" size="lg"
+                            class="btn btn-success">Download Photo
+                        </button>
+                    </div> -->
+
+                </c-row>
+            </form>
+            <br />
+            <form cForm [formGroup]="updateprofileForm" (keydown.enter)="$event.preventDefault()"
+                (ngSubmit)="OnSubmit()">
+                <c-row>
+                    <c-col [md]="6">
+                        <label for="studentaadhaar">Student Aadhaar:</label>
+                        <input id="studentaadhaar" disabled type="number" formControlName="studentaadhaar" [(ngModel)]="studentaadhaar"
+                            name="studentaadhaar" class="form-control" placeholder="Enter student aadhaar"
+                            minlength="12" maxlength="12">
+                        <span
+                            *ngIf="updateprofileForm.get('studentaadhaar')?.invalid && updateprofileForm.get('studentaadhaar')?.touched"
+                            class="text-danger">student aadhaar is required</span>
+                    </c-col>
+                    <c-col [md]="6">
+                        <label for="firstname">First Name:</label>
+                        <input id="firstname" disabled type="text" formControlName="firstname" [(ngModel)]="firstname" name="firstname"
+                            class="form-control" placeholder="Enter First Name">
+                        <span
+                            *ngIf="updateprofileForm.get('firstname')?.invalid && updateprofileForm.get('firstname')?.touched"
+                            class="text-danger">first name is required</span>
+                    </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                    <c-col [md]="6">
+                        <label for="lastname">Last Name:</label>
+                        <input id="lastname" disabled type="text" formControlName="lastname" [(ngModel)]="lastname" name="lastname"
+                            class="form-control" placeholder="Enter Last Name">
+                        <!-- <span
+                            *ngIf="updateprofileForm.get('lastname').invalid && updateprofileForm.get('lastname').touched"
+                            class="text-danger">last name is required</span> -->
+                    </c-col>
+                    <c-col [md]="6">
+                        <label for="fathername">Father Name:</label>
+                        <input id="fathername" disabled type="text" formControlName="fathername" [(ngModel)]="fathername" name="fathername"
+                            class="form-control" placeholder="Enter Father Name">
+                        <span
+                            *ngIf="updateprofileForm.get('fathername')?.invalid && updateprofileForm.get('fathername')?.touched"
+                            class="text-danger">father name is required</span>
+                    </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                    <c-col [md]="6">
+                        <label for="mothername">Mother Name:</label>
+                        <input id="mothername" disabled type="text" formControlName="mothername" [(ngModel)]="mothername" name="mothername"
+                            class="form-control" placeholder="Enter Mother Name">
+                        <span
+                            *ngIf="updateprofileForm.get('mothername')?.invalid && updateprofileForm.get('mothername')?.touched"
+                            class="text-danger">mother name is required</span>
+                    </c-col>
+                    <c-col [md]="6">
+                        <label for="gender">Gender:</label>
+                        <select id="gender" disabled formControlName="gender" [(ngModel)]="gender" name="gender" class="form-control">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Transgender">Transgender</option>
+                        </select>
+                        <span *ngIf="updateprofileForm.get('gender')?.invalid && updateprofileForm.get('gender')?.touched"
+                            class="text-danger">gender is required</span>
+                    </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                    <c-col [md]="6">
+                        <label for="Birth_date">Date Of Birth:</label>
+                        <input id="Birth_date" disabled type="date" formControlName="Birth_date" [(ngModel)]="Birth_date" name="Birth_date"
+                            class="form-control">
+                        <span
+                            *ngIf="updateprofileForm.get('Birth_date')?.invalid && updateprofileForm.get('Birth_date')?.touched"
+                            class="text-danger">Birth Date is required</span>
+                    </c-col>
+
+                    <c-col [md]="6">
+                        <label for="scholarship">Scholarship</label>
+                        <select  id="scholarship"
+                                [(ngModel)]="PerScholarship" formControlName="scholarship" class="form-control">
+                            <option value="" disabled selected>--- Please Select ---</option>
+                            <option *ngFor="let FreeShip of Scholarship" [value]="FreeShip">
+                                {{FreeShip}}</option>
+                        </select>
+                        <!-- <select [(ngModel)]="SelectedScholarship" formControlName="scholarship" class="form-control"
+                            (change)="onChangeScholarshipSelect()">
+                            <option *ngFor="let sch of Scholarship" [ngValue]="sch">{{sch.FreeShip}}</option>
+                        </select> -->
+                        <span
+                            *ngIf="updateprofileForm.get('scholarship')?.invalid && updateprofileForm.get('scholarship')?.touched"
+                            class="text-danger">scholarship is required</span>
+                    </c-col>
+                </c-row>
+
+                <c-row>
+                  <c-col [md]="4"></c-col>
+                    <c-col [md]="2" style="padding-top: 30px;">
+                        <button cButton type="submit" [disabled]="updateprofileForm.invalid"
+                            class="btn btn-success">
+                            <c-spinner  *ngIf="submitloader" aria-hidden="false" size="sm"></c-spinner>
+                            Submit
+                        </button>
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 30px;">
+                        <button cButton type="reset" (click)="resetAll()"
+                            class="btn btn-danger">Cancel
+                        </button>
+                    </c-col>
+                  <c-col [md]="2"></c-col>
+                </c-row>
+
+              </form>
+        </c-card-body>
+    </c-card>
+</div>

@@ -1,0 +1,86 @@
+<!--<c-header class="mb-4 d-print-none" position="sticky">-->
+<ng-container>
+    <c-container [fluid]="true">
+        <button
+                toggle="visible"
+                cHeaderToggler
+                [cSidebarToggle]="sidebarId"
+                class="ps-1"
+                style="margin-bottom:25px;"
+        >
+            <svg cIcon
+                 name="cilMenu"
+                 size="lg"
+                 color="dark"
+            ></svg>
+        </button>
+        <c-header-nav class="d-none d-lg-flex me-auto" >
+            <c-nav-item>
+                <a cNavLink routerLink="/dashboard" routerLinkActive="active">
+                    <b style="color: #39f; margin-top: 50px;font-size: small; ">RAMNIRANJAN JHUNJHUNWALA COLLEGE OF ARTS
+                        , COMMERCE AND SCIENCE (AUTONOMOUS)
+                      <h6 style="color: black;">Opposite Ghatkopar Railway Station West Mumbai-400086, Maharashtra, India</h6></b>
+                </a>
+            </c-nav-item>
+
+        </c-header-nav>
+
+      <ul class="c-header-nav">
+        <p style=" margin-top: 18px; color: red" ><b>Financial Year - {{this.oSession.finyear}}</b></p>
+      </ul>
+
+        <c-header-nav class="ms-3">
+            <ng-container *ngTemplateOutlet="userDropdown"></ng-container>
+        </c-header-nav>
+
+    </c-container>
+</ng-container>
+<ng-template #userDropdown>
+    <c-dropdown alignment="end" variant="nav-item">
+        <button
+                cButton
+                color=""
+                [caret]="false"
+                cDropdownToggle
+                class="py-0"
+        >
+            <c-avatar
+                    cTextColor="primary"
+                    shape="rounded-1"
+                    size="md"
+                    src="./assets/img/avatars/8.jpg"
+                    status="success"
+            >
+            </c-avatar>
+        </button>
+        <ul cDropdownMenu class="pt-0 pr-5 w-auto">
+            <li>
+                <h6 cDropdownHeader class="bg-light fw-semibold py-2">Settings</h6>
+            </li>
+            <li></li>
+            <li>
+                <a routerLink="./" cDropdownItem>
+                    <svg cIcon class="me-2" name="cilUser"></svg>
+                    Profile
+                </a>
+            </li>
+            <li>
+                <a routerLink="./finyear" cDropdownItem>
+                    <svg cIcon class="me-2" name="cilSettings"></svg>
+                    <!-- <svg [cIcon]="icons.cilSettings"></svg> -->
+                    <b>Financial Year - {{Finyear}}</b>
+                </a>
+            </li>
+            <li>
+                <hr cDropdownDivider/>
+            </li>
+            <li>
+                <a (click)="logoutlogin()" routerLink="./" cDropdownItem>
+                    <svg cIcon class="me-2" name="cilLockLocked"></svg>
+                    LogOut
+                </a>
+            </li>
+            <li></li>
+        </ul>
+    </c-dropdown>
+</ng-template>

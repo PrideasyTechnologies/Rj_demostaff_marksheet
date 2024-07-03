@@ -1,0 +1,115 @@
+
+<c-modal #infoModal color="info" size="xl">
+  <c-modal-header>
+    <h4 class="c-modal-title">Cancel Admission</h4>
+  </c-modal-header>
+  <c-modal-body>
+    <h5>Are You sure...<br>You Want To Cancel Admission??</h5>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton type="submit" class="btn btn-success">Yes!</button>
+        <button cButton class="btn btn-danger" (click)="infoModal.hide()">Close</button>
+  </c-modal-footer>
+</c-modal>
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Cancel Admission</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-row>
+        <c-col [md]="6">
+          <label for="Batch_Code">Batch:</label>
+
+          <div id="Batch_Code"
+               class="ng-autocomplete" style="width: 100%;">
+            <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword" (selected)='selectBatch($event)'
+                             (inputChanged)='onChangeSearch($event)' (inputFocused)='onFocused($event)'
+                             [itemTemplate]="batTemplate" [notFoundTemplate]="notFoundTemplate"
+                             placeholder="Select Batch">
+            </ng-autocomplete>
+
+            <ng-template #batTemplate let-bat>
+              <a [innerHTML]="bat.Batch_Name"></a>
+            </ng-template>
+
+            <ng-template #notFoundTemplate let-notFound>
+              <div [innerHTML]="notFound"></div>
+            </ng-template>
+          </div>
+        </c-col>
+        <!--        <div class="col-sm-2">-->
+        <!--          <label>Show only cancelled:</label>-->
+        <!--          <input type="checkbox" class="form-control" (change)="changeCheckbox($event.target.checked)">-->
+        <!--        </div>-->
+        <c-form-check class="col-sm-2" style="margin-top: 10px">
+          <input cFormCheckInput id="checkOne" type="checkbox" (change)="changeCheckbox($event.target.checked)"/>
+          <label cFormCheckLabel for="checkOne">Show only cancelled:</label>
+        </c-form-check>
+        <c-col [md]="2" style="padding-top: 25px;">
+          <button cButton type="submit" size="md" (click)="CancelAdmissionLists()" class="btn btn-info">
+            <c-spinner  *ngIf="showloader" aria-hidden="false" size="sm"></c-spinner>
+            Show
+          </button>
+        </c-col>
+        <c-col [md]="2" style="padding-top: 25px;">
+          <button cButton type="submit" size="md" (click)="AllCancelAdmissionLists()" class="btn btn-info">
+            <c-spinner  *ngIf="allloader" aria-hidden="false" size="sm"></c-spinner>
+            All
+          </button>
+        </c-col>
+
+      </c-row>
+    </c-card-body>
+
+    <c-row>
+      <c-col [md]="12" style="padding-top: 20px;">
+        <form cForm class="d-flex" role="search">
+          <!--          <div class="input-group">-->
+          <!--            <div class="input-group-prepend">-->
+          <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+          <!--            </div>-->
+          <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+          <!--          </div>-->
+          <c-input-group class="mb-3">
+            <span cInputGroupText id="basic-addon1">Search</span>
+            <input aria-describedby="basic-addon1"
+                   aria-label="Username"
+                   cFormControl
+                   placeholder="Search here"
+                   [(ngModel)]="searchValue"
+                   (keyup)="quickSearch()"
+            />
+          </c-input-group>
+        </form>
+      </c-col>
+    </c-row>
+    <c-card-body>
+      <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                       [rowData]="rowss"
+                       [gridOptions]="gridOptions"
+                       [columnDefs]="columnDefs"
+                       [pagination]="true"
+                       [paginationPageSize]="10"
+                       (gridReady)="onGridReady($event)"
+                       (rowSelected)="onRowSelectedEvent($event)"
+                       (selectionChanged)="onSelectionChanged($event)">
+      </ag-grid-angular>
+      <br/>
+      <c-row>
+        <c-col [md]="2">
+          <button cButton class="btn btn-danger" (click)="DownloadCancelAdmissionList()">
+<!--            <i-->
+<!--            style="border-color: white;" class="spinner-border text-success" role="status"-->
+<!--            *ngIf="downloadloader"></i>&nbsp;-->
+            <c-spinner  *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+            Download
+          </button>
+        </c-col>
+      </c-row>
+    </c-card-body>
+
+  </c-card>
+</div>

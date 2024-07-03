@@ -1,0 +1,219 @@
+<div class="fade-in">
+    <c-card>
+        <c-card-header>
+            <h4><b>Fee Structure Attachment For Students.</b></h4>
+        </c-card-header>
+        <c-card-body>
+            <form cForm [formGroup]="feesAttachmentForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="ShowFees()">
+                <c-row>
+                    <c-col [md]="8">
+                        <label for="Batch_Code">Batch:</label>
+                        <div id="Batch_Code"
+                             class="ng-autocomplete" style="width: 100%;">
+                            <ng-autocomplete [data]="Batchs" [searchKeyword]="Batchkeyword"
+                                             (selected)='selectBatch($event)' (inputChanged)='onChangeSearch($event)'
+                                             (inputFocused)='onFocused($event)' [itemTemplate]="batTemplate"
+                                             [notFoundTemplate]="notFoundTemplate">
+                            </ng-autocomplete>
+
+                            <ng-template #batTemplate let-bat>
+                                <a [innerHTML]="bat.Batch_Name"></a>
+                            </ng-template>
+
+                            <ng-template #notFoundTemplate let-notFound>
+                                <div [innerHTML]="notFound"></div>
+                            </ng-template>
+                        </div>
+                    </c-col>
+                </c-row>
+                <c-row>
+                    <c-col [md]="4">
+                        <label for="Term_Name">Term Name:</label>
+                        <select id="Term_Name" [(ngModel)]="SelectedTerm" formControlName="Term_Name"
+                                class="form-control"
+                                (change)="onChangeTermSelect()">
+                            <option *ngFor="let term of Terms" [ngValue]="term">{{term.Term_Name}}</option>
+                        </select>
+                    </c-col>
+
+                    <c-col [md]="2">
+                        <label for="category">Caste:</label>
+                        <select id="category"
+                                formControlName="category" name="category" class="form-control">
+                            <option *ngFor="let category of category" [value]="category">{{category}}</option>
+                        </select>
+                        <span
+                                *ngIf="feesAttachmentForm.get('category')?.invalid && feesAttachmentForm.get('category')?.touched"
+                                class="text-danger">Caste is required</span>
+                    </c-col>
+                    <c-col [md]="2">
+                        <label for="gender">Gender:</label>
+                        <select id="gender"
+                                formControlName="sex" name="sex" class="form-control">
+                            <option *ngFor="let sex of sex" [value]="sex">{{sex}}</option>
+                        </select>
+                        <span *ngIf="feesAttachmentForm.get('sex')?.invalid && feesAttachmentForm.get('sex')?.touched"
+                              class="text-danger">Gender is required</span>
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 24px;">
+                        <button cButton type="submit" (click)="ShowFees()" size="md"
+                                class="btn btn-info">Show
+                        </button>
+                    </c-col>
+                    <c-col [md]="2" style="padding-top: 24px;">
+                        <button cButton type="button" (click)="Unattachedstudents()" size="md" class="btn btn-success">
+                            Unattached List
+                        </button>
+                    </c-col>
+                </c-row>
+            </form>
+            <c-row>
+                <c-col [md]="12" style="padding-top: 20px;">
+                    <!--                    <form cForm class="d-flex" role="search">-->
+                    <!--          <div class="input-group">-->
+                    <!--            <div class="input-group-prepend">-->
+                    <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+                    <!--            </div>-->
+                    <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+                    <!--          </div>-->
+                    <c-input-group class="mb-3">
+                        <span cInputGroupText id="basic-addon1">Search</span>
+                        <input aria-describedby="basic-addon1"
+                               aria-label="Username"
+                               cFormControl
+                               placeholder="Search here"
+                               [(ngModel)]="searchValue"
+                               (keyup)="quickSearch()"
+                        />
+                    </c-input-group>
+                    <!--                    </form>-->
+                </c-col>
+            </c-row>
+            <br/>
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                             [rowData]="Res_voewattachfees"
+                             [gridOptions]="gridOptions"
+                             [columnDefs]="columnDefs"
+                             [rowSelection]="rowSelection"
+                             (gridReady)="onGridReady($event)"
+                             (rowSelected)="onRowSelectedEvent($event)"
+                             (selectionChanged)="onSelectionChanged($event)">
+            </ag-grid-angular>
+
+            <br>
+            <c-row>
+                <c-col [md]="1">
+                    <button  (click)="GetPdfApi()"
+                            cButton class="me-1"
+                            color="success">
+                        View
+                    </button>
+                </c-col>
+            </c-row>
+            <br>
+                <form cForm [formGroup]="feesAttachmentViewForm" (keydown.enter)="$event.preventDefault()"
+                      >
+                    <c-row [visible]="visible" cCollapse>
+
+                    <c-col [md]="4">
+                        <label for="Term_Name_View"><b>Term Name:</b></label>
+                        <select id="Term_Name_View"
+                                [(ngModel)]="SelectedTermView"
+                                formControlName="Term_Name_View" class="form-control"
+                                (change)="onChangeTermSelect()">
+                            <option value="" disabled>Select Term</option>
+                            <option *ngFor="let term of Terms" [ngValue]="term">{{term.Term_Name}}</option>
+                        </select>
+                    </c-col>
+                    <br>
+                    <c-col [md]="2" style="text-align: center;margin-top: 24px">
+                        <button cButton type="submit" (click)="AttachFees()" class="btn btn-info">Attach Fees
+                        </button>
+                    </c-col>
+                    <c-col [md]="2" style="text-align: center;margin-top: 24px">
+                        <button cButton type="submit" (click)="UnAttachFees()"
+
+                                class="btn btn-info">UnAttach Fees
+                        </button>
+                    </c-col>
+                    <c-col [md]="2" style="text-align: center;margin-top: 24px">
+                        <button cButton class="btn btn-success" (click)="incrementZoom(0.1)">
+                            <b>Zoom-In</b>
+                        </button>
+                    </c-col>
+                    <c-col [md]="2" style="text-align: center;margin-top: 24px">
+                        <button cButton class="btn btn-success" (click)="incrementZoom(-0.1)">
+                            <b>Zoom-Out</b>
+                        </button>
+                    </c-col>
+                    </c-row>
+
+                </form>
+
+                    <!-- *ngIf="ShowReservationdetails" -->
+                    <form cForm [formGroup]="DocumentsectionForm" (keydown.enter)="$event.preventDefault()">
+                    <c-row >
+                        <h4>Reservation Deatils</h4>
+                        <c-col [md]="2">
+                          <button class="btn btn-warning" (click)="ViewDocument('DOCUMENT',70)">
+                            View Document
+                            <c-spinner *ngIf="reservationviewloader" aria-hidden="false" size="sm"></c-spinner>
+              
+                         </button>
+                        </c-col>
+                        <br>
+                    </c-row>
+                    </form>
+                   
+                    <br>
+
+                    <div *ngIf="this.resp_viewdocument?.pdffile">
+                        <div class="container" *ngIf="showpdfbox">
+                          <!-- <div style="text-align: center;">
+              
+                            <button cButton class="btn btn-success" (click)="incrementZoom(0.1)">
+                              <b>Zoom-In</b>
+                            </button>&nbsp;&nbsp;
+              
+                            <button cButton class="btn btn-success" (click)="incrementZoom(-0.1)">
+                              <b>Zoom-Out</b>
+                            </button>&nbsp;&nbsp;
+              
+                            <button cButton type="button" class="btn btn-danger" (click)="ClosePdf()">Close Pdf</button>
+                          </div> -->
+                          <br>
+                          <div class="pdf-container">
+                            <pdf-viewer [src]="pdfSrc" [render-text]="true" [(page)]="pageVariable"
+                                        [show-all]="true" [stick-to-page]="true" [original-size]="false"
+                                        [fit-to-page]="true" [zoom]="zoom" [autoresize]="true" [show-borders]="true"
+                                        style="display: block;"></pdf-viewer>
+              
+                          </div>
+              
+                          <br>
+                          <!-- <div style="float: right;">
+                              <button cButton type="button" class="btn btn-danger" (click)="ClosePdf()">Close Pdf</button>
+                          </div> -->
+                        </div>
+              
+                      </div>
+                      <div *ngIf="this.resp_viewdocument?.pdffile">
+                     <img cImg [src]="MyImage" alt="Document" class="img-responsive img-fluid">
+                    </div>
+              
+            <!-- <div class="pdf-container" *ngIf="pdfform">
+                <pdf-viewer
+                        [src]="pdfSrc" [render-text]="true"
+                        [(page)]="pageVariable"
+                        [show-all]="true"
+                        [stick-to-page]="true"
+                        [original-size]="false"
+                        [fit-to-page]="true"
+                        [zoom]="zoom"
+                        [autoresize]="true" [show-borders]="true"
+                        style="display: block;">
+                </pdf-viewer>
+            </div> -->
+        </c-card-body>
+    </c-card>
+</div>

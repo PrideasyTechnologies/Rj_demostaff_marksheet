@@ -1,0 +1,533 @@
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Reports</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+            Fees
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            Outstanding/Rollcall wise payment
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+            Receipt Report
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>
+            Aadhaar Receipt
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="4" cNavLink>
+            Tally Posting
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="5" cNavLink>
+            Atkt Report
+          </a>
+        </c-nav-item>
+      </c-nav>
+      <c-tab-content #tabContent="cTabContent">
+        <c-tab-pane class="p-3">
+          <br>
+          <form cForm [formGroup]="AccountCollectionForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="3">
+                <label for="fromdate">From Date:</label>
+                <input type="date" class="form-control" formControlName="fromdate">
+                <span
+                  *ngIf="AccountCollectionForm.get('fromdate')?.invalid && AccountCollectionForm.get('fromdate')?.touched"
+                  class="text-danger">from date is required</span>
+              </c-col>
+              <c-col [md]="3">
+                <label for="todate">To Date:</label>
+                <input type="date" class="form-control" formControlName="todate">
+                <span
+                  *ngIf="AccountCollectionForm.get('todate')?.invalid && AccountCollectionForm.get('todate')?.touched"
+                  class="text-danger">from date is required</span>
+                <!-- <span style="color:red" *ngIf="dateerror">from date should be less than to date</span> -->
+              </c-col>
+              <c-col [md]="3" style="padding-top: 25px;">
+                <button type="submit" class="btn btn-info" [disabled]="onAccountclicked"
+                        (click)="onAccountcollection(); onAccountclicked = true">
+                  <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                  <!--                     *ngIf="Accountloader"></i>-->
+                  <c-spinner *ngIf="Accountloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  &nbsp;Download Account Collection
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br>
+          <c-row>
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="AccountOutclicked"
+                      (click)="AccountOutstanding(); AccountOutclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="AccountOutloader"></i>&nbsp;&nbsp;-->
+                <c-spinner *ngIf="AccountOutloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Account Outstanding Download
+              </button>
+            </c-col>
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="Studentclicked"
+                      (click)="StudentAccount(); Studentclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="Studentloader"></i>&nbsp;&nbsp;-->
+                <c-spinner *ngIf="Studentloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Student Account Download
+              </button>
+            </c-col>
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="Outstandingclicked"
+                      (click)="BatchOutstandingDownload(); Outstandingclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="outstandingloader"></i>&nbsp;&nbsp;-->
+                <c-spinner *ngIf="outstandingloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Outstanding Download
+              </button>
+            </c-col>
+          </c-row>
+          <br>
+          <c-row>
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="Paidunclicked"
+                      (click)="PaidUnpaidFile(); Paidunclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="Paidunloader"></i>&nbsp;-->
+                <c-spinner *ngIf="Paidunloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Paid Unpaid Download
+              </button>
+            </c-col>
+
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="Feesclicked"
+                      (click)="FeesStructureFile(); Feesclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="Feesloader"></i>&nbsp;&nbsp;-->
+                <c-spinner *ngIf="Feesloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Fees Structure Download
+              </button>
+            </c-col>
+          </c-row>
+          <br>
+          <c-row>
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="formfeesclicked"
+                      (click)="FormFeesDownload(); formfeesclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="formfeesloader"></i>&nbsp;&nbsp;-->
+                <c-spinner *ngIf="formfeesloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Form Fees Download
+              </button>
+            </c-col>
+
+            <c-col [md]="3">
+              <button type="button" class="btn btn-info" [disabled]="overallclicked"
+                      (click)="OverallCollectionDownload(); overallclicked = true">
+                <!--                <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                <!--                   *ngIf="overallloader"></i>&nbsp;-->
+                <c-spinner *ngIf="overallloader" aria-hidden="false" size="sm"></c-spinner>
+
+                Overall Expected Collection
+              </button>
+            </c-col>
+          </c-row>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <form cForm [formGroup]="PaymentForm" (keydown.enter)="$event.preventDefault()">
+
+            <br/>
+            <c-row>
+              <c-col [md]="3">
+                <label for="fromdate">From Date:</label>
+                <input id="fromdate" type="date" class="form-control" formControlName="fromdate">
+
+                <span *ngIf="PaymentForm.get('fromdate')?.invalid && PaymentForm.get('fromdate')?.touched"
+                      class="text-danger">from date is required</span>
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="todate">To Date:</label>
+                <input id="todate" type="date" class="form-control" formControlName="todate">
+
+                <span *ngIf="PaymentForm.get('todate')?.invalid && PaymentForm.get('todate')?.touched"
+                      class="text-danger">to date is required</span>
+                <!-- <span style="color:red" *ngIf="dateerror">from date should be less than to date</span> -->
+
+              </c-col>
+
+              <c-col [md]="3" style="padding-top: 24px;">
+                <button (click)="Outstanding(true)" type="submit" class="btn btn-info"
+                        [disabled]="PaymentForm.invalid">
+                  <!--                  <i style="border-color:white"-->
+                  <!--                                                            class="spinner-border text-primary" role="status"-->
+                  <!--                                                            *ngIf="rollcalltrueloader"></i>&nbsp;&nbsp;-->
+                  <c-spinner *ngIf="rollcalltrueloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Outstanding
+                </button>
+              </c-col>
+              <c-col [md]="3" style="padding-top: 24px;">
+                <button (click)="Outstanding(false)" type="submit" class="btn btn-primary"
+                        [disabled]="PaymentForm.invalid">
+                  <!--                  <i style="border-color:white"-->
+                  <!--                                                            class="spinner-border text-primary" role="status"-->
+                  <!--                                                            *ngIf="rollcallfalseloader"></i>&nbsp;&nbsp;-->
+                  <c-spinner *ngIf="rollcallfalseloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Rollcall
+                  wise
+                  payment
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <br/>
+          <form cForm [formGroup]="ReceiptForm" (keydown.enter)="$event.preventDefault()"
+                >
+            <c-row>
+              <c-col [md]="4">
+                <label for="batchcode">Select Prefix:</label>
+                <div id="batchcode" class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete [data]="Prefix" [searchKeyword]="Prefixkeyword"
+                                   (selected)='selectPrefix($event)'
+                                   (inputChanged)='onChangeSearch($event)'
+                                   (inputFocused)='onFocused($event)' [itemTemplate]="prefixTemplate"
+                                   [notFoundTemplate]="notFoundTemplate">
+                  </ng-autocomplete>
+
+                  <ng-template #prefixTemplate let-prefix>
+                    <a [innerHTML]="prefix.Prefix_desc"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="fromdate">Select From Date:</label>
+                <input type="date" formControlName="fromdate" class="form-control">
+                <span *ngIf="ReceiptForm.get('fromdate')?.invalid && ReceiptForm.get('fromdate')?.touched"
+                      class="text-danger">FromDate is required</span>
+              </c-col>
+              <c-col [md]="3">
+                <label for="todate">Select To Date:</label>
+                <input type="date" formControlName="todate" class="form-control">
+                <span *ngIf="ReceiptForm.get('todate')?.invalid && ReceiptForm.get('todate')?.touched"
+                      class="text-danger">ToDate is required</span>
+                <!-- <span style="color:red" *ngIf="dateerror">from date should be less than to date</span> -->
+
+              </c-col>
+              <c-col [md]="2" style="padding-top: 24px;">
+                <c-dropdown variant="btn-group">
+                  <button cButton cDropdownToggle type="submit" [disabled]="ReceiptForm.invalid" size="md"
+                          class="btn btn-info">
+                    <c-spinner *ngIf="showreceiptloader" aria-hidden="false" size="sm"></c-spinner>
+                    Show
+                  </button>
+                  <ul cDropdownMenu>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+
+                              (click)="RecieptDownload()">
+                        Print Reciept
+                      </button>
+
+                      <!--                      <c-spinner *ngIf="marksheetDownloadloader" aria-hidden="false" size="sm"></c-spinner>-->
+                    </li>
+                    <li>
+                      <button [routerLink]="[]" cDropdownItem
+
+                              (click)="ShowReceipt()">
+                        Show Reciept
+                      </button>
+
+                      <!--                      <c-spinner *ngIf="marksheetDownloadloader" aria-hidden="false" size="sm"></c-spinner>-->
+                    </li>
+                  </ul>
+                </c-dropdown>
+                <!--                  <ul cDropdownMenu>-->
+                <!--                    <li (click)="ShowReceipt()">-->
+                <!--                      Show-->
+                <!--                      &lt;!&ndash;                      <c-spinner *ngIf="marksheetDownloadloader" aria-hidden="false" size="sm"></c-spinner>&ndash;&gt;-->
+                <!--                    </li >-->
+                <!--                    <hr>-->
+                <!--                    <li (click)="ShowReceipt()">-->
+                <!--                      Print </li>-->
+                <!--                  </ul>-->
+                <!--                </c-dropdown>-->
+              </c-col>
+            </c-row>
+          </form>
+
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px;">
+              <!--                    <form cForm class="d-flex" role="search">-->
+              <!--          <div class="input-group">-->
+              <!--            <div class="input-group-prepend">-->
+              <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+              <!--            </div>-->
+              <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+              <!--          </div>-->
+              <c-input-group class="mb-3">
+                <span cInputGroupText>Search</span>
+                <input aria-describedby="basic-addon1"
+                       aria-label="Username"
+                       cFormControl
+                       placeholder="Search here"
+                       [(ngModel)]="searchValue"
+                       (keyup)="quickSearch()"
+                />
+              </c-input-group>
+              <!--                    </form>-->
+            </c-col>
+          </c-row>
+          <br/>
+          <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                           [rowData]="rowss"
+                           [gridOptions]="gridOptions"
+                           [columnDefs]="columnDefs"
+                           [pagination]="true"
+                           [paginationPageSize]="10"
+                           (gridReady)="onGridReady($event)"
+                           [rowSelection]='rowSelection'
+                           (rowSelected)="onRowSelectedEvent($event)"
+                           (selectionChanged)="onSelectionChanged($event)">
+          </ag-grid-angular>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <br/>
+          <form cForm [formGroup]="AadhaarReceiptForm" (keydown.enter)="$event.preventDefault()"
+                (ngSubmit)="ShowbyAadhaarReceipt()">
+            <c-row>
+              <c-col [md]="6">
+                <label for="batchcode">Enter Aadhaar:</label>
+                <input type="number" formControlName="aadhaar" class="form-control"
+                       placeholder="Aadhaar Number" [ngClass]="{ 'is-invalid': (submitted || f['aadhaar']?.touched) && f['aadhaar']?.errors,
+      'is-valid': f['aadhaar'].touched && !f['aadhaar'].errors }">
+                <div *ngIf="submitted && f['aadhaar']?.errors" class="invalid-feedback">
+                  <div *ngIf="f.aadhaar.errors.required">Aadhar Number is required</div>
+                  <div *ngIf="f.aadhaar.errors.minlength">Aadhar Number must be of 12
+                    characters
+                  </div>
+                </div>
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px;">
+                <button type="submit" [disabled]="AadhaarReceiptForm.invalid" size="lg"
+                        class="btn btn-info">
+                  <c-spinner *ngIf="aadhaarreceiptloader" aria-hidden="false" size="sm"></c-spinner>
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+
+          <c-row>
+            <c-col [md]="12" style="padding-top: 20px;">
+              <!--                    <form cForm class="d-flex" role="search">-->
+              <!--          <div class="input-group">-->
+              <!--            <div class="input-group-prepend">-->
+              <!--              <span class="input-group-text"><i class="cil-search"></i></span>-->
+              <!--            </div>-->
+              <!--            <input cInput cFormControl placeholder="Search Here" (keyup)="quickSearch()" [(ngModel)]="searchValue">-->
+              <!--          </div>-->
+              <c-input-group class="mb-3">
+                <span cInputGroupText id="basic-addon1">Search</span>
+                <input aria-describedby="basic-addon1"
+                       aria-label="Username"
+                       cFormControl
+                       placeholder="Search here"
+                       [(ngModel)]="searchValue"
+                       (keyup)="quickSearch()"
+                />
+              </c-input-group>
+              <!--                    </form>-->
+            </c-col>
+          </c-row>
+          <br/>
+          <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                           [rowData]="rowssbyaadhaar" [gridOptions]="gridOptions"
+                           [columnDefs]=" columnByAadhaar"
+                           [pagination]="true" [paginationPageSize]="10"
+                           (gridReady)="onGridReady($event)"
+                           [rowSelection]='rowSelection'
+                           (rowSelected)="onAadhaarRowSelectedEvent($event)"
+                           (selectionChanged)="onAadhaarSelectionChanged($event)">
+          </ag-grid-angular>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <form cForm [formGroup]="TallyForm" (keydown.enter)="$event.preventDefault()">
+
+            <br/>
+            <c-row>
+              <c-col [md]="3">
+                <label for="batchcode">Select Account:</label>
+                <div class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete [data]="Prefix"
+                                   [searchKeyword]="Accountkeyword"
+                                   (selected)='selectaccount($event)'
+                                   (inputChanged)='onChangeSearch($event)'
+                                   (inputFocused)='onFocused($event)'
+                                   [itemTemplate]="accountTemplate"
+                                   [notFoundTemplate]="notFoundTemplate">
+                  </ng-autocomplete>
+
+                  <ng-template #accountTemplate let-account>
+                    <a [innerHTML]="account.AccountNo"></a>
+                  </ng-template>
+
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+
+                <!-- <span *ngIf="TallyForm.get('account').invalid && TallyForm.get('account').touched"
+                    class="text-danger">account is required</span> -->
+              </c-col>
+              <c-col [md]="3">
+                <label for="paymode">Payment Mode</label>
+                <select id="paymode" class="form-control" formControlName="paymode">
+                  <option disabled selected="true">Select Payment Mode</option>
+                  <option value="ONLINE">ONLINE</option>
+                  <option value="CASH">CASH</option>
+                </select>
+
+                <span *ngIf="TallyForm.get('paymode')?.invalid && TallyForm.get('paymode')?.touched"
+                      class="text-danger">paymode is required</span>
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="fromdate">From Date:</label>
+                <input type="date" class="form-control" formControlName="fromdate">
+
+                <span *ngIf="TallyForm.get('fromdate')?.invalid && TallyForm.get('fromdate')?.touched"
+                      class="text-danger">from date is required</span>
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="todate">To Date:</label>
+                <input type="date" class="form-control" formControlName="todate">
+
+                <span *ngIf="TallyForm.get('todate')?.invalid && TallyForm.get('todate')?.touched"
+                      class="text-danger">to date is required</span>
+                <!-- <span style="color:red" *ngIf="dateerror">from date should be less than to date</span> -->
+
+              </c-col>
+            </c-row>
+
+            <c-row>
+              <c-col [md]="3" style="padding-top: 30px;">
+                <button (click)="TallyPost()" type="submit" class="btn btn-info"
+                        [disabled]="TallyForm.invalid">
+                  <!--                  <i style="border-color:white"-->
+                  <!--                                                          class="spinner-border text-primary" role="status"-->
+                  <!--                                                          *ngIf="tallysumloader"></i>&nbsp;&nbsp;-->
+                  <c-spinner *ngIf="tallysumloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Tally Summary
+                </button>
+              </c-col>
+              <!-- //new -->
+              <c-col [md]="3" style="padding-top: 30px;">
+                <button (click)="TallyDetail()" type="button" class="btn btn-info"
+                >
+                  <!--                  <i style="border-color:white"-->
+                  <!--                    class="spinner-border text-primary" role="status"-->
+                  <!--                    *ngIf="tallyloader"></i>&nbsp;&nbsp;-->
+                  <c-spinner *ngIf="tallyloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Tally Detail
+                </button>
+              </c-col>
+
+              <c-col [md]="3" style="padding-top:30px">
+                <button type="button" class="btn btn-info"
+                        (click)="DetailRegister()">
+                  <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                  <!--                     *ngIf="DetailRegloader"></i>&nbsp;-->
+                  <c-spinner *ngIf="RefundDetailRegloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Detail Register
+
+                </button>
+              </c-col>
+
+              <c-col [md]="3" style="padding-top:30px">
+                <button type="button" class="btn btn-info"
+                        (click)="RefundDetailRegister()">
+                  <!--                  <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                  <!--                     *ngIf="DetailRegloader"></i>&nbsp;-->
+                  <c-spinner *ngIf="DetailRegloader" aria-hidden="false" size="sm"></c-spinner>
+
+                  Refund Detail Register
+
+                </button>
+              </c-col>
+
+            </c-row>
+          </form>
+          <br/>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <br>
+          <form (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="2">
+                <div>
+<!--                  <button-->
+<!--                    type="submit"-->
+<!--                    (click)="DownloadReport('DETAIL')"-->
+<!--                    class="btn btn-info"-->
+<!--                  >-->
+<!--                    <c-spinner *ngIf="Downloadtabloader" aria-hidden="false"-->
+<!--                               size="sm"></c-spinner>-->
+
+<!--                    Detail-->
+<!--                  </button>-->
+                </div>
+              </c-col>
+
+              <c-col [md]="2">
+                <div>
+                  <button
+                    type="submit"
+                    (click)="DownloadReport('SUMMARY')"
+                    class="btn btn-info"
+                  >
+                    <c-spinner *ngIf="Downloadtabsummaryloader" aria-hidden="false"
+                               size="sm"></c-spinner>
+
+                    Summary
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+          </form>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>

@@ -1,0 +1,49 @@
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header style="background-color:#f0f3f5">
+      <h4><b>Upload Picture</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <form cForm [formGroup]="UploadPictureForm" (keydown.enter)="$event.preventDefault()">
+        <c-row>
+<!--          <c-col [md]="3">-->
+<!--            <label>Upload Image:</label>-->
+<!--            <input type="file" (change)="imgUpload($event)" formControlName="upload"-->
+<!--                   class="fileInputProfile">-->
+<!--            <span *ngIf="UploadPictureForm.get('upload')?.invalid && UploadPictureForm.get('upload')?.touched"-->
+<!--                  class="text-danger">image is required</span>-->
+<!--          </div>-->
+          <c-col [md]="3">
+            <h6>Upload Image</h6>
+            <input aria-label="file example"
+                  formControlName="upload"
+                   cFormControl
+                   id="validationText1"
+                   type="file"
+                   (change)="imgUpload($event)"
+                   (selectionchange)="imgUpload($event)"
+            />
+            <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+          </c-col>
+
+          <c-col [md]="2" style="padding-top: 27px;">
+            <button cButton type="button" class="btn btn-success" [disabled]="UploadPictureForm.invalid"
+                    (click)="OnSubmit()">
+<!--              <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+<!--                 *ngIf="loader"></i>&nbsp;-->
+              <c-spinner  *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+
+              Upload
+            </button>
+          </c-col>
+          <c-col [md]="2" style="padding-top: 27px;">
+            <button cButton type="button" [disabled]="UploadPictureForm.invalid" (click)="onCancel()"
+                    class="btn btn-danger">Cancel
+            </button>
+          </c-col>
+        </c-row>
+      </form>
+    </c-card-body>
+  </c-card>
+</div>

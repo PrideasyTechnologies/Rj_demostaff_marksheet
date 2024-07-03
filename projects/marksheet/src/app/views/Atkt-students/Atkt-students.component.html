@@ -1,0 +1,1807 @@
+<!-- <div>
+    <h3>Upload Template</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header style="background-color: #f0f3f5">
+      <h4><b>Atkt Students</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>ATKT Student</a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>Download Marks</a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>Atkt Outside student form</a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>Atkt inhouse student form</a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="4" cNavLink>Outside Student Edit form</a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="5" cNavLink>Additional Exam </a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="6" cNavLink>Reciept</a>
+        <a [cTabContent]="tabContent" [tabPaneIdx]="7" cNavLink>Report</a>
+
+      </c-nav>
+      <c-tab-content #tabContent="cTabContent" [activeTabPaneIdx]="activePane"
+                     (activeTabPaneIdxChange)="outsidechange($event)">
+        <c-tab-pane class="p-3">
+          <c-card-body>
+            <form cForm
+                  [formGroup]="AtktStudentsForm"
+                  (keydown.enter)="$event.preventDefault()"
+            >
+              <c-row>
+                <c-col [md]="4">
+                  <label>Batch:</label>
+                  <div class="ng-autocomplete" style="width: 100%">
+                    <ng-autocomplete
+                      [data]="json_edit_batchs"
+                      [searchKeyword]="Batchkeyword"
+                      (selected)="selectBatch($event)"
+                      (inputChanged)="onChangeSearch($event)"
+                      (inputFocused)="onFocused($event)"
+                      [itemTemplate]="batTemplatea"
+                      [notFoundTemplate]="notFoundTemplate"
+                      placeholder="Select Batch"
+                    >
+                    </ng-autocomplete>
+
+                    <ng-template #batTemplatea let-bat>
+                      <a [innerHTML]="bat.Batch_name"></a>
+                    </ng-template>
+
+                    <ng-template #notFoundTemplate let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </c-col>
+
+                <c-col [md]="4">
+                  <label for="userexam">User Exam:</label>
+                  <select
+                    id="userexam"
+                    [(ngModel)]="selected_userexam"
+                    formControlName="userexam"
+                    class="form-control"
+                    (change)="onChangeUserExamSelect()"
+                  >
+                    <option selected>--Select User Exam--</option>
+                    <option *ngFor="let user of json_userexam" [ngValue]="user">
+                      {{ user.Userexamname }}
+                    </option>
+                  </select>
+
+                  <span
+                    *ngIf="AtktStudentsForm.get('userexam')?.invalid &&
+                      AtktStudentsForm.get('userexam')?.touched"
+                    class="text-danger">userexam is required</span>
+
+                </c-col>
+
+                <c-col [md]="2">
+                  <div style="padding-top: 24px">
+                    <button
+                      type="submit"
+                      class="btn btn-info"
+                      [disabled]="AtktStudentsForm?.invalid"
+                      (click)="GridData()">
+                      Show
+                    </button>
+                  </div>
+                </c-col>
+                <c-col [md]="2">
+                  <div style="padding-top: 24px">
+                    <button
+                      type="reset"
+                      class="btn btn-danger"
+                      (click)="resetAll()">
+                      Reset
+                    </button>
+                  </div>
+                </c-col>
+              </c-row>
+            </form>
+
+            <form cForm
+                  [formGroup]="DownloadUploadForm"
+                  (keydown.enter)="$event.preventDefault()"
+            >
+              <c-row>
+                <c-col [md]="2">
+                  <div style="padding-top: 27px">
+                    <button
+                      type="submit"
+                      [disabled]="AtktStudentsForm?.invalid"
+                      (click)="OnDownloadFile()"
+                      class="btn btn-info"
+                    >
+                      <!--                      <i-->
+                      <!--                              style="border-color: white"-->
+                      <!--                              class="spinner-border text-primary"-->
+                      <!--                              role="status"-->
+                      <!--                              *ngIf="Downloadloader"-->
+                      <!--                      ></i-->
+                      <!--                      >&nbsp;-->
+                      <c-spinner *ngIf="Downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                      Download
+                    </button>
+                  </div>
+                </c-col>
+                <c-col [md]="2">
+                  <h6>Upload Image</h6>
+                  <input aria-label="file example"
+                         cFormControl
+                         (change)="xlsxUpload($event)"
+                         (selectionchange)="xlsxUpload($event)"
+                         id="validationText1"
+                         type="file"
+                  />
+                  <c-form-feedback [valid]="false">Example invalid form file feedback
+                  </c-form-feedback>
+                </c-col>
+
+                <c-col [md]="2" style="padding-top: 27px;">
+                  <button type="button" class="btn btn-success"
+                          (click)="Uploadfile()">
+                    <!--                      <i style="border-color: white;" class="spinner-border text-primary" role="status"-->
+                    <!--                         *ngIf="loader"></i>&nbsp;&nbsp;-->
+                    Upload
+                  </button>
+                </c-col>
+              </c-row>
+              <!--                <c-col [md]="2"></div>-->
+              <!--                <c-col [md]="2" style="padding-top: 30px;">-->
+              <!--                  <button type="submit" [disabled]="DownloadUploadForm?.invalid"-->
+              <!--                          class="btn btn-success" (click)="Uploadfile()">-->
+              <!--                    &lt;!&ndash;                      <i style="border-color: white;" class="spinner-border text-primary"&ndash;&gt;-->
+              <!--                    &lt;!&ndash;                         role="status" *ngIf="loader"></i>&nbsp;&nbsp;&ndash;&gt;-->
+              <!--                    <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>-->
+
+              <!--                    Upload-->
+              <!--                  </button>-->
+              <!--                </div>-->
+              <!--              </div>-->
+            </form>
+          </c-card-body>
+          <c-card-body>
+
+            <c-row>
+              <c-col [md]="12" style="padding-top: 20px;">
+
+                <c-input-group class="mb-3">
+                  <span cInputGroupText id="basic-addon1">Search</span>
+                  <input aria-describedby="basic-addon1"
+                         aria-label="Username"
+                         cFormControl
+                         placeholder="Search here"
+                         [(ngModel)]="searchValue"
+                         (keyup)="quickSearch()"
+                  />
+                </c-input-group>
+                <!--                    </form>-->
+              </c-col>
+            </c-row>
+            <br/>
+            <div>
+              <div class="example-header">
+                Page Size:
+                <select
+                  style="
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    color: #495057;
+                    box-shadow: none;
+                    border-radius: 0.25rem;
+                    border: 1px solid #dde6e9;
+                  "
+                  (change)="onPageSizeChanged()"
+                  id="page-size"
+                >
+                  <option value="10" selected="">10</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="500">500</option>
+                  <option value="1000">1000</option>
+                </select>
+              </div>
+              <br/>
+              <ag-grid-angular
+                style="width: 100%; height: 300px"
+                class="ag-theme-alpine"
+                [rowData]="rowss"
+                [gridOptions]="gridOptions"
+                [columnDefs]="columnDefs"
+                (gridReady)="onGridReady($event)"
+                (rowSelected)="onRowSelectedEvent($event)"
+                [pagination]="true"
+                [paginationPageSize]="paginationPageSize"
+                (selectionChanged)="onSelectionChanged($event)"
+              >
+              </ag-grid-angular>
+            </div>
+          </c-card-body>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <c-card-body>
+            <form
+              [formGroup]="DownloadtabForm"
+              (keydown.enter)="$event.preventDefault()"
+            >
+              <h5>Current Year</h5>
+              <c-row>
+                <c-col [md]="3">
+                  <label>Batch:</label>
+                  <div class="ng-autocomplete" style="width: 100%">
+                    <ng-autocomplete
+                      [data]="json_edit_batchs"
+                      [searchKeyword]="Batchkeyword"
+                      (selected)="selectBatch_download($event)"
+                      (inputChanged)="onChangeSearch($event)"
+                      (inputFocused)="onFocused($event)"
+                      [itemTemplate]="batTemplate"
+                      [notFoundTemplate]="notFoundTemplate"
+                      placeholder="Select Batch"
+                    >
+                    </ng-autocomplete>
+
+                    <ng-template #batTemplate let-bat>
+                      <a [innerHTML]="bat.Batch_name"></a>
+                    </ng-template>
+
+                    <ng-template #notFoundTemplate let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </c-col>
+
+                <c-col [md]="3">
+                  <label for="userexamdownload">User Exam:</label>
+                  <select id="userexamdownload"
+                          [(ngModel)]="selected_userexam_download"
+                          formControlName="userexamdownload"
+                          class="form-control"
+                          (change)="onChangeUserExamDownloadSelect()"
+                  >
+                    <option selected>--Select User Exam--</option>
+                    <option *ngFor="let user of json_userexam" [ngValue]="user">
+                      {{ user.Userexamname }}
+                    </option>
+                  </select>
+
+                  <span
+                    *ngIf="
+                      DownloadtabForm.get('userexam')?.invalid &&
+                      DownloadtabForm.get('userexam')?.touched
+                    "
+                    class="text-danger"
+                  >userexam is required</span
+                  >
+                </c-col>
+                <c-col [md]="3">
+                  <label for="subject">Subject:</label>
+                  <select
+                    id="subject"
+                    [(ngModel)]="SelectedSubject"
+                    formControlName="subject"
+                    class="form-control"
+                    (change)="onChangeSubjectSelect()"
+                  >
+                    <option selected>--Select Subject--</option>
+                    <option
+                      *ngFor="let sub of json_subjectorder_download"
+                      [ngValue]="sub"
+                    >
+                      {{ sub.Subject_name }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="
+                      DownloadtabForm.get('subject')?.invalid &&
+                      DownloadtabForm.get('subject')?.touched
+                    "
+                    class="text-danger"
+                  >Subject is required</span
+                  >
+                </c-col>
+
+                <c-col [md]="3">
+                  <label for="Exam_Name">Semester Exam:</label>
+                  <select
+                    id="Exam_Name"
+                    [(ngModel)]="SelectedSemExam"
+                    formControlName="Exam_Name"
+                    class="form-control"
+                    (change)="onChangeSemExamSelect()"
+                  >
+                    <option disabled>Select Semester Exam</option>
+                    <option *ngFor="let exam of Exam" [ngValue]="exam">
+                      {{ exam.Examname }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="
+                      DownloadtabForm.get('Exam_Name')?.invalid &&
+                      DownloadtabForm.get('Exam_Name')?.touched
+                    "
+                    class="text-danger"
+                  >field is required</span
+                  >
+                </c-col>
+              </c-row>
+              <br/>
+
+              <h5>Financial Year</h5>
+              <c-row>
+                <c-col [md]="3">
+                  <label for="finyear">Finyear:</label>
+                  <select
+                    id="finyear"
+                    [(ngModel)]="SelectedFinyear"
+                    formControlName="Currentfinyear"
+                    class="form-control"
+                    (change)="onChangeFinyearSelect($event)"
+                  >
+                    <option disabled selected>--Select Finyear--</option>
+                    <option *ngFor="let fin of FinYear" [ngValue]="fin.Finyear">
+                      {{ fin.Finyear }}
+                    </option>
+                  </select>
+                </c-col>
+
+                <c-col [md]="3">
+                  <label for="userexam">User Exam:</label>
+                  <select
+                    [(ngModel)]="SelectedLastyearUserExam"
+                    formControlName="lastyearuserexam"
+                    class="form-control"
+                    (change)="onChangeLastyearExamSelect()"
+                  >
+                    <option selected>--Select User Exam--</option>
+                    <option *ngFor="let user of LastUserExam" [ngValue]="user">
+                      {{ user.Userexamname }}
+                    </option>
+                  </select>
+
+                  <span
+                    *ngIf="
+                      DownloadtabForm.get('lastyearuserexam')?.invalid &&
+                      DownloadtabForm.get('lastyearuserexam')?.touched
+                    "
+                    class="text-danger"
+                  >userexam is required</span
+                  >
+                </c-col>
+                <c-col [md]="3">
+                  <label for="subject">Subject:</label>
+                  <select
+                    [(ngModel)]="SelectedlastyearSubject"
+                    formControlName="lastyearsubject"
+                    class="form-control"
+                    (change)="onChangelastyearSubjectSelect()"
+                  >
+                    <option selected>--Select Subject--</option>
+                    <option
+                      *ngFor="let sub of LastSubjectgroupcode"
+                      [ngValue]="sub"
+                    >
+                      {{ sub.Subject_name }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="
+                      DownloadtabForm.get('lastyearsubject')?.invalid &&
+                      DownloadtabForm.get('lastyearsubject')?.touched
+                    "
+                    class="text-danger"
+                  >Subject is required</span
+                  >
+                </c-col>
+                <c-col [md]="3">
+                  <label for="Exam_Name">Semester Exam:</label>
+                  <select
+                    [(ngModel)]="SelectedLastSemExam"
+                    formControlName="LastExam_Name"
+                    class="form-control"
+                    (change)="onChangeLastSemExamSelect()"
+                  >
+                    <option disabled>Select Semester Exam</option>
+                    <option *ngFor="let exam of LastExam" [ngValue]="exam">
+                      {{ exam.Examname }}
+                    </option>
+                  </select>
+                  <span
+                    *ngIf="
+                      DownloadtabForm.get('LastExam_Name')?.invalid &&
+                      DownloadtabForm.get('LastExam_Name')?.touched
+                    "
+                    class="text-danger"
+                  >field is required</span
+                  >
+                </c-col>
+
+                <c-col [md]="2">
+                  <div style="padding-top: 30px">
+                    <button
+                      type="submit"
+                      [disabled]="DownloadtabForm?.invalid"
+                      (click)="OnDownloadtabMarks()"
+                      class="btn btn-info"
+                    >
+                      <c-spinner *ngIf="Downloadtabloader" aria-hidden="false"
+                                 size="sm"></c-spinner>
+
+                      Download
+                    </button>
+                  </div>
+                </c-col>
+
+                <c-col [md]="2" style="padding-top: 30px">
+                  <button
+                    type="submit"
+                    [disabled]="DownloadUploadForm?.invalid"
+                    class="btn btn-success"
+                    (click)="OnCopymarksapi()"
+                  >
+                    <!--                    <i-->
+                    <!--                            style="border-color: white"-->
+                    <!--                            class="spinner-border text-primary"-->
+                    <!--                            role="status"-->
+                    <!--                            *ngIf="loader"-->
+                    <!--                    ></i-->
+                    <!--                    >-->
+                    <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+
+                    Copy Marks
+                  </button>
+                </c-col>
+              </c-row>
+            </form>
+          </c-card-body>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <br>
+          <form cForm
+                [formGroup]="outAtktForm"
+                (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="3">
+                <label for="out_aadhaar" class="required">Aadhaar</label>
+                <input
+                  type="number"
+                  id="out_aadhaar"
+                  formControlName="out_aadhaar"
+                  (focusout)="check_aadharlength()"
+                  [ngClass]="{ 'is-invalid': (submitted
+                      || out_atktform['out_aadhaar'].touched) && out_atktform['out_aadhaar']?.errors,
+                                                'is-valid': out_atktform['out_aadhaar']?.touched && !out_atktform['out_aadhaar']?.errors }"
+                  class="form-control capitalize" placeholder="Enter Aadhaar">
+                <div *ngIf="submitted && out_atktform['out_aadhaar']?.errors" class="invalid-feedback">
+                  <div *ngIf="out_atktform['out_aadhaar']?.errors">Aadhaar is required</div>
+                </div>
+              </c-col>
+
+              <!--                            <c-col [md]="2">-->
+              <!--                                <label >Month:</label>-->
+              <!--                                <select-->
+              <!--                                        -->
+              <!--                                        [(ngModel)]="selected_month_detail"-->
+              <!--                                        formControlName="out_month"-->
+              <!--                                        class="form-control"-->
+              <!--                                        (change)="onSelect_month()"-->
+              <!--                                >-->
+
+              <!--                                    <option *ngFor="let prefix of show_prefix_detail" [ngValue]="prefix">-->
+              <!--                                        {{ prefix.Prefix_month }}-->
+              <!--                                    </option>-->
+
+
+              <!--                                </select>-->
+
+              <!--                            </div>-->
+            </c-row>
+            <!--                        <c-row>-->
+            <!--                            <c-col [md]="12">-->
+            <!--                                <ag-grid-angular-->
+            <!--                                        style="width: 100%; height: 200px;" class="ag-theme-alpine"-->
+            <!--                                        [pagination]="true"-->
+            <!--                                        [paginationPageSize]="10"-->
+            <!--                                        [rowData]="showatktstudent_outside"-->
+            <!--                                        [gridOptions]="outatkt_show_gridOptions"-->
+            <!--                                        [columnDefs]="outatkt_show_columnDefs"-->
+            <!--                                        [rowSelection]='single_show_rowSelection'-->
+            <!--                                        (gridReady)="onGridReady_show_outatkt($event)"-->
+            <!--                                        (rowSelected)="onRowSelected_show_outatkt($event)"-->
+            <!--                                        (selectionChanged)="onSelectionChanged_show_atkt($event)">-->
+            <!--                                </ag-grid-angular>-->
+            <!--                            </div>-->
+            <!--                        </div>-->
+            <c-row>
+              <div class="form-group col-sm-3">
+                <label for="out_firstname" class="required">First Name</label>
+                <input
+                  id="out_firstname"
+                  type="text"
+                  formControlName="out_firstname"
+                  [ngClass]="{ 'is-invalid': (submitted
+                      || out_atktform['out_firstname']?.touched) && out_atktform['out_firstname']?.errors,
+                                                'is-valid': out_atktform['out_firstname']?.touched && !out_atktform['out_firstname']?.errors }"
+                  class="form-control capitalize" placeholder="Enter your Firstname">
+                <div *ngIf="submitted && out_atktform['out_firstname']?.errors"
+                     class="invalid-feedback">
+                  <div *ngIf="out_atktform['out_firstname']?.errors">First Name is required</div>
+                </div>
+              </div>
+
+              <div class="form-group col-sm-3">
+                <label for="out_lastname">Last Name/ Surname</label>
+                <input
+                  id="out_lastname"
+                  type="text" formControlName="out_lastname" class="form-control capitalize"
+                  placeholder="Enter your Lastname">
+
+              </div>
+              <div class="form-group col-sm-3">
+                <label for="out_fathername" class="required">Father's Name</label>
+                <input
+                  id="out_fathername"
+                  type="text" formControlName="out_fathername" [ngClass]="{ 'is-invalid': (submitted ||
+                      out_atktform['out_fathername']?.touched) && out_atktform['out_fathername']?.errors,
+                                                'is-valid': out_atktform['out_fathername']?.touched
+                                                && !out_atktform['out_fathername']?.errors }"
+                  class="form-control capitalize"
+                  placeholder="Enter your Father's First Name">
+                <div *ngIf="submitted && out_atktform['out_fathername']?.errors"
+                     class="invalid-feedback">
+                  <div *ngIf="out_atktform['out_fathername']?.errors">Father First Name is
+                    required
+                  </div>
+                </div>
+              </div>
+              <div class="form-group col-sm-3">
+                <label for="out_mothername" class="required">Mother's Name</label>
+                <input
+                  id="out_mothername"
+                  type="text" formControlName="out_mothername" [ngClass]="{ 'is-invalid': (submitted ||
+                      out_atktform['out_mothername']?.touched) && out_atktform['out_mothername']?.errors,
+                                                'is-valid': out_atktform['out_mothername']?.touched
+                                                && !out_atktform['out_mothername']?.errors }"
+                  class="form-control capitalize"
+                  placeholder="Enter your Mother's First Name">
+                <div *ngIf="submitted && out_atktform['out_mothername']?.errors"
+                     class="invalid-feedback">
+                  <div *ngIf="out_atktform['out_mothername']?.errors">Mother First Name is
+                    required
+                  </div>
+                </div>
+              </div>
+
+            </c-row>
+
+            <c-row>
+
+
+              <c-col [md]="2">
+                <label for="prn_no">PRN No:</label>
+                <input
+                  id="prn_no" type="number"
+                  formControlName="prn_no" [ngClass]="{ 'is-invalid': (submitted
+                      || out_atktform['prn_no']?.touched) && out_atktform['prn_no']?.errors,
+                                                'is-valid': out_atktform['prn_no']?.touched && !out_atktform['prn_no']?.errors }"
+                  class="form-control capitalize" placeholder="Enter PRN no.">
+                <div *ngIf="submitted && out_atktform['prn_no']?.errors"
+                     class="invalid-feedback">
+                  <div *ngIf="out_atktform['prn_no']?.errors">PRN is
+                    required
+                  </div>
+                </div>
+              </c-col>
+              <c-col [md]="1">
+                <label for="out_gender">Gender:</label>
+                <select
+                  #gender
+                  id="out_gender"
+                  formControlName="out_gender"
+                  class="form-control"
+                  (change)="onSelect_gender(gender.value)"
+                >
+                  <option>Male</option>
+                  <option>Female</option>
+                </select>
+                <span
+                  *ngIf="
+                      outAtktForm.get('out_gender')?.invalid &&
+                      outAtktForm.get('out_gender')?.touched
+                    "
+                  class="text-danger"
+                >Semester is required</span>
+
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="mobile_no">Mobile no:</label>
+                <input (focusout)="check_mobilelength()"
+                       id="mobile_no" type="number"
+                       formControlName="mobile_no" [ngClass]="{ 'is-invalid': (submitted
+                                                      || out_atktform['mobile_no']?.touched) && out_atktform['mobile_no']?.errors,
+                                                                                'is-valid': out_atktform['mobile_no']?.touched && !out_atktform['mobile_no']?.errors }"
+                       class="form-control capitalize" placeholder="Enter Mobile">
+                <div *ngIf="submitted && out_atktform['mobile_no']?.errors"
+                     class="invalid-feedback">
+                  <div *ngIf="out_atktform['mobile_no']?.errors">Mobile no. is
+                    required
+                  </div>
+                </div>
+              </c-col>
+
+              <!--                            <c-col [md]="2">-->
+              <!--                                <label for="save_student">&nbsp;&nbsp; </label>-->
+              <!--                                <button id="save_student" style="width: 100%" (click)="Save_outsidesubjects()"-->
+              <!--                                        class="btn btn-success"-->
+              <!--                                >Save-->
+              <!--                                </button>-->
+              <!--                            </div>-->
+            </c-row>
+
+            <h5>Student subjects</h5>
+
+            <form cForm
+                  [formGroup]="outAtktForm_subject"
+                  (keydown.enter)="$event.preventDefault()"
+            >
+
+              <c-row>
+                <c-col [md]="4">
+                  <label for="out_batch">Batch:</label>
+                  <div class="ng-autocomplete" style="width: 100%;">
+                    <ng-autocomplete
+                      #outside_batch
+                      id="out_batch"
+                      [data]="json_edit_batchs"
+                      [searchKeyword]="Batchkeyword"
+                      (selected)="outatakt_selectBatch($event)"
+                      [itemTemplate]="batoutsideTemplate"
+                      [notFoundTemplate]="notFoundTemplate"
+                      placeholder="Select Batch">
+                    </ng-autocomplete>
+                    <ng-template #batoutsideTemplate let-item_outside>
+                      <a [innerHTML]="item_outside.Batch_name"></a>
+                    </ng-template>
+                    <ng-template #notFoundTemplate let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+
+                </c-col>
+                <c-col [md]="4">
+                  <label for="out_semester">Semester:</label>
+                  <select
+                    id="out_semester"
+                    [(ngModel)]="selected_semesterexam"
+                    formControlName="out_semester"
+                    class="form-control"
+                    (change)="onChangeSemesterExamSelect()"
+                  >
+                    <option selected>--Select Semester Exam--</option>
+                    <option *ngFor="let user of json_semester_batchwise" [ngValue]="user">
+                      {{ user }}
+                    </option>
+                    <span
+                      *ngIf="
+                      outAtktForm.get('out_semester')?.invalid &&
+                      outAtktForm.get('out_semester')?.touched
+                    "
+                      class="text-danger"
+                    >Semester is required</span>
+                  </select>
+                </c-col>
+
+                <c-col [md]="4">
+                  <label for="marksheet_atktoutside">Marksheet no:</label>
+                  <input type="number"
+                         id="marksheet_atktoutside"
+                         formControlName="marksheet_atktoutside" [ngClass]="{ 'is-invalid': (submitted
+                      || out_atktform['marksheet_atktoutside']?.touched) && out_atktform['marksheet_atktoutside']?.errors,
+                                                'is-valid': out_atktform['marksheet_atktoutside']?.touched && !out_atktform['marksheet_atktoutside']?.errors }"
+                         class="form-control capitalize" placeholder="Enter Marksheet no.">
+                  <div *ngIf="submitted && out_atktform['marksheet_atktoutside']?.errors"
+                       class="invalid-feedback">
+                    <div *ngIf="out_atktform['marksheet_atktoutside']?.errors">Marksheet is
+                      required
+                    </div>
+                  </div>
+                </c-col>
+              </c-row>
+
+
+              <c-row>
+                <c-col [md]="7">
+                  <label for="out_subject">Subject:</label>
+                  <div class="ng-autocomplete" style="width: 100%;">
+                    <ng-autocomplete
+                      #outside_subject
+                      id="out_subject"
+                      [data]="json_subjectorder_batchwise"
+                      [searchKeyword]="Subjectbatchwisekeyword"
+                      (selected)="form_subjectbatchwiseselect($event)"
+                      [itemTemplate]="subjectTemplate"
+                      [notFoundTemplate]="notFoundTemplate" placeholder="Select Subject">
+                    </ng-autocomplete>
+                    <ng-template #subjectTemplate let-subject>
+                      <a [innerHTML]="subject.Displayname"></a>
+                    </ng-template>
+                    <ng-template #notFoundTemplate let-notFound>
+                      <div [innerHTML]="notFound"></div>
+                    </ng-template>
+                  </div>
+                </c-col>
+
+                <c-col [md]="3">
+                  <label for="out_examyear">Register Finyear :</label>
+                  <select
+                    #out_lastfinyear
+                    id="out_examyear"
+                    formControlName="out_examyear"
+                    class="form-control"
+                    (change)="onSelect_lastfinyear(out_lastfinyear.value)"
+                  >
+                    <option>2015</option>
+                    <option>2016</option>
+                    <option>2017</option>
+                    <option>2018</option>
+                    <option>2019</option>
+                    <option>2020</option>
+                    <option>2021</option>
+                    <option>2022</option>
+                  </select>
+                  <span
+                    *ngIf="
+                      outAtktForm.get('out_examyear')?.invalid &&
+                      outAtktForm.get('out_examyear')?.touched
+                    "
+                    class="text-danger"
+                  >Register Finyear is required</span>
+                </c-col>
+
+                <!--                                <c-col [md]="3">-->
+                <!--                                    <label for="out_specialisation">Specialisation:</label>-->
+                <!--                                    <input-->
+                <!--                                            id="out_specialisation"-->
+                <!--                                            formControlName="out_specialisation" [ngClass]="{ 'is-invalid': (submitted-->
+                <!--                      || out_atktform['out_specialisation']?.touched) && out_atktform['out_specialisation']?.errors,-->
+                <!--                                                'is-valid': out_atktform['out_specialisation']?.touched && !out_atktform['out_specialisation']?.errors }"-->
+                <!--                                            class="form-control capitalize" placeholder="Enter Specialisation">-->
+                <!--                                    <div *ngIf="submitted && out_atktform['out_specialisation']?.errors"-->
+                <!--                                         class="invalid-feedback">-->
+                <!--                                        <div *ngIf="out_atktform['out_specialisation']?.errors">Specialisation is-->
+                <!--                                            required-->
+                <!--                                        </div>-->
+                <!--                                    </div>-->
+                <!--                                </div>-->
+
+                <c-col [md]="2">
+                  <label for="out_scale">Scale:</label>
+                  <select
+                    #outscale
+                    id="out_scale"
+                    formControlName="out_scale"
+                    class="form-control"
+                    (change)="onSelect_scale(outscale.value)"
+                  >
+                    <option>10</option>
+                    <option>7</option>
+                  </select>
+                  <span
+                    *ngIf="
+                      outAtktForm.get('out_scale')?.invalid &&
+                      outAtktForm.get('out_scale')?.touched
+                    "
+                    class="text-danger"
+                  >field is required</span>
+                </c-col>
+
+                <c-row>
+
+
+                  <c-col [md]="2">
+                    <label for="add_subject">&nbsp;&nbsp; </label>
+                    <button id="add_subject" style="width: 100%"
+
+                            (click)="Add_subjectout_detail()"
+                            class="btn btn-info"
+                    >Add
+                    </button>
+                  </c-col>
+                </c-row>
+              </c-row>
+            </form>
+            <div class="d-grid gap-3">
+              <div><br></div>
+            </div>
+
+            <c-row>
+              <c-col [md]="12">
+                <ag-grid-angular
+                  style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                  [pagination]="true"
+                  [paginationPageSize]="10"
+                  [rowData]="ASubjectsdetails"
+                  [gridOptions]="outatkt_gridOptions"
+                  [columnDefs]="outatkt_columnDefs"
+                  [rowSelection]='single_rowSelection'
+                  (rowClicked)="onRowClick($event)"
+                  (gridReady)="onGridReady_outatkt($event)"
+                  (rowSelected)="onRowSelected_outatkt($event)"
+                  (selectionChanged)="onSelectionChanged_atkt($event)">
+                </ag-grid-angular>
+              </c-col>
+            </c-row>
+
+            <c-col [md]="2">
+              <label for="delete_subject">&nbsp;&nbsp; </label>
+              <button id="delete_subject" style="width: 100%"
+
+                      (click)="Delete_subjectout_detail()"
+                      class="btn btn-info"
+              >Delete
+              </button>
+            </c-col>
+
+            <p style="font-weight: bold"><h5 style="color: red;">Note:Please check the subjects before
+            applying.
+            Once you have submitted,data cannot be modified.The amount will not be refunded.
+          </h5>
+            <p style="font-weight: bold;"><h5 style="color:red;">Note: If you face any issue
+            during transaction please wait for 24 hrs.</h5>
+
+            <!--                        <div class="d-grid gap-3">-->
+            <!--                            <div><br></div>-->
+            <!--                        </div>-->
+
+
+            <!--                        <div class="d-grid gap-3">-->
+            <!--                            <div><br></div>-->
+            <!--                        </div>-->
+            <br>
+            <br>
+
+            <c-row>
+
+              <c-col [md]="3">
+                <p><h4>Total {{ sumoutsideamount }}</h4>
+              </c-col>
+              <c-col [md]="3">
+                <h6>To upload multiple marksheet press 'Ctrl'</h6>
+                <input aria-label="file example"
+                       cFormControl
+                       id="validationTextoutside"
+                       multiple type="file"
+                       (change)="Uploadfiles($event)"
+                       (selectionchange)="Uploadfiles($event)"
+                />
+              </c-col>
+
+              <c-col [md]="4">
+                <label for="payment_type_outside" class="required">Payment</label>
+                <select
+                  id="payment_type_outside"
+                  formControlName="payment_type_outside"
+                  class="form-control"
+                  [(ngModel)]=Demoversion_outside
+                  (change)="onChangePaymentSelect_outside($event.target.selectedIndex)"
+                >
+                  <option *ngFor="let payment_type of paymenttype_outside"
+                          [ngValue]="payment_type.id">{{payment_type.name}}</option>
+
+                </select>
+              </c-col>
+            </c-row>
+
+            <c-row style="justify-content: center">
+              <c-col [md]="2" style="margin-top: 26px;">
+                <button id="totaloutsideamount"
+                        type="submit" class="btn btn-info"
+                        (click)="Finalsubmit_outside()">
+                  <i style="border-color: white;" class="spinner-border text-primary"
+                     role="status"
+                     *ngIf="finalloader"></i>Payment
+                </button>
+              </c-col>
+
+              <c-col [md]="2" style="margin-top: 26px;">
+                <button class="btn btn-primary" type="button" (click)="make_outsidepayment()">
+                  Add new students
+                </button>
+              </c-col>
+            </c-row>
+
+            <br>
+
+
+          </form>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <br>
+          <form cForm
+                [formGroup]="in_AtktForm"
+                (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="4">
+                <label for="out_batch">Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete
+                    #outside_batch
+                    id="in_batch"
+                    [data]="json_edit_batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="outatakt_selectBatch($event)"
+                    [itemTemplate]="batoutsideTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch">
+                  </ng-autocomplete>
+                  <ng-template #batoutsideTemplate let-item_outside>
+                    <a [innerHTML]="item_outside.Batch_name"></a>
+                  </ng-template>
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="in_semester">Semester:</label>
+                <select
+                  id="in_semester"
+                  [(ngModel)]="selected_semester"
+                  formControlName="in_semester"
+                  class="form-control"
+                  (change)="onSelect_semester()"
+                >
+                  <option selected>--Select Semester Exam--</option>
+                  <option *ngFor="let user of json_semester_batchwise" [ngValue]="user">
+                    {{ user }}
+                  </option>
+                  <span *ngIf=" outAtktForm.get('out_semester')?.invalid
+                                     &&  outAtktForm.get('out_semester')?.touched "
+                        class="text-danger">
+                                      Semester is required</span>
+                </select>
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="in_aadhaar" class="required">Aadhaar</label>
+                <input
+                  type="number" formControlName="in_aadhaar"
+                  id="in_aadhaar"
+                  class="form-control capitalize" placeholder="Enter Aadhaar">
+                <div *ngIf="submitted && atkt_subject['in_aadhaar']?.errors" class="invalid-feedback">
+                  <div *ngIf="atkt_subject['in_aadhaar']?.errors">Aadhaar is required</div>
+                </div>
+              </c-col>
+
+              <c-col [md]="2" style="margin-top: 22px">
+                <button class="btn btn-success" type="button" (click)="ShowAtkt('ATKT')">
+                  Show
+                </button>
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="show_data" id="show_data">&nbsp;&nbsp;
+                </label>
+              </c-col>
+            </c-row>
+
+            <br>
+            <c-row>
+              <c-col [md]="12">
+                <c-nav variant="tabs">
+                  <a [active]="true" [cTabContent]="tabContents" [routerLink] [tabPaneIdx]="0"
+                     cNavLink>Exam wise subjects</a>
+                  <!--                                    <a [cTabContent]="tabContents" [routerLink] [tabPaneIdx]="1" cNavLink>Enter-->
+                  <!--                                        subject</a>-->
+                  <!--                                    <a [cTabContent]="tabContents" [routerLink] [tabPaneIdx]="2" cNavLink> already-->
+                  <!--                                        selected subject</a>-->
+
+                </c-nav>
+                <c-tab-content #tabContents="cTabContent">
+                  <c-tab-pane class="p-3">
+                    <p><h6 style="color: red">Note: For existing students</h6>
+                    <ag-grid-angular
+                      style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                      [rowData]="atkt_subject_papers"
+                      [gridOptions]="gridOptions_details"
+                      [columnDefs]="subject_details"
+                      [rowSelection]="single_rowSelection_details"
+                      (gridReady)="onGridReady_subject_selected($event)"
+                      (rowSelected)="onRowSelected_subject($event)"
+                      (selectionChanged)="onSelectionChanged_subject($event)">
+                    </ag-grid-angular>
+
+                    <br>
+
+                    <p style="font-weight: bold"><h5 style="color: red;">Note: Once you submitted
+                    data cannot be modified.</h5>
+                    <p style="font-weight: bold;"><h5 style="color:red;">Note: If you face any issue
+                    during transaction please wait for 24 hrs.</h5>
+
+                    <c-row>
+                      <c-col [md]="4">
+                        <p><h4>Total {{ sumamount }}</h4>
+                      </c-col>
+                      <c-col [md]="4">
+                        <label for="payment_type" class="required">Payment</label>
+                        <select
+                          #batch_type
+                          id="payment_type"
+                          formControlName="payment_type"
+                          class="form-control"
+                          [(ngModel)]=Demoversion
+                          (change)="onChangePaymentSelect($event.target.selectedIndex)"
+                        >
+                          <option *ngFor="let payment_type of paymenttype"
+                                  [ngValue]="payment_type.id">{{payment_type.name}}</option>
+
+                        </select>
+                      </c-col>
+                    </c-row>
+                    <br>
+                    <c-row style="justify-content: center">
+                      <c-col [md]="2">
+                        <button id="totalamount"
+                                type="submit" class="btn btn-info"
+                                (click)="Finalsubmit('INHOUSE')">
+                          <i style="border-color: white;" class="spinner-border text-primary"
+                             role="status"
+                             *ngIf="finalloader"></i>Payment
+                        </button>
+                      </c-col>
+                    </c-row>
+
+                  </c-tab-pane>
+                  <c-tab-pane class="p-3">
+                    <c-card-body>
+                      <ag-grid-angular
+                        style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                        [rowData]="json_inatkt"
+                        [rowSelection]="multiple_selection"
+                        [gridOptions]="inatkt_gridOptions"
+                        [columnDefs]="atkt_inhouse"
+                        (gridReady)="onGridReady_inatkt($event)"
+                        (rowSelected)="onRowSelectedEvent_inatkt($event)"
+                        (selectionChanged)="onSelectionChanged_inatkt($event)">
+                      </ag-grid-angular>
+                      <c-row>
+                        <c-col [md]="5">
+                        </c-col>
+                        <c-col [md]="2">
+                          <button class="btn btn-primary" type="button"
+                                  (click)="studentatktform_inhouse()">
+                            Submit
+                          </button>
+                        </c-col>
+                        <c-col [md]="5">
+                        </c-col>
+                      </c-row>
+                    </c-card-body>
+                  </c-tab-pane>
+                  <c-tab-pane class="p-3">
+                    <c-card-body>
+                      <ag-grid-angular
+                        style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                        [rowData]="json_inatkt_selected"
+                        [gridOptions]="inatkt_gridOptions_selected"
+                        [columnDefs]="atkt_inhouse_selected"
+                        [rowSelection]="single_rowSelection"
+                        (gridReady)="onGridReady_inatkt_selected($event)"
+                        (rowSelected)="onRowSelected_inatktsubject($event)"
+                        (selectionChanged)="onSelectionChanged_inatkt($event)">
+                      </ag-grid-angular>
+                    </c-card-body>
+
+                    <c-row>
+                      <c-col [md]="5">
+                      </c-col>
+                      <c-col [md]="2">
+                        <button class="btn btn-primary" type="button"
+                                (click)="studentatktform_inhouse()">
+                          Submit
+                        </button>
+                      </c-col>
+                      <c-col [md]="5">
+                      </c-col>
+                    </c-row>
+                  </c-tab-pane>
+
+                </c-tab-content>
+              </c-col>
+            </c-row>
+            <c-row>
+              <c-col [md]="12">
+                <h4></h4>
+              </c-col>
+            </c-row>
+
+          </form>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <form cForm
+                [formGroup]="outAtktForm_edit_subject"
+                (keydown.enter)="$event.preventDefault()"
+          >
+            <c-row>
+              <c-col [md]="2">
+                <label for="edit_batchtype" class="required">Batch Type</label>
+                <select
+                  #batch_type
+                  id="edit_batchtype"
+                  formControlName="edit_batchtype"
+                  class="form-control"
+                  [(ngModel)]=edit_batchtype_outside
+                  (change)="onChangeBatchtypeEdit_Select($event.target.selectedIndex)"
+                >
+                  <option *ngFor="let typebatch of batchtype_edit_outside_detail"
+                          [ngValue]="typebatch.id">{{typebatch.name}}</option>
+
+                </select>
+              </c-col>
+
+              <c-col [md]="2">
+                <button id="show_edit_student" style="width: 100%;margin-top: 24px;"
+                        (click)="Showatktstudent_edit_outside()"
+                        class="btn btn-success"
+                >Show
+                </button>
+              </c-col>
+
+
+            </c-row>
+
+
+            <br>
+            <c-row>
+              <ag-grid-angular
+                style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                [rowData]="atkt_editstudent_papers"
+                [gridOptions]="gridOptions_editstudentdetails"
+                [columnDefs]="subject_edit_studentdetails"
+                [rowSelection]="single_rowSelection_edit_studentdetails"
+                (gridReady)="onGridReady_edit_student_selected($event)"
+                (rowSelected)="onRowSelected_editstudent($event)"
+                (selectionChanged)="onSelectionChanged_editstudent($event)">
+              </ag-grid-angular>
+            </c-row>
+            <br>
+            <c-row>
+              <ag-grid-angular
+                style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                [rowData]="json_outside"
+                [gridOptions]="gridOptions_editsubjectdetails"
+                [columnDefs]="subject_edit_subjectdetails"
+                [rowSelection]="single_rowSelection_edit_subjectdetails"
+                (gridReady)="onGridReady_edit_subject_selected($event)"
+                (rowSelected)="onRowSelected_editsubject($event)"
+                (selectionChanged)="onSelectionChanged_editsubject($event)">
+              </ag-grid-angular>
+            </c-row>
+            <br>
+            <c-row>
+
+              <c-col [md]="2">
+                <label for="view_subject">&nbsp;&nbsp; </label>
+                <button id="view_subject" [cModalToggle]="fullScreen.id" style="width: 100%"
+                        [disabled]="outAtktForm_edit_subject.invalid" (click)="Viewimage_detail()"
+                        class="btn btn-info"
+                >View Image
+                </button>
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="viewstudent_subject">&nbsp;&nbsp; </label>
+                <button id="viewstudent_subject" [cModalToggle]="modalXl.id" style="width: 100%"
+                        [disabled]="outAtktForm_edit_subject.invalid" (click)="Viewstudent_detail()"
+                        class="btn btn-success"
+                >Edit Detail
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+
+
+          <c-modal #modalXl id="modalXl" size="xl">
+            <c-modal-header>
+              <h5 cModalTitle>Edit details.</h5>
+            </c-modal-header>
+            <c-modal-body>
+              <c-row>
+                <c-col [md]="6">
+                  <form cForm
+                        [formGroup]="outAtktForm_subjectedit_subject"
+                        (keydown.enter)="$event.preventDefault()"
+                  >
+
+                    <c-row>
+                      <c-col [md]="12">
+                        <label for="out_batch">Batch:</label>
+                        <div class="ng-autocomplete" style="width: 100%;">
+                          <ng-autocomplete
+                            #edit_batch
+                            id="edit_batch"
+                            [data]="json_edit_batchs"
+                            [searchKeyword]="Batchkeyword"
+                            (selected)="outatakt_edit_selectBatch($event)"
+                            [itemTemplate]="batTemplate_edit"
+                            [notFoundTemplate]="notFoundTemplate"
+                            placeholder="Select Batch">
+                          </ng-autocomplete>
+                          <ng-template #batTemplate_edit let-item_edit>
+                            <a [innerHTML]="item_edit.Batch_name"></a>
+                          </ng-template>
+                          <ng-template #notFoundTemplate let-notFound>
+                            <div [innerHTML]="notFound"></div>
+                          </ng-template>
+                        </div>
+                      </c-col>
+                      <!--                                    <c-col [md]="4" style="margin-left: 120px; margin-top: 25px;">-->
+                      <!--                                        <p>{{this.out_edit_rowselected_image?.Batch_name}}</p>-->
+
+                      <!--                                    </div>-->
+                    </c-row>
+                    <c-row>
+                      <c-col [md]="12">
+                        <label for="edit_subjectedit_semester">Semester:</label>
+                        <select
+                          id="edit_subjectedit_semester"
+                          [(ngModel)]="selected_edit_semesterexam"
+                          formControlName="edit_subjectedit_semester"
+                          class="form-control"
+                          (change)="onChangeSemesterEditExamSelect()"
+                        >
+                          <option selected>--Select Semester Exam--</option>
+                          <option *ngFor="let user of json_semester_edit_batchwise"
+                                  [ngValue]="user">
+                            {{ user }}
+                          </option>
+                        </select>
+                      </c-col>
+
+                      <!--                                    <c-col [md]="4">-->
+                      <!--                                        <p>{{this.out_edit_rowselected_image?.Semester}}</p>-->
+                      <!--                                    </div>-->
+                    </c-row>
+
+                    <c-row>
+
+                      <c-col [md]="12">
+                        <label for="marksheet_subject_atktoutside">Marksheet no:</label>
+                        <input type="number"
+                               id="marksheet_subject_atktoutside"
+                               formControlName="marksheet_subject_atktoutside" [ngClass]="{ 'is-invalid': (submitted
+                      || out_atktform['marksheet_subject_atktoutside']?.touched) && out_atktform['marksheet_subject_atktoutside']?.errors,
+                                                'is-valid': out_atktform['marksheet_subject_atktoutside']?.touched && !out_atktform['marksheet_subject_atktoutside']?.errors }"
+                               class="form-control capitalize"
+                               placeholder="Enter Marksheet no.">
+                        <div *ngIf="submitted && out_atktform['marksheet_subject_atktoutside']?.errors"
+                             class="invalid-feedback">
+                          <div *ngIf="out_atktform['marksheet_subject_atktoutside']?.errors">
+                            Marksheet is
+                            required
+                          </div>
+                        </div>
+                      </c-col>
+                    </c-row>
+
+                    <c-row>
+                      <c-col [md]="12">
+                        <label for="out_subject">Subject:</label>
+                        <div class="ng-autocomplete" style="width: 100%;">
+                          <ng-autocomplete
+                            #outside_subject
+                            id="out_subject_detail"
+                            [data]="json_subjectorder_edit_batchwise"
+                            [searchKeyword]="Subjectbatchwiseeditkeyword"
+                            (selected)="form_subjectbatcheditwiseselect($event)"
+                            [itemTemplate]="subjectTemplate"
+                            [notFoundTemplate]="notFoundTemplate"
+                            placeholder="Select Subject">
+                          </ng-autocomplete>
+                          <ng-template #subjectTemplate let-subject>
+                            <a [innerHTML]="subject.Displayname"></a>
+                          </ng-template>
+                          <ng-template #notFoundTemplate let-notFound>
+                            <div [innerHTML]="notFound"></div>
+                          </ng-template>
+                        </div>
+                      </c-col>
+                    </c-row>
+
+                    <c-row>
+
+                      <c-col [md]="12">
+                        <label for="out_subject_specialisation">Specialisation:</label>
+                        <input
+                          id="out_subject_specialisation"
+                          formControlName="out_subject_specialisation" [ngClass]="{ 'is-invalid': (submitted
+                      || out_atktform['out_subject_specialisation']?.touched) && out_atktform['out_subject_specialisation']?.errors,
+                                                'is-valid': out_atktform['out_subject_specialisation']?.touched && !out_atktform['out_subject_specialisation']?.errors }"
+                          class="form-control capitalize"
+                          placeholder="Enter Specialisation">
+                        <div *ngIf="submitted && out_atktform['out_subject_specialisation']?.errors"
+                             class="invalid-feedback">
+                          <div *ngIf="out_atktform['out_subject_specialisation']?.errors">
+                            Specialisation is
+                            required
+                          </div>
+                        </div>
+                      </c-col>
+                    </c-row>
+
+                    <c-row>
+
+                      <c-col [md]="12">
+                        <label for="out_editscale">Scale:</label>
+                        <select
+                          #outscale
+                          id="out_editscale"
+                          formControlName="out_editscale"
+                          class="form-control"
+                          (change)="onSelectedit_scale(outscale.value)"
+                        >
+                          <option>10</option>
+                          <option>7</option>
+                        </select>
+                      </c-col>
+                    </c-row>
+
+                    <c-row style="justify-content: center;">
+                      <c-col [md]="4">
+                        <label for="add_student_subject">&nbsp;&nbsp; </label>
+                        <button id="add_student_subject" style="width: 100%"
+                                (click)="Save_subjectout_detail()"
+                                class="btn btn-success"
+                        >Save
+                        </button>
+                      </c-col>
+
+                      <c-col [md]="4">
+                        <label for="cancel_student_subject">&nbsp;&nbsp; </label>
+                        <button id="cancel_student_subject" style="width: 100%"
+                                [cModalToggle]="modalXl.id"
+                                class="btn btn-primary"
+                        >Cancel
+                        </button>
+                      </c-col>
+                    </c-row>
+                  </form>
+                </c-col>
+                <c-col [md]="5">
+
+                  <h5>Your data:</h5>
+                  <p>Batch name-{{ this.out_edit_rowselected_editdetail_image?.Batch_name}}</p>
+                  <p>Semester-{{ this.out_edit_rowselected_editdetail_image?.Semester}}</p>
+                  <p>Subject name-{{ this.out_edit_rowselected_editdetail_image?.Subject_name}}</p>
+                  <p>Subject order-{{ this.out_edit_rowselected_editdetail_image?.Subject_order}}</p>
+                  <p>Papercode-{{ this.out_edit_rowselected_editdetail_image?.Papercode}}</p>
+                  <p>Subject
+                    Finyear-{{ this.out_edit_rowselected_editdetail_image?.Subject_finyear}}</p>
+                  <p>Boardlevel-{{ this.out_edit_rowselected_editdetail_image?.Boardlevel}}</p>
+                </c-col>
+              </c-row>
+            </c-modal-body>
+          </c-modal>
+
+
+          <c-modal #fullScreen [fullscreen]="true" id="fullScreen">
+            <c-modal-header>
+              <h5 cModalTitle>Full screen</h5>
+            </c-modal-header>
+            <c-modal-body>
+              <div *ngFor="let singleimage of MyMarksheetImage; let i = index">
+                <img style="height: 700px;width: 800px;" [src]="singleimage">
+              </div>
+            </c-modal-body>
+            <c-modal-footer>
+              <c-col [md]="2">
+                <button cButton [cModalToggle]="fullScreen.id">Close</button>
+              </c-col>
+            </c-modal-footer>
+          </c-modal>
+        </c-tab-pane>
+
+
+        <!-- ###################   Aditional Exam Tab Starts    #################     -->
+        <c-tab-pane class="p-3">
+          <br>
+          <form cForm [formGroup]="in_AtktForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+
+              <p class="text-decoration-underline text-danger fw-semibold text-uppercase">Note: Only 5
+                Semester Students
+                Are Allow</p>
+              <c-col [md]="4">
+                <label for="out_batch">Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete
+                    #outside_batch
+                    id="additional-exam"
+                    [data]="json_edit_batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="outatakt_selectBatch($event)"
+                    [itemTemplate]="batoutsideTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch">
+                  </ng-autocomplete>
+                  <ng-template #batoutsideTemplate let-item_outside>
+                    <a [innerHTML]="item_outside.Batch_name"></a>
+                  </ng-template>
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="aditinal-exam">Semester:</label>
+                <select
+                  id="aditinal-exam"
+                  [(ngModel)]="selected_semester"
+                  formControlName="in_semester"
+                  class="form-control"
+                  (change)="onSelect_semester()">
+                  <option selected>--Select Semester Exam--</option>
+                  <option *ngFor="let user of json_semester_batchwise" [ngValue]="user">
+                    {{ user }}
+                  </option>
+                  <span *ngIf=" outAtktForm.get('out_semester')?.invalid
+                                           && outAtktForm.get('out_semester')?.touched "
+                        class="text-danger">
+                                        Semester is required</span>
+                </select>
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="in_aadhaar" class="required">Aadhaar</label>
+                <input
+                  type="number" formControlName="in_aadhaar"
+                  id="aditionalex-adhar"
+                  class="form-control capitalize" placeholder="Enter Aadhaar">
+                <div *ngIf="submitted && atkt_subject['in_aadhaar']?.errors" class="invalid-feedback">
+                  <div *ngIf="atkt_subject['in_aadhaar']?.errors">Aadhaar is required</div>
+                </div>
+              </c-col>
+
+              <c-col [md]="2" style="margin-top: 22px">
+                <button class="btn btn-success" type="button" (click)="ShowAtkt('ADDITIONAL')">
+                  Show
+                </button>
+              </c-col>
+
+              <c-col [md]="2">
+                <label for="show_data" id="additionalex_data">&nbsp;&nbsp;
+                </label>
+              </c-col>
+            </c-row>
+
+            <br>
+            <c-row>
+              <c-col [md]="12">
+                <h6 style="color: red">Note: For existing students</h6>
+                <ag-grid-angular
+                  style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                  [rowData]="atkt_subject_papers"
+                  [gridOptions]="gridOptions_details"
+                  [columnDefs]="additionalSubject_GridData"
+                  [rowSelection]="single_rowSelection_details"
+                  (gridReady)="onGridReady_subject_selected($event)"
+                  (rowSelected)="onRowSelected_subject($event)"
+                  (selectionChanged)="onSelectionChanged_subject($event)">
+                </ag-grid-angular>
+
+                <br>
+
+                <p style="font-weight: bold"><h5 style="color: red;">Note: Once you submitted
+                data cannot be modified.</h5>
+                <p style="font-weight: bold;"><h5 style="color:red;">Note: If you face any issue
+                during transaction please wait for 24 hrs.</h5>
+
+                <c-row>
+                  <c-col [md]="4">
+                    <p><h4>Total {{ sumamount }}</h4>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="payment_type" class="required">Payment</label>
+                    <select
+                      #batch_type
+                      id="additionalExPayment_type"
+                      formControlName="payment_type"
+                      class="form-control"
+                      [(ngModel)]=Demoversion
+                      (change)="onChangePaymentSelect($event.target.selectedIndex)"
+                    >
+                      <option *ngFor="let payment_type of paymenttype"
+                              [ngValue]="payment_type.id">{{payment_type.name}}</option>
+
+                    </select>
+                  </c-col>
+                </c-row>
+                <br>
+                <c-row style="justify-content: center">
+                  <c-col [md]="2">
+                    <button id="additional-totalamount"
+                            type="submit" class="btn btn-info"
+                            (click)="Finalsubmit('ADDITIONAL')">
+                      <i style="border-color: white;" class="spinner-border text-primary"
+                         role="status"
+                         *ngIf="finalloader"></i>Payment
+                    </button>
+                  </c-col>
+                </c-row>
+
+                <c-tab-pane class="p-3">
+                  <c-card-body>
+                    <ag-grid-angular
+                      style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                      [rowData]="json_inatkt"
+                      [rowSelection]="multiple_selection"
+                      [gridOptions]="inatkt_gridOptions"
+                      [columnDefs]="atkt_inhouse"
+                      (gridReady)="onGridReady_inatkt($event)"
+                      (rowSelected)="onRowSelectedEvent_inatkt($event)"
+                      (selectionChanged)="onSelectionChanged_inatkt($event)">
+                    </ag-grid-angular>
+                    <c-row>
+                      <c-col [md]="5">
+                      </c-col>
+                      <c-col [md]="2">
+                        <button class="btn btn-primary" type="button"
+                                (click)="studentatktform_inhouse()">
+                          Submit
+                        </button>
+                      </c-col>
+                      <c-col [md]="5">
+                      </c-col>
+                    </c-row>
+                  </c-card-body>
+                </c-tab-pane>
+                <c-tab-pane class="p-3">
+                  <c-card-body>
+                    <ag-grid-angular
+                      style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                      [rowData]="json_inatkt_selected"
+                      [gridOptions]="inatkt_gridOptions_selected"
+                      [columnDefs]="atkt_inhouse_selected"
+                      [rowSelection]="single_rowSelection"
+                      (gridReady)="onGridReady_inatkt_selected($event)"
+                      (rowSelected)="onRowSelected_inatktsubject($event)"
+                      (selectionChanged)="onSelectionChanged_inatkt($event)">
+                    </ag-grid-angular>
+                  </c-card-body>
+
+                  <c-row>
+                    <c-col [md]="5">
+                    </c-col>
+                    <c-col [md]="2">
+                      <button class="btn btn-primary" type="button"
+                              (click)="studentatktform_inhouse()">
+                        Submit
+                      </button>
+                    </c-col>
+                    <c-col [md]="5">
+                    </c-col>
+                  </c-row>
+                </c-tab-pane>
+              </c-col>
+
+            </c-row>
+            <c-row>
+              <c-col [md]="12">
+                <h4></h4>
+              </c-col>
+            </c-row>
+
+          </form>
+        </c-tab-pane>
+        <!--##################      Aditional Exam Tab End     ##############    -->
+
+
+        <!-- #######################     Print  Reciept Start ######################-->
+        <c-tab-pane class="p-3">
+          <br>
+          <form cForm [formGroup]="in_Reciept" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="2" id="in_Reciept">
+                <label for="in_Reciept" class="required">Aadhaar</label>
+                <input
+                  type="number" formControlName="reciept_aadhaar"
+                  id="reciept-adhar"
+                  class="form-control capitalize" placeholder="Enter Aadhaar">
+                <div *ngIf="submitted && in_recieptSubject['reciept_aadhaar']?.errors"
+                     class="invalid-feedback">
+                  <div *ngIf="in_recieptSubject['reciept_aadhaar']?.errors">Aadhaar is required</div>
+                </div>
+              </c-col>
+
+              <c-col [md]="2" style="margin-top: 22px">
+                <button class="btn btn-success" type="button" (click)="ShowReciept()">
+                  Show
+                </button>
+              </c-col>
+            </c-row>
+
+            <br>
+            <c-row>
+              <c-col [md]="12">
+                <ag-grid-angular
+                  style="width: 100%; height: 400px;" class="ag-theme-alpine"
+                  [rowData]="iReq_Reciept"
+                  [gridOptions]="gridOptions_details"
+                  [columnDefs]="feesReciept_GridData"
+                  [rowSelection]="single_rowSelection_details"
+                  (gridReady)="onGridReady_Reciept($event)"
+                  (rowSelected)="onRowSelected_Reciep($event)"
+                  (selectionChanged)="onSelectionChanged_subject($event)">
+                </ag-grid-angular>
+                <br>
+              </c-col>
+            </c-row>
+
+          </form>
+
+
+          <!-- #####################  Show And Print  Reciept ################################  -->
+          <ngx-print-element #element="element">
+            <button (click)="element.print(tableElement)" class="btn btn-info w-25">Print Riecept</button>
+          </ngx-print-element>
+
+          <div #tableRef ngxPrintElement *ngIf="FeeReceipt">
+            <c-card>
+              <c-card-header class="d-flex align-items-center">
+                 <span style="padding-left: 8px; padding-top: 15px">
+                   Receipt No : <strong> ATKT/ {{iReq_Reciept[0]?.Finyear}} /{{ iReq_Reciept[0]?.Receiptno }}
+                 </strong></span>
+              </c-card-header>
+
+              <c-card-body>
+                <c-row class="mb-4">
+                  <c-col sm="4">
+                    <h6 class="mb-3">From:</h6>
+                    <div>
+                      <strong
+                      >RAMNIRANJAN JHUNJHUNWALA COLLEGE OF ARTS , COMMERCE AND SCIENCE
+                        (AUTONOMOUS)</strong
+                      >
+                    </div>
+                    <div>Ghatkopar,Mumbai</div>
+                    <div>Email: rjcollege@rjcollege.edu.in</div>
+                    <div>Contact: 022 25151763</div>
+                  </c-col>
+
+                  <c-col sm="4">
+                    <h6 class="mb-3">To:</h6>
+                    <div>
+                      <strong>{{ iReq_Reciept[0]?.Fullname }}</strong>
+                    </div>
+                    <div>Batch Code:{{ iReq_Reciept[0]?.Batch_code }}</div>
+                    <div>Batch Name: {{ iReq_Reciept[0]?.Batch_name }}</div>
+                    <div>Mobile No: {{ iReq_Reciept[0]?.Mobileno }}</div>
+                  </c-col>
+
+                  <c-col sm="4">
+                    <h6 class="mb-3">Details:</h6>
+                    <div>
+                      <strong>BilldeskId : {{ iReq_Reciept[0]?.Billdeskid }}</strong>
+                    </div>
+                    <div>Date : {{ iReq_Reciept[0]?.Billdeskdate }}</div>
+                    <div>Transaction ID: {{iReq_Reciept[0]?.Billdesktranid}}</div>
+                  </c-col>
+                </c-row>
+
+                <div class="table-responsive-sm">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th class="center">#</th>
+                      <th>Description</th>
+                      <th class="right">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let data of iReq_Reciept; let i = index">
+                      <td class="center">{{ i + 1 }}</td>
+                      <td class="left">ATKT Fees for
+                        Semester {{intToRoman(iReq_Reciept[0].Semester)}}</td>
+                      <td class="right">₹ {{ data?.Receiptamount }}</td>
+                    </tr>
+                    <br/>
+                    <tr>
+                      <td class="center"></td>
+                      <td class="right"><strong>Total</strong></td>
+                      <td class="right">
+                        <strong>₹ {{ iReq_Reciept[0]?.Receiptamount }}</strong>
+                      </td>
+                    </tr>
+                    <br>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h6 style="font-weight: bold">
+                  This is computer generated receipt,it does not require a stamp &
+                  signature.
+                </h6>
+              </c-card-body>
+
+            </c-card>
+          </div>
+        </c-tab-pane>
+
+        <!-- #######################     Print  Reciept End ######################-->
+
+        <!-- #######################    Report tab Start ######################-->
+        <c-tab-pane class="p-3">
+          <form (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="4">
+                <label for="out_batch">Batch:</label>
+                <div class="ng-autocomplete" style="width: 100%;">
+                  <ng-autocomplete
+                    #outside_batch
+                    id="report"
+                    [data]="json_edit_batchs"
+                    [searchKeyword]="Batchkeyword"
+                    (selected)="outatakt_selectBatch($event)"
+                    [itemTemplate]="batoutsideTemplate"
+                    [notFoundTemplate]="notFoundTemplate"
+                    placeholder="Select Batch">
+                  </ng-autocomplete>
+                  <ng-template #batoutsideTemplate let-item_outside>
+                    <a [innerHTML]="item_outside.Batch_name"></a>
+                  </ng-template>
+                  <ng-template #notFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </c-col>
+
+
+              <c-col [md]="2">
+                <div style="padding-top: 23px">
+                  <button
+                    type="submit"
+                    (click)="DownloadReport('DETAIL')"
+                    class="btn btn-info"
+                  >
+                    <c-spinner *ngIf="Downloadtabloader" aria-hidden="false"
+                               size="sm"></c-spinner>
+
+                    Detail
+                  </button>
+                </div>
+              </c-col>
+
+              <c-col [md]="2">
+                <div style="padding-top: 23px">
+                  <button
+                    type="submit"
+                    (click)="DownloadReport('SUMMARY')"
+                    class="btn btn-info"
+                  >
+                    <c-spinner *ngIf="Downloadtabsummaryloader" aria-hidden="false"
+                               size="sm"></c-spinner>
+
+                    Summary
+                  </button>
+                </div>
+              </c-col>
+            </c-row>
+
+
+          </form>
+        </c-tab-pane>
+
+        <!-- #######################    Report tab Start ######################-->
+
+
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>

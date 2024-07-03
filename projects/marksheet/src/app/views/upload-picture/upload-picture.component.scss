@@ -1,0 +1,54 @@
+.form-control.ng-touched.ng-invalid{
+    border:1px solid red;
+}
+.form-control.ng-touched.ng-valid{
+    border:1px solid green;
+}
+
+//ag-grid
+.ag-theme-balham .ag-header {
+    background-color: #524ab8;
+    color: rgb(243, 240, 240);
+}
+
+.ag-theme-balham .ag-header-row {
+    color: rgb(226, 222, 222);
+    color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, rgb(243, 240, 240)));
+    // height: 32px;
+}
+
+.ag-theme-balham .ag-row-selected {
+    border-color: #dadada !important;
+    background-color: #dadada;
+}
+
+.ag-theme-balham .ag-ltr .ag-cell-focus {
+    border: 1px solid #113f67 !important;
+}
+
+.ag-theme-balham {
+    font-family: 'Roboto', sans-serif !important;
+}
+
+.ag-theme-balham .ag-header-icon {
+    color: rgb(255, 253, 253);
+    color: var(--ag-secondary-foreground-color, rgb(255, 253, 253));
+}
+
+.csv-file-chooser-section {
+    padding: 10px;
+    margin: 5%;
+    border: 1px solid;
+    text-align: center;
+  }
+  
+  .csv-result-table {
+    margin: 5%;
+    border: 1px solid #73AD21;
+  
+  }
+
+  button{
+      width:100%;
+  }
+  

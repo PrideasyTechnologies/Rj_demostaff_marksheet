@@ -1,0 +1,108 @@
+/* You can add global styles to this file, and also import other style files */
+// If you want to override variables do it here
+@import "variables";
+
+$enable-ltr: true;
+$enable-rtl: true;
+
+// Import styles with default layout.
+@import "@coreui/coreui-pro/scss/coreui";
+@import "@coreui/coreui-pro/scss/themes/dark";
+
+@import "layout";
+
+// Some temp fixes
+@import "fixes";
+
+// If you want to add something do it here
+@import "custom";
+
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+.header.header-sticky:not([class*=border])
+{
+  max-height: 4px;
+}
+c-sidebar-nav {
+  background-color: rgb(255, 255, 255);
+}
+.sidebar-nav .nav-link{
+  color: black;
+}
+.sidebar-nav .nav-link.active{
+  background-color: rgba(51, 153, 255, 100);
+}
+.sidebar{
+  background-color: rgba(51, 153, 255, 100);
+}
+.sidebar-nav .nav-link:hover{
+  background-color: rgba(51, 153, 255, 100);
+}
+
+
+//ag-grid
+.ag-theme-alpine .ag-header {
+  background-color: #ffff;
+  color: black;
+}
+
+.ag-theme-alpine .ag-header-row {
+  color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, black));
+  // height: 32px;
+  font-size: 15px;
+}
+
+.ag-theme-alpine .ag-row-selected {
+  border-color: #dadada !important;
+  background-color: #dadada;
+}
+
+.ag-theme-alpine .ag-ltr .ag-cell-focus {
+  border: 1px solid #ffff !important;
+}
+
+.ag-theme-alpine {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.ag-theme-alpine .ag-header-icon {
+  color: var(--ag-secondary-foreground-color, rgb(255, 253, 253));
+}
+
+.ag-theme-balham .ag-header {
+  // background-color: #524ab8;
+  background-color: #39f;
+  color: rgb(243, 240, 240);
+}
+
+div.ag-floating-filter-input {
+  color: black;
+}
+html:not([dir=rtl]) .sidebar-nav .nav-icon:first-child {
+  color: black;
+}
+
+.ag-theme-balham .ag-header-row {
+  color: var(--ag-header-foreground-color, var(--ag-secondary-foreground-color, rgb(243, 240, 240)));
+  // height: 32px;
+}
+
+.ag-theme-balham .ag-row-selected {
+  border-color: #dadada !important;
+  background-color: #dadada;
+}
+
+.ag-theme-balham .ag-ltr .ag-cell-focus {
+  border: 1px solid #113f67 !important;
+}
+
+// .ag-theme-balham {
+//     font-family: 'Roboto', sans-serif !important;
+// }
+
+.ag-theme-balham .ag-header-icon {
+  color: var(--ag-secondary-foreground-color, rgb(255, 253, 253));
+}
+
+

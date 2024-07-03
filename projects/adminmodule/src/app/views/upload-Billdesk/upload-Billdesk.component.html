@@ -1,0 +1,326 @@
+<!-- <div>
+    <h3>Upload Bill Desk</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Upload Bill Desk</b></h4>
+    </c-card-header>
+    <c-card-body>
+      <c-nav variant="tabs">
+        <c-nav-item>
+          <a [active]="true" [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
+            Upload Existing Bill Desk
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="1" cNavLink>
+            Upload Bill Desk
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="2" cNavLink>
+            Bill Desk Refund
+          </a>
+        </c-nav-item>
+        <c-nav-item>
+          <a [cTabContent]="tabContent" [tabPaneIdx]="3" cNavLink>
+            ATKT Query api
+          </a>
+        </c-nav-item>
+      </c-nav>
+      <c-tab-content #tabContent="cTabContent" [activeTabPaneIdx]="activePane"
+                     (activeTabPaneIdxChange)="outsidechange($event)">
+        <c-tab-pane class="p-3" style=" margin-top : 20px"
+                    heading="Upload Existing Bill Desk">
+          <form cForm [formGroup]="BilldeskForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+
+              <c-col [md]="3">
+                <h6>Upload Image</h6>
+                <input aria-label="file example"
+                       cFormControl
+                       id="validationText"
+                       (change)="csvUpload($event)"
+                       (selectionchange)="csvUpload($event)"
+                       type="file"/>
+                <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px;">
+                <button cButton type="submit" size="md" class="btn btn-success" (click)="SubmitBill()">
+
+                  <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+                  Upload
+                </button>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px;">
+                <button cButton type="button" size="md" (click)="onCancel()"
+                        class="btn btn-danger">Cancel
+                </button>
+              </c-col>
+            </c-row>
+
+
+
+
+<!--            <c-modal id="liveDemoModal" [visible]="childModal" >-->
+<!--              <c-modal-header>-->
+<!--                <h5 cModalTitle>Modal title</h5>-->
+<!--                <button cButtonClose></button>-->
+<!--              </c-modal-header>-->
+<!--              <c-modal-body>Woohoo, you are reading this text in a modal!</c-modal-body>-->
+<!--              <c-modal-footer>-->
+<!--                <button cButton color="secondary" >-->
+<!--                  Close-->
+<!--                </button>-->
+<!--                <button cButton color="primary">Save changes</button>-->
+<!--              </c-modal-footer>-->
+<!--            </c-modal>-->
+          </form>
+        </c-tab-pane>
+
+        <c-tab-pane class="p-3" style=" margin-top : 20px"
+                    heading="Upload Bill Desk">
+          <h4>Upload Billdesk Data</h4>
+          <form cForm [formGroup]="UploadBilldeskForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+
+              <c-col [md]="4">
+                <h6>Upload Image</h6>
+                <input aria-label="file example"
+                       cFormControl
+                       (change)="xlsxUpload($event)"
+                       (selectionchange)="xlsxUpload($event)"
+                       id="validationTextuploadbilldeskdata"
+                       type="file"/>
+                <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px;">
+                <button cButton type="submit" size="md" class="btn btn-success" (click)="UploadBillDesk()">
+
+                  <c-spinner *ngIf="uploadloader" aria-hidden="false" size="sm"></c-spinner>
+                  Upload
+                </button>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px;">
+                <button cButton type="button" (click)="onCancel()"
+                        class="btn btn-danger">Cancel
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br/>
+          <c-card-body>
+            <h4>Download Billdesk Data</h4>
+            <form cForm [formGroup]="DownloadBilldeskForm" (keydown.enter)="$event.preventDefault()">
+              <c-row>
+                <c-col [md]="3">
+                  <label for="fromdate">From Date:</label>
+                  <input id="fromdate"
+                         type="date" formControlName="fromdate" class="form-control">
+                  <span
+                    *ngIf="DownloadBilldeskForm.get('fromdate')?.invalid && DownloadBilldeskForm.get('fromdate')?.touched"
+                    class="text-danger">from date is required</span>
+                </c-col>
+
+                <c-col [md]="3">
+                  <label for="todate">To Date:</label>
+                  <input id="todate"
+                         type="date" formControlName="todate" class="form-control">
+                  <span
+                    *ngIf="DownloadBilldeskForm.get('todate')?.invalid && DownloadBilldeskForm.get('todate')?.touched"
+                    class="text-danger">to date is required</span>
+                </c-col>
+
+                <c-col [md]="2" style="padding-top: 23px;">
+                  <button cButton type="button" class="btn btn-info"
+                          [disabled]="DownloadBilldeskForm?.invalid"
+                          (click)="ViewBilldesk()">
+                    <c-spinner *ngIf="viewloader" aria-hidden="false" size="sm"></c-spinner>
+
+                    View
+                  </button>
+                </c-col>
+                <c-col [md]="2" style="padding-top: 23px;">
+                  <button cButton type="button" class="btn btn-success"
+                          [disabled]="DownloadBilldeskForm?.invalid" (click)="DownloadBilldesk()">
+                    <c-spinner *ngIf="downloadloader" aria-hidden="false" size="sm"></c-spinner>
+
+                    Download
+                  </button>
+                </c-col>
+              </c-row>
+            </form>
+          </c-card-body>
+          <c-card-body>
+            <c-row>
+              <c-col [md]="12" style="padding-top: 20px;">
+                <form cForm class="d-flex" role="search">
+
+                  <c-input-group class="mb-3">
+                    <span cInputGroupText id="basic-addonsearch">Search</span>
+                    <input aria-describedby="basic-addon1"
+                           aria-label="Username"
+                           cFormControl
+                           placeholder="Search here"
+                           [(ngModel)]="searchValue"
+                           name="Value"
+                           (keyup)="quickSearch()"
+                    />
+                  </c-input-group>
+                </form>
+              </c-col>
+            </c-row>
+
+            <br/>
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                             [rowData]="rowss"
+                             [gridOptions]="billdesk_gridOptions"
+                             [columnDefs]="columnDefs"
+                             [pagination]="true"
+                             [paginationPageSize]="10"
+                             (gridReady)="onGridReady($event)"
+                             (rowSelected)="onRowSelectedEvent($event)"
+                             (selectionChanged)="onSelectionChanged($event)">
+            </ag-grid-angular>
+          </c-card-body>
+        </c-tab-pane>
+        <c-tab-pane class="p-3" style=" margin-top : 20px"
+                    heading="Bill Desk Refund">
+          <h4>Upload Billdesk Refund</h4>
+          <form cForm [formGroup]="UploadBilldeskRefundForm" (keydown.enter)="$event.preventDefault()">
+            <c-row>
+              <c-col [md]="3">
+                <h6>Upload Image</h6>
+                <input aria-label="file example"
+                       cFormControl
+                       (change)="xlsxUpload($event)"
+                       (selectionchange)="xlsxUpload($event)"
+                       id="validationText1"
+                       type="file"/>
+                <c-form-feedback [valid]="false">Example invalid form file feedback</c-form-feedback>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px;">
+                <button cButton type="submit" size="md" class="btn btn-success" (click)="UploadRefundBillDesk()">
+
+                  <c-spinner *ngIf="loader" aria-hidden="false" size="sm"></c-spinner>
+                  Upload
+                </button>
+              </c-col>
+              <c-col [md]="2" style="padding-top: 27px;">
+                <button cButton type="button" (click)="onCancel()"
+                        class="btn btn-danger">Cancel
+                </button>
+              </c-col>
+            </c-row>
+          </form>
+          <br/>
+          <c-card-body>
+            <h4>Download Billdesk Refund</h4>
+            <form cForm [formGroup]="DownloadBilldeskRefundForm" (keydown.enter)="$event.preventDefault()">
+              <c-row>
+                <c-col [md]="3">
+                  <label for="fromdate">From Date:</label>
+                  <input type="date" formControlName="fromdate" class="form-control">
+                  <span
+                    *ngIf="DownloadBilldeskRefundForm.get('fromdate')?.invalid && DownloadBilldeskRefundForm.get('fromdate')?.touched"
+                    class="text-danger">from date is required</span>
+                </c-col>
+
+                <c-col [md]="3">
+                  <label for="todate">To Date:</label>
+                  <input type="date" formControlName="todate" class="form-control">
+                  <span
+                    *ngIf="DownloadBilldeskRefundForm.get('todate')?.invalid && DownloadBilldeskRefundForm.get('todate')?.touched"
+                    class="text-danger">to date is required</span>
+                </c-col>
+
+                <c-col [md]="2" style="padding-top: 23px;">
+                  <button cButton type="button" class="btn btn-info"
+                          [disabled]="DownloadBilldeskRefundForm?.invalid"
+                          (click)="ViewRefundBilldesk()">
+
+                    <c-spinner *ngIf="viewrefundloader" aria-hidden="false" size="sm"></c-spinner>
+
+                    View
+                  </button>
+                </c-col>
+                <c-col [md]="2" style="padding-top: 23px;">
+                  <button cButton type="button" class="btn btn-success"
+                          [disabled]="DownloadBilldeskRefundForm.invalid"
+                          (click)="DownloadRefundBilldesk()">
+
+                    <c-spinner *ngIf="downloadrefundloader" aria-hidden="false" size="sm"></c-spinner>
+
+                    Download
+                  </button>
+                </c-col>
+              </c-row>
+            </form>
+          </c-card-body>
+          <c-card-body>
+            <c-row>
+              <c-col [md]="12" style="padding-top: 20px;">
+                <form cForm class="d-flex" role="search">
+
+                  <c-input-group class="mb-3">
+                    <span cInputGroupText id="basic-addon1">Search</span>
+                    <input aria-describedby="basic-addon1"
+                           aria-label="Username"
+                           cFormControl
+                           placeholder="Search here"
+                           [(ngModel)]="searchValue"
+                           name="Value"
+                           (keyup)="quickSearch()"
+                    />
+                  </c-input-group>
+                </form>
+              </c-col>
+            </c-row>
+            <br/>
+            <ag-grid-angular style="width: 100%; height: 300px;" class="ag-theme-alpine"
+                             [rowData]="rowss"
+                             [gridOptions]="refund_gridOptions"
+                             [columnDefs]="columnDefs"
+                             [pagination]="true"
+                             [paginationPageSize]="10"
+                             (gridReady)="onGridReady($event)"
+                             (rowSelected)="onRowSelectedEvent($event)"
+                             (selectionChanged)="onSelectionChanged($event)">
+            </ag-grid-angular>
+
+          </c-card-body>
+        </c-tab-pane>
+        <c-tab-pane class="p-3">
+          <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
+                           [rowData]="atktquery"
+                           [gridOptions]="gridOptions_atktquery"
+                           [columnDefs]="columnDefs_atktquery"
+                           [pagination]="true"
+                           [paginationPageSize]="10"
+                           (gridReady)="onGridReady_atktquery($event)"
+                           [rowSelection]='rowSelection_query'
+                           (rowSelected)="onRowSelectedEvent_atktquery($event)"
+                           (selectionChanged)="onSelectionChanged_atktquery($event)"
+          >
+          </ag-grid-angular>
+          <br>
+          <c-row>
+            <c-col [md]="2" style="padding-top: 27px;">
+            <button cButton type="button" (click)="QueryApi()"
+                    class="btn btn-success">Query Api
+            </button>
+            </c-col>
+            <c-col [md]="2" style="padding-top: 27px;">
+            <button  cButton type="button" (click)="DeleteQueryApi()"
+                    class="btn btn-danger">Delete
+            </button>
+            </c-col>
+          </c-row>
+        </c-tab-pane>
+      </c-tab-content>
+    </c-card-body>
+  </c-card>
+</div>

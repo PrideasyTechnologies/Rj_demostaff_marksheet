@@ -1,0 +1,333 @@
+<!-- <div>
+    <h3>Edit Profile</h3>
+    <hr>
+</div> -->
+
+<div class="fade-in">
+  <c-card>
+    <c-card-header>
+      <h4><b>Edit Profile</b></h4>
+    </c-card-header>
+
+    <c-card-body>
+      <form cForm [formGroup]="editprofileForm" (keydown.enter)="$event.preventDefault()">
+        <c-row>
+          <c-col [md]="3">
+            <label for="aadhaarno">Enter Student Aadhaar:</label>
+            <input id="aadhaarno" type="number" formControlName="aadhaarno" class="form-control"
+                   placeholder="Enter aadhaar no" minlength="12" maxlength="12">
+            <span *ngIf="editprofileForm.get('aadhaarno')?.invalid && editprofileForm.get('aadhaarno')?.touched"
+                  class="text-danger">aadhaar is required</span>
+            <!-- <span  *ngIf="aadhaar.errors?.minlength">Aadhaar must be 12 numbers</span> -->
+          </c-col>
+          <c-col [md]="2" style="padding-top: 25px;">
+            <button cButton type="submit" [disabled]="editprofileForm.invalid" (click)="ShowProfile()" size="md"
+                    class="btn btn-info">
+
+              Show
+            </button>
+          </c-col>
+          <c-col [md]="2" style="margin-top: 25px;">
+          <c-dropdown variant="btn-group">
+            <button [disabled]="editprofileForm.invalid" cButton cDropdownToggle>
+              Download
+            </button>
+            <ul cDropdownMenu>
+              <li (click)="DownloadAadhaar()">
+                Photo
+                <c-spinner *ngIf="Downloadloader" aria-hidden="false" size="sm"></c-spinner>
+              </li>
+              <li (click)="MarksheetDownload()" >
+                Marksheet</li>
+            </ul>
+          </c-dropdown>
+          </c-col>
+<!--          <c-col [md]="2" style="padding-top: 25px;">-->
+<!--            <button [disabled]="editprofileForm.invalid" (click)="DownloadAadhaar()" size="lg"-->
+<!--                    class="btn btn-success" >-->
+<!--              &lt;!&ndash;                          <i style="border-color: white;" class="spinner-border text-primary"&ndash;&gt;-->
+<!--              &lt;!&ndash;                                role="status" *ngIf="Downloadloader"></i>&nbsp;&ndash;&gt;-->
+<!--              <c-spinner *ngIf="Downloadloader" aria-hidden="false" size="sm"></c-spinner>-->
+
+<!--              Download Photo-->
+<!--            </button>-->
+<!--          </div>-->
+
+        </c-row>
+      </form>
+      <br/>
+      <!--            <tabset>-->
+      <!--                <tab heading="Profile Detail">-->
+      <c-card-body>
+        <c-nav variant="tabs">
+          <a [active]="true" [cTabContent]="tabContent" [routerLink] [tabPaneIdx]="0" cNavLink>Edit Profile</a>
+          <a [active]="true" [cTabContent]="tabContent" [routerLink] [tabPaneIdx]="1" cNavLink>Images</a>
+
+        </c-nav>
+        <c-tab-content #tabContent="cTabContent">
+          <c-tab-pane class="p-3">
+            <c-card-body>
+              <br/>
+
+              <form cForm [formGroup]="updateprofileForm" (keydown.enter)="$event.preventDefault()"
+                    (ngSubmit)="UpdateProfile()">
+                <c-row>
+                  <c-col [md]="6">
+                    <label for="Aadhaar">Student Aadhaar:</label>
+                    <input id="Aadhaar" type="number" formControlName="Aadhaar"
+                           [(ngModel)]="studentaadhaar" readonly
+                           name="studentaadhaar" class="form-control" placeholder="Enter student aadhaar"
+                           minlength="12" maxlength="12">
+                    <span
+                      *ngIf="updateprofileForm.get('Aadhaar')?.invalid && updateprofileForm.get('Aadhaar')?.touched"
+                      class="text-danger">student aadhaar is required</span>
+                  </c-col>
+                  <c-col [md]="6">
+                    <label for="FirstName">First Name:</label>
+                    <input id="FirstName" type="text" formControlName="FirstName" [(ngModel)]="firstname"
+                           name="firstname"
+                           class="form-control" placeholder="Enter First Name">
+                    <span
+                      *ngIf="updateprofileForm.get('FirstName')?.invalid && updateprofileForm.get('FirstName')?.touched"
+                      class="text-danger">first name is required</span>
+                  </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                  <c-col [md]="6">
+                    <label for="LastName">Last Name:</label>
+                    <input id="LastName" type="text" formControlName="LastName" [(ngModel)]="lastname" name="lastname"
+                           class="form-control" placeholder="Enter Last Name">
+                    <!-- <span
+                *ngIf="updateprofileForm.get('lastname').invalid && updateprofileForm.get('lastname').touched"
+                class="text-danger">last name is required</span> -->
+                  </c-col>
+                  <c-col [md]="6">
+                    <label for="FatherName">Father Name:</label>
+                    <input id="FatherName" type="text" formControlName="FatherName" [(ngModel)]="fathername"
+                           name="fathername" class="form-control" placeholder="Enter Father Name">
+                    <span
+                      *ngIf="updateprofileForm.get('FatherName')?.invalid && updateprofileForm.get('FatherName')?.touched"
+                      class="text-danger">father name is required</span>
+                  </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                  <c-col [md]="6">
+                    <label for="MotherName">Mother Name:</label>
+                    <input id="MotherName" type="text" formControlName="MotherName" [(ngModel)]="mothername"
+                           name="mothername" class="form-control" placeholder="Enter Mother Name">
+                    <span
+                      *ngIf="updateprofileForm.get('MotherName')?.invalid && updateprofileForm.get('MotherName')?.touched"
+                      class="text-danger">mother name is required</span>
+                  </c-col>
+                  <c-col [md]="3">
+                    <label for="Gender">Gender:</label>
+                    <select id="Gender" formControlName="Gender" [(ngModel)]="gender" name="gender"
+                            class="form-control">
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Transgender">Transgender</option>
+                    </select>
+                    <span
+                      *ngIf="updateprofileForm.get('Gender')?.invalid && updateprofileForm.get('Gender')?.touched"
+                      class="text-danger">gender is required</span>
+                  </c-col>
+
+                  <c-col [md]="3">
+                    <label for="Dob">Date Of Birth:</label>
+                    <input id="Dob" type="date" formControlName="Dob" [(ngModel)]="Birth_date"
+                           name="Birth_date" class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('Dob')?.invalid && updateprofileForm.get('Dob')?.touched"
+                      class="text-danger">Birth Date is required</span>
+                  </c-col>
+                </c-row>
+
+                <hr/>
+                <h4><b>Address Details</b></h4>
+                <hr/>
+
+                <c-row>
+                  <c-col [md]="6">
+                    <label for="CorrepondenceFlatNo">Flat No / Building Name / House No / Block No:</label>
+                    <input id="CorrepondenceFlatNo" type="text" formControlName="CorrepondenceFlatNo" [(ngModel)]="flatno" name="flatno"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceFlatNo')?.invalid && updateprofileForm.get('CorrepondenceFlatNo')?.touched"
+                      class="text-danger">Flat No is required</span>
+                  </c-col>
+                  <c-col [md]="6">
+                    <label for="CorrepondenceColonyName">Street Name / Area Name / Colony Name / Ward Name:</label>
+                    <input id="CorrepondenceColonyName" type="text" formControlName="CorrepondenceColonyName" [(ngModel)]="streetno" name="streetno"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceColonyName')?.invalid && updateprofileForm.get('CorrepondenceColonyName')?.touched"
+                      class="text-danger">Street Name is required</span>
+                  </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceVillageName">Additional Address:</label>
+                    <input id="CorrepondenceVillageName" type="text" formControlName="CorrepondenceVillageName"
+                           [(ngModel)]="additional_address"
+                           name="additional_address" class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceVillageName')?.invalid && updateprofileForm.get('CorrepondenceVillageName')?.touched"
+                      class="text-danger">Additional Address is required</span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceLandmark">LandMark:</label>
+                    <input id="CorrepondenceLandmark" ype="text" formControlName="CorrepondenceLandmark" [(ngModel)]="landmark" name="landmark"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceLandmark')?.invalid && updateprofileForm.get('CorrepondenceLandmark')?.touched"
+                      class="text-danger">LandMark is required</span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceLocationArea">Location Area:</label>
+                    <select id="CorrepondenceLocationArea" [(ngModel)]="perLocation" formControlName="CorrepondenceLocationArea"
+                            class="form-control">
+                      <option value="" disabled selected>--- Please Select ---</option>
+                      <option *ngFor="let location_area of location_area" [value]="location_area">
+                        {{location_area}}</option>
+                    </select>
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceLocationArea')?.invalid && updateprofileForm.get('CorrepondenceLocationArea')?.touched"
+                      class="text-danger">Location Area is required</span>
+                  </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceCountry">Country:</label>
+                    <select id="CorrepondenceCountry" [(ngModel)]="perCountry" formControlName="CorrepondenceCountry" class="form-control">
+                      <option value="" disabled selected>--- Please Select ---</option>
+                      <option *ngFor="let country of country" [value]="country">
+                        {{country}}</option>
+                    </select>
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceCountry')?.invalid && updateprofileForm.get('CorrepondenceCountry')?.touched"
+                      class="text-danger">Country is required</span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceState">State:</label>
+                    <select id="CorrepondenceState" [(ngModel)]="perState" formControlName="CorrepondenceState" class="form-control">
+                      <option value="" disabled selected>--- Please Select ---</option>
+                      <option *ngFor="let state of state" [value]="state">{{state}}</option>
+                    </select>
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceState')?.invalid && updateprofileForm.get('CorrepondenceState')?.touched"
+                      class="text-danger">State is required</span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceDistrict">District:</label>
+                    <select id="CorrepondenceDistrict" [(ngModel)]="perDistrict" formControlName="CorrepondenceDistrict"
+                            class="form-control">
+                      <option value="" disabled selected>--- Please Select ---</option>
+                      <option *ngFor="let district of district" [value]="district">
+                        {{district}}</option>
+                    </select>
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceDistrict')?.invalid && updateprofileForm.get('CorrepondenceDistrict')?.touched"
+                      class="text-danger">District is required</span>
+                  </c-col>
+                </c-row>
+                <br>
+                <c-row>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceTaluka">Tehsil / Taluka:</label>
+                    <input id="CorrepondenceTaluka" type="text" formControlName="CorrepondenceTaluka" [(ngModel)]="taluka"
+                           name="taluka"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceTaluka')?.invalid && updateprofileForm.get('CorrepondenceTaluka')?.touched"
+                      class="text-danger">Tehsil or Taluka is required
+                                </span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="CorrepondenceCity">City:</label>
+                    <input id="CorrepondenceCity" type="text" formControlName="CorrepondenceCity" [(ngModel)]="city" name="city"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondenceCity')?.invalid && updateprofileForm.get('CorrepondenceCity')?.touched"
+                      class="text-danger">City is required</span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="CorrepondencePincode">Pincode:</label>
+                    <input id="CorrepondencePincode" type="text" formControlName="CorrepondencePincode" [(ngModel)]="pincode" name="pincode"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('CorrepondencePincode')?.invalid && updateprofileForm.get('CorrepondencePincode')?.touched"
+                      class="text-danger">Pincode is required</span>
+                  </c-col>
+                </c-row>
+                <br/>
+                <c-row>
+                  <c-col [md]="4">
+                    <label for="convocationno">Convocation No:</label>
+                    <input id="convocationno" type="text" formControlName="convocationno" name="convocationno"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('convocationno')?.invalid && updateprofileForm.get('convocationno')?.touched"
+                      class="text-danger">convocation no is required</span>
+                  </c-col>
+                  <c-col [md]="4">
+                    <label for="Whatsapp">Whatsapp No:</label>
+                    <input id="Whatsapp" type="number" formControlName="Whatsapp" name="Whatsapp"
+                           class="form-control">
+                    <span
+                      *ngIf="updateprofileForm.get('Whatsapp')?.invalid && updateprofileForm.get('Whatsapp')?.touched"
+                      class="text-danger">Whatsapp no is required</span>
+                  </c-col>
+                  <c-col [md]="2">
+                    <label for="upload">Upload Photo:</label>
+                    <input id="upload" type="file" (change)="ImageUpload($event)" formControlName="upload"
+                           class="fileInputProfile">
+                    <!-- <span *ngIf="updateprofileForm.get('upload').invalid && updateprofileForm.get('upload').touched"
+                class="text-danger">img upload is required</span> -->
+                  </c-col>
+                  <!-- <c-col [md]="2" style="padding-top: 30px;">
+              <button type="button" [disabled]="updateprofileForm.invalid" size="lg"
+                  class="btn btn-success">upload photo
+              </button>
+          </div> -->
+                </c-row>
+
+                <c-row>
+                  <c-col [md]="4"></c-col>
+                  <c-col [md]="2" style="padding-top: 30px;">
+                    <button type="submit" [disabled]="updateprofileForm.invalid" size="lg"
+                            class="btn btn-success">Update Profile
+                    </button>
+                  </c-col>
+                  <c-col [md]="4"></c-col>
+                </c-row>
+              </form>
+            </c-card-body>
+          </c-tab-pane>
+          <c-tab-pane class="p-3">
+            <c-card-body>
+              <c-card class="w-50 mb-4">
+                <h5 cCardTitle>Aadhaar</h5>
+                <img cCardImg="top" [src]="showaadharImg">
+
+              </c-card>
+              <c-card class="w-50 mb-4">
+                <h5 cCardTitle>Photo</h5>
+                <img cCardImg="top" [src]="showprofileImg">
+
+              </c-card>
+              <c-card class="w-50 mb-4">
+                <h5 cCardTitle>Signature</h5>
+                <img cCardImg="top" [src]="showsignImg">
+
+              </c-card>
+            </c-card-body>
+          </c-tab-pane>
+        </c-tab-content>
+      </c-card-body>
+    </c-card-body>
+  </c-card>
+</div>
