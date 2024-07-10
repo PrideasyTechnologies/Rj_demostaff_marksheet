@@ -10,6 +10,7 @@ import { GridOptions } from 'ag-grid-community';
 import { Router } from '@angular/router';
 import { EditCellCustomComponent } from '../editcell-custom/editcell-custom.component';
 import {
+  BatchSubjects,
   BatchSubjectsnone,
   Createrollno,
   downloadrollcallconfiguration,
@@ -35,7 +36,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { saveAs } from 'file-saver';
 import { Ires_RollCalllist } from '../../models/responsemodel';
-import { IRes_subjectgroup_rollno } from '../../models/response';
+import { IRes_BatchSubjects, IRes_subjectgroup_rollno } from '../../models/response';
 
 
 @Component({
@@ -65,6 +66,7 @@ export class SubjectQuotaComponent implements OnInit {
   UploadFileForm!: FormGroup;
 
   Rollcall_configurationForm!: FormGroup;
+  Addbatch_Form!: FormGroup;
 
   res: any;
   Batchs = [];
@@ -89,6 +91,10 @@ export class SubjectQuotaComponent implements OnInit {
   Rollno_popup_pwd_rollcall: any;
 
   Res_subject_group_rollno:IRes_subjectgroup_rollno[] =[];
+
+
+  Res_BatchSubjects!:IRes_BatchSubjects
+  SelectedBatchSubjects!:IRes_BatchSubjects
 
   
   // selectedobject_subjectgroup!:IRes_subjectgroup_rollno;
@@ -159,6 +165,15 @@ export class SubjectQuotaComponent implements OnInit {
 
     this.Rollcall_configurationForm = new FormGroup({
       batch: new FormControl('', Validators.required),
+    });
+
+    this.Addbatch_Form = new FormGroup({
+      batchsubjects: new FormControl('', Validators.required),
+      divison: new FormControl('', Validators.required),
+      roll_no_from: new FormControl('', Validators.required),
+      roll_no_to: new FormControl('', Validators.required),
+      rules: new FormControl('', Validators.required),
+      activate_deactivate: new FormControl('', Validators.required),
     });
   }
 
@@ -285,10 +300,12 @@ export class SubjectQuotaComponent implements OnInit {
     // debugger
     if (!this.passwordVerified) {
       this.secondaryvisible = true;
+      
     }else{
       // this.secondaryvisible = false;
       
       this.Show_subject_group_rollno();
+      
     }
 
     
@@ -347,6 +364,7 @@ export class SubjectQuotaComponent implements OnInit {
       this.passwordVerified = true
       this.secondaryvisible = false;
       this.Show_subject_group_rollno();
+      this.ShowBatchSubjects()
     } else {
       if (this.Rollno_popup_pwd_rollcall === '') {
         // alert("Please enter password");
@@ -529,6 +547,23 @@ export class SubjectQuotaComponent implements OnInit {
           alert('No data found');
         } else {
           this.Subject_group_code = response['data'];
+        }
+      });
+  }
+
+
+  ShowBatchSubjects() {
+    let jsonin = {
+      // "BatchCode": this.SelectedBatch.Batch_Code
+      BatchCode: this.BatchCode,
+    };
+    this.commonService
+      .Post_json(BatchSubjects, jsonin)
+      .subscribe((response: any) => {
+        if (response['data'] == '' || response['data'] == null) {
+          alert('No data found');
+        } else {
+          this.Res_BatchSubjects = response['data'];
         }
       });
   }
@@ -716,6 +751,7 @@ export class SubjectQuotaComponent implements OnInit {
     this.BatchCode = bat.Batch_Code;
     // do something with selected item
     this.ShowBatch();
+   
   }
 
   onChangeSearch(search: string) {
@@ -759,6 +795,34 @@ export class SubjectQuotaComponent implements OnInit {
           this.globalmessage.Show_error('No Data Found');
         }
         this.showloader = false;
+      });
+  }
+
+
+  Add_New(){
+    
+    let jsonin = {
+      Batch_code: this.BatchCode,
+      Batch_division: this.Addbatch_Form.controls['divison'].value,
+      Rollno_from: this.Addbatch_Form.controls['roll_no_from'].value, 
+      Rollno_to: this.Addbatch_Form.controls['roll_no_to'].value,
+      Subject_names: this.SelectedBatchSubjects.Subject_group_name,
+      Subject_group_code: this.SelectedBatchSubjects.Subject_group_code,
+      Rules: this.Addbatch_Form.controls['rules'].value,
+      Active_deactive: this.Addbatch_Form.controls['activate_deactivate'].value
+    };
+
+    console.log('absjson',jsonin)
+
+    this.commonService
+      .Post_json(iu_subject_group_rollno, jsonin)
+      .subscribe((response: {}) => {
+        this.res = response;
+        if (this.res.data == true) {
+          this.globalmessage.Show_message('Added Successfully!');
+        } else {
+          this.globalmessage.Show_message('Failed to Add!');
+        }
       });
   }
 

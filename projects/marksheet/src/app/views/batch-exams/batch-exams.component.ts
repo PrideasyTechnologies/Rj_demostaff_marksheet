@@ -312,7 +312,6 @@ export class BatchExamsComponent implements OnInit {
     };
 
 
-
     this.commonService.Post_json(userexams,jsonin).subscribe((response) => {
 
       if (response == null) {

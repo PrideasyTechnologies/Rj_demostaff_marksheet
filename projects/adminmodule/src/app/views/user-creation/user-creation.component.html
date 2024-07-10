@@ -43,7 +43,6 @@
                   id="aadhaar"
                   type="number"
                   formControlName="aadhaar"
-                  [(ngModel)]="aadhaar"
                   name="aadhaar"
                   class="form-control"
                   placeholder="Enter aadhaar no"
@@ -65,7 +64,6 @@
                   id="password"
                   type="password"
                   formControlName="password"
-                  [(ngModel)]="password"
                   name="password"
                   class="form-control"
                   placeholder="Enter Password"
@@ -85,7 +83,6 @@
                   id="Name"
                   type="text"
                   formControlName="Name"
-                  [(ngModel)]="Name"
                   name="Name"
                   class="form-control"
                   placeholder="Enter Name"
@@ -99,9 +96,11 @@
                   >Name is required</span
                 >
               </c-col>
-              <c-col [md]="2">
+
+
+               <c-col [md]="2">
                 <label for="UserRole">User Role:</label>
-                <select
+                <!-- <select
                   id="UserRole"
                   class="form-control"
                   formControlName="UserRole"
@@ -110,8 +109,20 @@
                   <option value="FEES">FEES</option>
                   <option value="ADMISSION">ADMISSION</option>
                   <option value="MARKSHEET">MARKSHEET</option>
-                </select>
-                <span
+                </select> -->
+                
+                <c-multi-select
+                multiple
+                [(ngModel)]="SelectedUserRole"
+                formControlName="UserRole"
+                visibleItems="8"
+              >
+                <c-multi-select-option
+                  *ngFor="let data of Roles"
+                  >{{ data.Rolenames }}</c-multi-select-option
+                >
+               </c-multi-select>
+               <span
                   *ngIf="
                     usercreationForm.get('UserRole')?.invalid &&
                     usercreationForm.get('UserRole')?.touched
@@ -119,7 +130,9 @@
                   class="text-danger"
                   >User Role is required</span
                 >
-              </c-col>
+                </c-col> 
+
+
 
               <c-col [md]="2" style="padding-top: 24px">
                 <button
@@ -134,15 +147,7 @@
             </c-row>
           </form>
 
-          <!-- <div style="text-align: center;" *ngIf="loader">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <div style="text-align: center;" *ngIf="loader">
-                <div class="text-muted"><b style="color: blue;">
-                    loading data.... Please wait.</b></div>
-            </div> -->
+          
           <c-row>
             <c-col [md]="12" style="padding-top: 20px">
               <c-input-group class="mb-3">
@@ -183,11 +188,11 @@
           >
             <c-row>
               <c-col [md]="3">
-                <label for="userrole">Role:</label>
-                <select
-                  id="userrole"
+                <label for="userrole_attach">Role:</label>
+                <!-- <select
+                  id="userrole_attach"
                   [(ngModel)]="SelectedUserRole"
-                  formControlName="userrole"
+                  formControlName="userrole_attach"
                   class="form-control"
                   cSelect
                 >
@@ -195,7 +200,19 @@
                   <option *ngFor="let data of Roles" [ngValue]="data">
                     {{ data.Rolenames }}
                   </option>
-                </select>
+                </select> -->
+
+                <c-multi-select
+                multiple
+                [(ngModel)]="SelectedUserRole_Attach"
+                formControlName="userrole_attach"
+                visibleItems="8"
+              >
+                <c-multi-select-option
+                  *ngFor="let data of Roles"
+                  >{{ data.Rolenames }}</c-multi-select-option
+                >
+              </c-multi-select>
               </c-col>
 
               <c-col style="padding-top: 25px" [md]="2" class="text-center">

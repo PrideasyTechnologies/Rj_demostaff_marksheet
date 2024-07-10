@@ -16,7 +16,6 @@ export class DefaultLayoutComponent implements OnInit {
   menus_resp:any
   constructor(private commonService: CommonService) { }
 
-
   Aadhaar = parseInt(sessionStorage.getItem('Aadhaar')!);
   Token = sessionStorage.getItem('Token');
 
@@ -61,8 +60,6 @@ export class DefaultLayoutComponent implements OnInit {
       } else {
         this.menus_resp = response;
       }
-
-      
 
       // this.navItems = this.menus_resp
       console.log('naaaaa',this.navItems)

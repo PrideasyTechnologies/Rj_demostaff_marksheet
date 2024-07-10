@@ -28,10 +28,12 @@ import {
   config_menus,
   iu_rolemenus,
   role_selectedmenus,
+  update_userrole,
 } from '../../globals/global-api';
 import { Sessiondata } from '../../models/request';
 import { SessionService } from '../../globals/sessionstorage';
 import { StoreService } from '../../globals/store.service';
+import { IRes_Userlist } from '../../models/response';
 
 @Component({
   selector: 'app-user-creation',
@@ -62,7 +64,7 @@ export class UserCreationComponent implements OnInit {
   usercreationForm!: FormGroup;
   Frm_role!: FormGroup;
   Frm_menu!: FormGroup;
-  Frm_RoleAttach!:FormGroup;
+  Frm_RoleAttach!: FormGroup;
   res: any;
   Batchs = [];
   Roles!: IRoles[];
@@ -71,6 +73,8 @@ export class UserCreationComponent implements OnInit {
   Menus!: IResp_Menus[];
 
   selectedMenus!: IRes_Selectedmenus;
+
+  SelectedUserRole_Attach: any;
 
   SelectedUserRole:any;
 
@@ -92,7 +96,7 @@ export class UserCreationComponent implements OnInit {
 
   currentactive: boolean = false;
 
-  selectedUserGrid:any;
+  selectedUserGrid!: IRes_Userlist;
 
   oSession!: Sessiondata;
 
@@ -120,9 +124,6 @@ export class UserCreationComponent implements OnInit {
   }
 
   ngOnInit(): void {
- 
-
-
     this.oSession = new Sessiondata(this.sessionService);
     this.oSession.Getdatafromstroage();
 
@@ -130,7 +131,7 @@ export class UserCreationComponent implements OnInit {
       aadhaar: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
       Name: new FormControl('', Validators.required),
-      UserRole: new FormControl('', Validators.required),
+      UserRole: new FormControl('',Validators.required),
     });
 
     this.Frm_role = this.formBuilder.group({
@@ -142,7 +143,7 @@ export class UserCreationComponent implements OnInit {
     });
 
     this.Frm_RoleAttach = this.formBuilder.group({
-      userrole: new FormControl('', Validators.required),
+      userrole_attach: new FormControl('', Validators.required),
     });
 
     this.GetBatchApi();
@@ -257,7 +258,7 @@ export class UserCreationComponent implements OnInit {
       filter: true,
       floatingFilter: true,
     },
- 
+
     {
       headerName: 'Action',
       field: 'Action',
@@ -300,8 +301,7 @@ export class UserCreationComponent implements OnInit {
         }
 
         // Return the DOM element instead of an HTML string
-         return input;
-
+        return input;
       },
     },
     {
@@ -362,7 +362,7 @@ export class UserCreationComponent implements OnInit {
       aadhaar: this.usercreationForm.controls['aadhaar'].value,
       user_pwd: this.usercreationForm.controls['password'].value,
       user_name: this.usercreationForm.controls['Name'].value,
-      user_role: this.usercreationForm.controls['UserRole'].value,
+      user_role: this.usercreationForm.controls['UserRole'].value.toString(),
       user_type: 'ALL',
     };
     console.log('update', jsonin);
@@ -370,7 +370,7 @@ export class UserCreationComponent implements OnInit {
       .Post_json(InsertUpdateUsers, jsonin)
       .subscribe((response: {}) => {
         this.res = response;
-        console.log('My Response ', this.res);
+       
         this.globalmessage.Show_successmessage(
           'User Role Created Successfully.'
         );
@@ -432,17 +432,10 @@ export class UserCreationComponent implements OnInit {
     let selected_outnode = this.gridApi.getSelectedRows();
     this.selectedUserGrid = selected_outnode[0];
 
-    // if(this.selectedUserGrid.Userrole == "STUDENTS"){
-    //   this.globalmessage.Show_message("User Role can't be student")
-    //   return
-    // }
-
-    // console.log('selected_Education', this.selectedUserGrid);
-
+    console.log('selected_Education', this.selectedUserGrid);
   }
 
-  onSelectionChanged(event: any) {
-  }
+  onSelectionChanged(event: any) {}
 
   GetBatchApi() {
     this.commonService
@@ -492,7 +485,6 @@ export class UserCreationComponent implements OnInit {
     this.commonService
       .Post_json(role_selectedmenus, jsonin)
       .subscribe((response: any) => {
-
         const hasKey = 'data' in response;
         if (hasKey) {
           this.selectedMenus = response.data;
@@ -506,23 +498,18 @@ export class UserCreationComponent implements OnInit {
           var sMenus = this.selectedMenus.Menus!;
           let AMenus = sMenus.split(',');
 
-  
-          console.log('Amenus',AMenus,sMenus)
+          console.log('Amenus', AMenus, sMenus);
 
           for (const menu of this.Menus) {
-
             // this.Menus[key].isEnabled = false;
-            let afound = AMenus.find(
-              (i) => i === menu.Myid.toString()
-            );
-            console.log('afound',afound)
+            let afound = AMenus.find((i) => i === menu.Myid.toString());
+            console.log('afound', afound);
 
             if (afound !== undefined) {
-              menu.isEnabled = true; 
+              menu.isEnabled = true;
             } else {
-              menu.isEnabled = false; 
+              menu.isEnabled = false;
             }
-
           }
           this.gridApi_menuconfig.redrawRows();
         }
@@ -546,14 +533,12 @@ export class UserCreationComponent implements OnInit {
   onRowSelectedEvent_menuconfig(event: any) {}
 
   onSelectionChanged_menuconfig(event: any) {
-
     let selected_outnode = this.gridApi_menuconfig.getSelectedNodes();
     this.out_rowselected = selected_outnode.map(
       (node: { data: any }) => node.data
     );
     //alert(`Selected Nodes:\n${JSON.stringify(selectedData)}`);
     console.log('Selection updated', this.out_rowselected);
-   
   }
 
   onSubmit() {
@@ -580,8 +565,6 @@ export class UserCreationComponent implements OnInit {
 
     this.commonService.Post_json(iu_rolemenus, jsonin).subscribe((response) => {
       this.res = response.data;
-      // console.log('response::', this.res);
-
       if (this.res == true) {
         this.globalmessage.Show_message('Data Updated Successfully');
       } else {
@@ -590,7 +573,28 @@ export class UserCreationComponent implements OnInit {
     });
   }
 
-  onAttach(){
-    console.log('slelelele',this.SelectedUserRole.Rolenames)
+  onAttach() {
+
+    if (this.selectedUserGrid.Userrole == 'STUDENTS') {
+      this.globalmessage.Show_message("User Role can't be student");
+      return;
+    }
+
+    let jsonin = {
+      aadhaar: this.selectedUserGrid.Aadhaar,
+      Userrole: this.SelectedUserRole_Attach.toString(),
+    };
+
+    console.log('json', jsonin);
+
+    this.commonService.Post_json(update_userrole, jsonin).subscribe((response) => {
+      this.res = response.data;
+      if (this.res == true) {
+        this.globalmessage.Show_message('Role Attached Successfully');
+      } else {
+        this.globalmessage.Show_message('Failed to Attached!');
+      }
+    });
+
   }
 }

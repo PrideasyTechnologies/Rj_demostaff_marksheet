@@ -387,17 +387,16 @@ export class StudentSubjectComponent implements OnInit {
       this.globalmessage.Show_error("File not selected ");
       return;
     }
-
+    
     this.loader = true;
-
     let jsonin = {
-      College_code : this.oSession.collegecode,
-      Finyear : this.oSession.finyear,
-      Useraadhaar : this.oSession.aadhaar,
-      Batch_code :  this.BatchCode2,
-      Semester : this.SelectedBatSemester.Semester.toString(),
-      Batchexam_id : this.SelectedBatSemester.Batchexam_id.toString(),
-      Subject_Order : this.SelectedSubject.Subject_order.toString(),
+      college_code : this.oSession.collegecode,
+      finyear : this.oSession.finyear,
+      useraadhaar : this.oSession.aadhaar,
+      batch_code :  this.BatchCode2,
+      semester : this.SelectedBatSemester.Semester,
+      batchexam_id : this.SelectedBatSemester.Batchexam_id,
+      subject_order : this.SelectedSubject.Subject_order,
     } 
 
     let formData = new FormData();

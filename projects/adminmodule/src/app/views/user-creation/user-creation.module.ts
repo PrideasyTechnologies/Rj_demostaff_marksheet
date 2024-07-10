@@ -6,46 +6,63 @@ import { HttpClientModule } from '@angular/common/http';
 
 // DataTable
 
-import {ButtonDirective, CardModule, FormModule, GridModule, NavComponent} from '@coreui/angular-pro';
 import {
-
+  ButtonDirective,
+  CardModule,
+  FormModule,
+  GridModule,
+  MultiSelectComponent,
+  MultiSelectModule,
+  MultiSelectOptionComponent,
+  NavComponent,
+  SharedModule,
+} from '@coreui/angular-pro';
+import {
   NavItemComponent,
-  NavLinkDirective, SpinnerComponent,
-  TabContentComponent, TabContentRefDirective, TabPaneComponent
+  NavLinkDirective,
+  SpinnerComponent,
+  TabContentComponent,
+  TabContentRefDirective,
+  TabPaneComponent,
 } from '@coreui/angular-pro';
 
 import { UserCreationComponent } from './user-creation.component';
 
-
 // Routing
 import { UserCreationRoutingModule } from './user-creation-routing.module';
-import {ModalModule} from '@coreui/angular-pro';
+import { ModalModule } from '@coreui/angular-pro';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { AgGridModule } from 'ag-grid-angular';
-import { CellCustomComponent } from '../cell-custom/cell-custom.component'
-import {EditCellCustomComponent} from "../editcell-custom/editcell-custom.component";
+import { CellCustomComponent } from '../cell-custom/cell-custom.component';
+import { EditCellCustomComponent } from '../editcell-custom/editcell-custom.component';
 
 @NgModule({
-    imports: [
-        ReactiveFormsModule,
-        CommonModule,
-        FormsModule,
-        HttpClientModule,
-        UserCreationRoutingModule,
-        CardModule,
-        ModalModule,
-        PdfViewerModule,
-        GridModule,
-        FormModule,
-        AgGridModule,
-        ButtonDirective,
-        NavComponent,
-        NavItemComponent,
-        NavLinkDirective,
-        SpinnerComponent,
-        TabContentComponent, TabContentRefDirective, TabPaneComponent
-    ],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+    UserCreationRoutingModule,
+    CardModule,
+    ModalModule,
+    PdfViewerModule,
+    GridModule,
+    FormModule,
+    AgGridModule,
+    ButtonDirective,
+    NavComponent,
+    NavItemComponent,
+    NavLinkDirective,
+    SpinnerComponent,
+    TabContentComponent,
+    TabContentRefDirective,
+    TabPaneComponent,
+    MultiSelectOptionComponent,
+    MultiSelectComponent,
+    MultiSelectModule,
+    SharedModule
+  ],
   // entryComponents : [CellCustomComponent],
   declarations: [UserCreationComponent],
 })
-export class UserCreationModule { }
+export class UserCreationModule {}

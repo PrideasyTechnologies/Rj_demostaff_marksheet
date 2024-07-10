@@ -21,7 +21,6 @@ export const navItems: INavData[] = [
     iconComponent: {name: 'cil-layers'},
     children: [
      
-
       {
         name: 'Registration',
         iconComponent: {name: 'cil-arrow-right'},

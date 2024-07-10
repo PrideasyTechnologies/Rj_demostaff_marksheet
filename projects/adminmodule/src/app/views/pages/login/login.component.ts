@@ -141,11 +141,11 @@ export class LoginComponent {
       this.submitted = true;
       this.commonService.Post_json_withouttoken(eazylogin,input_json).subscribe((response) => {
 
-        this.login_resp = response.data
+       this.login_resp = response.data
        if (this.login_resp.Token.length <= 0) {
         this.GetCaptchaImage()
         return;
-      }
+        }
 
       this.sessionservice.SaveData('aadhaar', EncryptData(String(this.login_resp.Aadhaar)));
         // this.sessionservice.SaveData('UserRole', response.data.UserRole);

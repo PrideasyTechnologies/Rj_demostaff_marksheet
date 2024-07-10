@@ -10,14 +10,10 @@
         <h4><b>Roll Call</b></h4>
       </c-row>
     </c-card-header>
-    <c-card-body >
-      <c-nav variant="tabs" >
+    <c-card-body>
+      <c-nav variant="tabs">
         <c-nav-item>
-          <a
-            [cTabContent]="tabContent"
-            [tabPaneIdx]="0"
-            cNavLink
-          >
+          <a [cTabContent]="tabContent" [tabPaneIdx]="0" cNavLink>
             View And Assign RollCall
           </a>
         </c-nav-item>
@@ -33,7 +29,10 @@
         </c-nav-item>
       </c-nav>
 
-      <c-tab-content #tabContent="cTabContent" (activeTabPaneIdxChange)="handleChange($event)">
+      <c-tab-content
+        #tabContent="cTabContent"
+        (activeTabPaneIdxChange)="handleChange($event)"
+      >
         <!-- Tab 1 -->
         <c-tab-pane class="p-3">
           <form
@@ -322,6 +321,160 @@
             </c-row>
           </form>
 
+          <form
+            cForm
+            [formGroup]="Addbatch_Form"
+            (keydown.enter)="$event.preventDefault()"
+            class="p-3"
+          >
+            <c-row>
+
+
+              <c-col [md]="3">
+                <label for="batchsubjects">Subjects:</label>
+                <select
+                  id="batchsubjects"
+                  [(ngModel)]="SelectedBatchSubjects"
+                  formControlName="batchsubjects"
+                  class="form-control"
+                  cSelect
+                >
+                  <option disabled>Select Type</option>
+                  <option *ngFor="let data of Res_BatchSubjects" [ngValue]="data">
+                    {{ data.Subject_group_name }}
+                  </option>
+                </select>
+              </c-col>
+
+
+              <c-col [md]="3">
+                <label for="divison">Division</label>
+                <input
+                  type="text"
+                  formControlName="divison"
+                  class="form-control"
+                  placeholder="Enter Division"
+                />
+                <span
+                  *ngIf="
+                    Rollcall_configurationForm.get('divison')?.invalid &&
+                    Rollcall_configurationForm.get('divison')?.touched
+                  "
+                  class="text-danger"
+                  >Division is required</span
+                >
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="roll_no_from">Roll No From : </label>
+                <input
+                  id="roll_no_from"
+                  type="number"
+                  formControlName="roll_no_from"
+                  class="form-control"
+                  placeholder="Roll No From"
+                  minlength="12"
+                  maxlength="12"
+                />
+                <span
+                  *ngIf="
+                    Rollcall_configurationForm.get('roll_no_from')?.invalid &&
+                    Rollcall_configurationForm.get('roll_no_from')?.touched
+                  "
+                  class="text-danger"
+                  >Roll No From is required</span
+                >
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="roll_no_to">Roll No To : </label>
+                <input
+                  id="roll_no_to"
+                  type="number"
+                  formControlName="roll_no_to"
+                  class="form-control"
+                  placeholder="Roll No To"
+                />
+                <span
+                  *ngIf="
+                    Rollcall_configurationForm.get('roll_no_to')?.invalid &&
+                    Rollcall_configurationForm.get('roll_no_to')?.touched
+                  "
+                  class="text-danger"
+                  >Roll No To is required</span
+                >
+              </c-col>
+            </c-row>
+
+            <c-row>
+              <c-col [md]="3">
+                <label for="rules">Rules</label>
+                <input
+                  type="text"
+                  formControlName="rules"
+                  class="form-control"
+                  placeholder="Enter Rules"
+                />
+                <span
+                  *ngIf="
+                    Rollcall_configurationForm.get('rules')?.invalid &&
+                    Rollcall_configurationForm.get('rules')?.touched
+                  "
+                  class="text-danger"
+                  >Rules is required</span
+                >
+              </c-col>
+
+              <c-col [md]="3">
+                <label for="activate_deactivate">Activate / Deactivate</label>
+                <input
+                  type="number"
+                  formControlName="activate_deactivate"
+                  class="form-control"
+                  placeholder="Enter 1 or 0"
+                />
+                <span
+                  *ngIf="
+                    Rollcall_configurationForm.get('activate_deactivate')
+                      ?.invalid &&
+                    Rollcall_configurationForm.get('activate_deactivate')
+                      ?.touched
+                  "
+                  class="text-danger"
+                  >Acitave or Deactivate</span
+                >
+              </c-col>
+
+              <c-col [md]="2" style="padding-top: 24px">
+                <button
+                  cButton
+                  type="submit"
+                  [disabled]="Rollcall_configurationForm.invalid"
+                  (click)="Add_New()"
+                  size="md"
+                  class="btn btn-info"
+                >
+                  <c-spinner
+                    *ngIf="loader"
+                    aria-hidden="false"
+                    size="sm"
+                  ></c-spinner>
+                  Add
+                </button>
+              </c-col>
+              <!-- <c-col [md]="1" style="padding-top: 24px">
+                <button
+                  cButton
+                  type="submit"
+                  class="btn btn-danger"
+                  (click)="resetAll()"
+                >
+                  Reset
+                </button>
+              </c-col> -->
+            </c-row>
+          </form>
+
           <br />
           <c-row>
             <c-col [md]="12">
@@ -372,7 +525,13 @@
   </c-card>
 </div>
 
-<c-modal #primaryModal id="primaryModal" color="primary" size="sm" [visible]="primaryvisible">
+<c-modal
+  #primaryModal
+  id="primaryModal"
+  color="primary"
+  size="sm"
+  [visible]="primaryvisible"
+>
   <c-modal-header>
     <h4 class="c-modal-title">Create Rollno</h4>
   </c-modal-header>
@@ -410,7 +569,13 @@
   </c-modal-footer>
 </c-modal>
 
-<c-modal #secondaryModal id="secondaryModal" color="primary" size="sm" [visible]="secondaryvisible">
+<c-modal
+  #secondaryModal
+  id="secondaryModal"
+  color="primary"
+  size="sm"
+  [visible]="secondaryvisible"
+>
   <c-modal-header>
     <h4 class="c-modal-title">Validate</h4>
   </c-modal-header>
@@ -433,7 +598,9 @@
   </c-modal-body>
   <c-modal-footer>
     <c-col [md]="5">
-      <button cButton class="btn btn-success" (click)="Close_secondary()">Back</button>
+      <button cButton class="btn btn-success" (click)="Close_secondary()">
+        Back
+      </button>
     </c-col>
     <c-col [md]="5">
       <button

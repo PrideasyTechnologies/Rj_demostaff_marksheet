@@ -17,11 +17,9 @@ export class DefaultLayoutComponent implements OnInit{
 
   ngOnInit() {
     this.Clickeventblock();
-}
+  } 
 
   Clickeventblock(){
-
-
 
     if(this.Aadhaar !== 1001) {
       document.addEventListener('contextmenu', function (e) {

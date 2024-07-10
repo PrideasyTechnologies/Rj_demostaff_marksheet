@@ -1561,30 +1561,7 @@ export class DownloadFileComponent {
     );
   }
 
-  //upload convocation
-  //Upload File
-
-  /*
-  xlsxUpload(element: any) {
-    this.xlsxFile = element.target.files;
-    if (
-      this.xlsxFile[0].type ==
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' &&
-      this.xlsxFile[0].size < 2400000
-    ) {
-    } else {
-      // this.dialogService.open({ message: 'Only .xlsx file allowed!', positive: 'Ok', })
-      Swal.fire({
-        title: 'Error!',
-        text: 'Only .xlsx file allowed!',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      }); //alert
-
-      this.resetAll();
-    }
-  }
-  */
+  
 
   xlsxUpload(element: any) {
     this.xlsxFile = element.target.files;

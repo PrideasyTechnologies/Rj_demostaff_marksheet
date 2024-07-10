@@ -311,7 +311,6 @@ export class UploadTemplateComponent implements OnInit {
       Batchexam_id : this.SelectedUserExam.Batchexam_id
     }
 
-    
      let formData = new FormData();
 
      formData.append("input_form",encryptUsingAES256(jsonin));

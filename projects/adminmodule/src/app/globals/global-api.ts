@@ -1,20 +1,20 @@
 export var ServerURL = location.origin + location.pathname;
 
-export const EmailIP = 'https://admission.rjcollege.edu.in:7009'; //live new
-export const CommonIP = 'https://admission.rjcollege.edu.in:7009';//demo new
-export const ServerIP = 'https://admission.rjcollege.edu.in:7009';//live Staff
+export const EmailIP = 'https://admission.rjcollege.edu.in:7007'; //live new
+export const CommonIP = 'https://admission.rjcollege.edu.in:7007';//demo new
+export const ServerIP = 'https://admission.rjcollege.edu.in:7007';//live Staff
 
-export const ServerIP_7001 = 'https://admission.rjcollege.edu.in:7009';//live Staff
+export const ServerIP_7001 = 'https://admission.rjcollege.edu.in:7007';//live Staff
 
 export const downurl = 'https://www.admission.rjcollege.edu.in';//Document approval pdf
 
 export var Serverlink = 'https://admission.rjcollege.edu.in';
 
-export const StudentIP = 'https://admission.rjcollege.edu.in:7009';//live Student
+export const StudentIP = 'https://admission.rjcollege.edu.in:7007';//live Student
 
-export var baseURL = 'https://admission.rjcollege.edu.in:7009';
+export var baseURL = 'https://admission.rjcollege.edu.in:7007';
 
-export var baseURL_7009 = 'https://admission.rjcollege.edu.in:7009';
+export var baseURL_7009 = 'https://admission.rjcollege.edu.in:7007';
 
 const EAZYURL = ServerIP + '/v2/eazy/';
 
@@ -268,6 +268,7 @@ export const get_menus_coreui = ServerIP + '/v1/Common/get_menus_coreui';
 
 export const iu_rolemenus = ServerIP + '/v1/Common/iu_rolemenus';
 export const role_selectedmenus = ServerIP + '/v1/Common/role_selectedmenus';
+export const update_userrole = ServerIP + '/v1/Common/update_userrole';
 
 
 /**
@@ -365,6 +366,7 @@ export const updateeligible = ServerIP + '/v1/Marksheet/updateeligible';
 
 //Batch Subjects None
 export const BatchSubjectsnone = ServerIP + '/v1/Common/Batchsubjectsnone';
+// export const BatchSubjects = ServerIP + '/v1/Common/BatchSubjects';
 
 //Cancel admission
 export const AdmissionCancel = ServerIP + '/v1/Fees/AdmissionCancel';
